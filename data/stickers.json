@@ -1,0 +1,25 @@
+{
+  "name": "表情包存储站",
+  "description": "全网最全表情包收藏",
+  "stickers": [
+    {
+      "id": "panda-001",
+      "filename": "panda-hi.gif",
+      "url": "https://pic1.zhimg.com/80/v2-6d9e4e1c1c5e1f5e1c5e1f5e1c5e1f5e_1440w.jpg",
+      "tags": ["熊猫人", "打招呼"],
+      "category": "熊猫人",
+      "added": "2026-07-13"
+    },
+    {
+      "id": "cat-001",
+      "filename": "cat-stare.gif",
+      "url": "https://pic1.zhimg.com/80/v2-6d9e4e1c1c5e1f5e1c5e1f5e1c5e1f5e_1440w.jpg",
+      "tags": ["猫", "盯", "震惊"],
+      "category": "猫猫",
+      "added": "2026-07-13"
+    }
+  ],
+  "categories": [
+    "熊猫人", "猫猫", "狗狗", "沙雕", "老年人专用", "打字专用", "怼人专用", "上班族"
+  ]
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>表情包存储站</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="header">
+  <h1>😂 表情包存储站</h1>
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="搜索表情包..." autocomplete="off">
+    <button id="search-btn">🔍</button>
+  </div>
+</header>
+
+<nav class="categories">
+  <button class="cat-btn active" data-cat="all">全部</button>
+</nav>
+
+<main class="gallery" id="gallery">
+  <div class="loading">加载中...</div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
