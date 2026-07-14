@@ -3,12 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>表情包存储站</title>
+<meta name="description" content="我的表情 my Emoticones - 游戏动态表情包管理与发送工具。汇集原神、崩坏星穹铁道、绝区零、鸣潮等热门游戏GIF动图表情，支持一键下载收藏，在微信/QQ/抖音等聊天场景中快速发送。">
+<meta name="keywords" content="表情包,动态表情,GIF表情,游戏表情,原神表情,崩坏表情,绝区零表情,鸣潮表情,微信表情">
+<title>我的表情 - my Emoticones</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
+<!-- ====== App 推广页 ====== -->
+<section class="landing">
+  <div class="landing-hero">
+    <div class="app-icon">🎭</div>
+    <h1 class="app-name-cn">我的表情</h1>
+    <p class="app-name-en">my Emoticones</p>
+    <p class="app-desc">游戏动态表情包管理工具，GIF 动图一键发送</p>
+    <a href="#download" class="download-btn">📥 下载 App</a>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feat-icon">🎮</div>
+      <h3>热门游戏表情</h3>
+      <p>汇集原神、星穹铁道、绝区零、鸣潮等热门游戏动态表情</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">⚡</div>
+      <h3>悬浮球一键发送</h3>
+      <p>聊天时点击屏幕边缘悬浮球，表情面板弹出，复制即用</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">⌨️</div>
+      <h3>系统键盘集成</h3>
+      <p>作为系统输入法注册，在微信/QQ/抖音中直接插入动图表情</p>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon">📦</div>
+      <h3>自由收藏管理</h3>
+      <p>浏览、搜索、预览表情包，一键下载到本地，分类整理</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 下载区域 ====== -->
+<section class="download-section" id="download">
+  <h2>📥 下载 我的表情</h2>
+  <p class="dl-sub">Android 版本 · 支持 Android 8.0 及以上</p>
+
+  <div class="dl-buttons">
+    <a href="apk/我的表情.apk" class="dl-btn-primary">⬇ 下载 APK（直接安装）</a>
+    <span class="dl-hint">或扫描二维码下载</span>
+    <div class="qr-placeholder">
+      <!-- 二维码图片，部署后替换 -->
+      <div class="qr-box">📱<br><small>扫码下载</small></div>
+    </div>
+  </div>
+
+  <p class="dl-note">
+    安装后请前往系统「设置 → 语言和输入法 → 虚拟键盘」启用「我的表情」键盘<br>
+    并允许「在其他应用上显示」权限以使用悬浮球功能
+  </p>
+</section>
+
+<!-- ====== 表情包浏览 ====== -->
+<section class="sticker-section">
+  <h2>🎬 表情包预览</h2>
+</section>
+
 <header class="header">
-  <h1>😂 表情包存储站</h1>
   <div class="search-bar">
     <input type="text" id="search" placeholder="搜索表情包..." autocomplete="off">
     <button id="search-btn">🔍</button>
@@ -24,6 +85,31 @@
 </main>
 
 <div class="toast" id="toast"></div>
+
+<!-- 图片预览弹窗 -->
+<div class="preview-overlay" id="preview-overlay">
+  <div class="preview-container">
+    <button class="preview-close" id="preview-close">&times;</button>
+    <img id="preview-img" src="" alt="">
+    <div class="preview-info" id="preview-info"></div>
+    <div class="preview-actions">
+      <button class="pa-btn" id="pa-download">⬇ 下载</button>
+      <button class="pa-btn" id="pa-related">🔍 搜索关联</button>
+    </div>
+  </div>
+</div>
+
+<!-- 右键菜单 -->
+<div class="context-menu" id="context-menu">
+  <button class="cm-item" data-action="view">🔍 查看</button>
+  <button class="cm-item" data-action="download">⬇ 下载</button>
+  <button class="cm-item" data-action="related">🔗 搜索关联</button>
+</div>
+
+<footer class="footer">
+  <p>&copy; 2026 my Emoticones · 我的表情</p>
+  <p class="footer-small">游戏素材版权归各自游戏厂商所有</p>
+</footer>
 
 <script src="js/app.js"></script>
 </body>
