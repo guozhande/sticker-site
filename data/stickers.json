@@ -9,27 +9,19 @@
         "Ib",
         "东方Project",
         "偶像大师",
-        "兽娘动物园",
-        "动物森友会",
         "原神",
-        "喷射战士",
         "塞尔达传说",
         "女神异闻录",
         "宝可梦",
-        "少女与战车",
         "少女前线",
         "尼尔机械纪元",
         "崩坏星穹铁道",
         "崩坏系列",
         "弹丸论破",
         "明日方舟",
-        "机动战舰抚子号",
-        "碧蓝航线",
         "索尼克",
         "绝区零",
         "舰队Collection",
-        "英雄联盟",
-        "蔚蓝档案",
         "街霸",
         "超级马里奥",
         "阿兹漫画大王",
@@ -47,11 +39,8 @@
         "小林家的龙女仆",
         "我的英雄学院",
         "摇曳百合",
-        "死神",
         "海贼王",
-        "灌篮高手",
         "火影忍者",
-        "灵能百分百",
         "电锯人",
         "空之境界",
         "美少女战士",
@@ -64,13 +53,11 @@
         "间谍过家家",
         "雏田频道",
         "鬼灭之刃",
-        "魔法少女小圆",
         "黑岩射手",
         "龙珠"
       ],
       "网络": [
         "Hololive",
-        "原创",
         "网络"
       ]
     }
@@ -849,7 +836,7 @@
       ],
       "category": "网络",
       "url": "stickers/api-2002.gif",
-      "subcategory": "原创"
+      "subcategory": "网络"
     },
     {
       "id": "a2004",
@@ -1129,9 +1116,9 @@
         "black_hair",
         "1980s_(style)"
       ],
-      "category": "游戏",
+      "category": "网络",
       "url": "stickers/api-2026.jpg",
-      "subcategory": "少女与战车"
+      "subcategory": "网络"
     },
     {
       "id": "a2028",
@@ -1683,9 +1670,9 @@
         "braid",
         "necktie"
       ],
-      "category": "游戏",
+      "category": "网络",
       "url": "stickers/api-2075.jpg",
-      "subcategory": "蔚蓝档案"
+      "subcategory": "网络"
     },
     {
       "id": "a2077",
@@ -1851,9 +1838,9 @@
         "diaper",
         "konohagakure_symbol"
       ],
-      "category": "动漫",
+      "category": "网络",
       "url": "stickers/api-2090.jpg",
-      "subcategory": "火影忍者"
+      "subcategory": "网络"
     },
     {
       "id": "a2092",
@@ -2014,9 +2001,9 @@
         "male_focus",
         "top_hat"
       ],
-      "category": "动漫",
+      "category": "网络",
       "url": "stickers/api-2100.jpg",
-      "subcategory": "海贼王"
+      "subcategory": "网络"
     },
     {
       "id": "a2102",
@@ -2513,9 +2500,9 @@
         "what",
         "real_life_insert"
       ],
-      "category": "动漫",
+      "category": "网络",
       "url": "stickers/api-2132.jpg",
-      "subcategory": "哆啦A梦"
+      "subcategory": "网络"
     },
     {
       "id": "a2134",
@@ -2834,8 +2821,8 @@
         "panda",
         "abyssal_ship"
       ],
-      "category": "游戏",
-      "subcategory": "舰队Collection"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5009",
@@ -2946,8 +2933,8 @@
         "crowd",
         "outdoors"
       ],
-      "category": "游戏",
-      "subcategory": "女神异闻录"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5019",
@@ -3052,8 +3039,8 @@
         "meme",
         "white_background"
       ],
-      "category": "动漫",
-      "subcategory": "哆啦A梦"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5029",
@@ -3155,8 +3142,8 @@
         "solo",
         "open_mouth"
       ],
-      "category": "游戏",
-      "subcategory": "超级马里奥"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5039",
@@ -3351,7 +3338,7 @@
         "in_container"
       ],
       "category": "网络",
-      "subcategory": "原创"
+      "subcategory": "网络"
     },
     {
       "id": "b5057",
@@ -3499,8 +3486,8 @@
         "simple_background",
         "short_hair"
       ],
-      "category": "游戏",
-      "subcategory": "舰队Collection"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5071",
@@ -3702,8 +3689,8 @@
         "pillow",
         "realistic"
       ],
-      "category": "动漫",
-      "subcategory": "哆啦A梦"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5088",
@@ -4116,8 +4103,8 @@
         "greyscale",
         "multiple_girls"
       ],
-      "category": "游戏",
-      "subcategory": "舰队Collection"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5125",
@@ -4168,8 +4155,8 @@
         "pokemon_(creature)",
         "dragon"
       ],
-      "category": "游戏",
-      "subcategory": "宝可梦"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5130",
@@ -4458,8 +4445,8 @@
         "chinese_text",
         "white_background"
       ],
-      "category": "动漫",
-      "subcategory": "哆啦A梦"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "b5158",
@@ -5086,8 +5073,8 @@
         "pointy_ears",
         "open_mouth"
       ],
-      "category": "游戏",
-      "subcategory": "原神"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "g6042",
@@ -5358,8 +5345,8 @@
         "1girl",
         "star_guardian_(league_of_legends)"
       ],
-      "category": "游戏",
-      "subcategory": "英雄联盟"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "g6052",
@@ -5700,8 +5687,8 @@
         "pointy_ears",
         "open_mouth"
       ],
-      "category": "游戏",
-      "subcategory": "原神"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "g6072",
@@ -5844,8 +5831,8 @@
         "indoors",
         "solo"
       ],
-      "category": "动漫",
-      "subcategory": "鬼灭之刃"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "g6077",
@@ -5887,8 +5874,8 @@
         "army",
         "crowd"
       ],
-      "category": "动漫",
-      "subcategory": "进击的巨人"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "g6080",
@@ -7509,8 +7496,8 @@
         "upper_body",
         "cloudy_sky"
       ],
-      "category": "动漫",
-      "subcategory": "死神"
+      "category": "网络",
+      "subcategory": "网络"
     },
     {
       "id": "g6162",
@@ -8545,9 +8532,9 @@
         "bench",
         "overalls"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "http://img.soogif.com/BUfJa64b1jK9ldfRtGyrWxmVGo7Qwvju.gif",
-      "subcategory": "喷射战士"
+      "subcategory": "网络"
     },
     {
       "id": "soogif-3dedbee2",
@@ -9152,7 +9139,7 @@
       ],
       "category": "网络",
       "source_url": "https://pinoss.com/pdan123/i/pdan1/2026/5/J1.gif",
-      "subcategory": "原创"
+      "subcategory": "网络"
     },
     {
       "id": "pdan-390c72cd",
@@ -9733,9 +9720,9 @@
         "1boy",
         "parody"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/EE6BF9DE0445CB0B7BD0F745B94CCA40",
-      "subcategory": "舰队Collection"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-72990836",
@@ -9848,9 +9835,9 @@
         ":3",
         "6+girls"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/822CC6FA5030885BBE6EC86E56096475",
-      "subcategory": "兽娘动物园"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-5ec516b1",
@@ -9962,9 +9949,9 @@
         "blush",
         "solo"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/7C7C8BD314D10665C529D81038C79935",
-      "subcategory": "动物森友会"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-fda06643",
@@ -10232,9 +10219,9 @@
         "white_background",
         "blush"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/E4A2917204642CF9FA2908008EFA8EF9",
-      "subcategory": "动物森友会"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-c2520c3b",
@@ -10709,7 +10696,7 @@
       ],
       "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/8A15A6BEB94BA9ECFE090E58BB461CB5",
-      "subcategory": "Hololive"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-2133c167",
@@ -11518,9 +11505,9 @@
         "nail_bat",
         "what"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/5E4071CEEF3842817533F2D262A160C5",
-      "subcategory": "电锯人"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-1088bdcb",
@@ -11584,9 +11571,9 @@
         "firing",
         "animal"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/384A118E9437A1E9F5C9A69E54831A63",
-      "subcategory": "少女与战车"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-83cc7012",
@@ -11641,9 +11628,9 @@
         "no_humans",
         "simple_background"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/047D3B11242FBDF6A97F4E76D91E6FD4",
-      "subcategory": "哆啦A梦"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-e4ab2a68",
@@ -11668,9 +11655,9 @@
         "parody",
         "shoes"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/F27F3DB010155A17DD79B72013EB0C04",
-      "subcategory": "灵能百分百"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-119e9d62",
@@ -11771,9 +11758,9 @@
         "train_interior",
         "silhouette"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/0CA2E162AC8779A081DA609DD04B885F",
-      "subcategory": "魔法少女小圆"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-0de5ea2f",
@@ -12032,7 +12019,7 @@
       ],
       "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/DF681F743670BB633707A3C208F36437",
-      "subcategory": "Hololive"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-bd3d441e",
@@ -12157,9 +12144,9 @@
         "simple_background",
         "chinese_text"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/D1BF917F0261823EBE15358486A89E87",
-      "subcategory": "原神"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-aa378328",
@@ -12432,9 +12419,9 @@
         "ahoge",
         "full_body"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/C8389F3384534C2548A40824A43F78F9",
-      "subcategory": "碧蓝航线"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-c26e7fb4",
@@ -12906,9 +12893,9 @@
         "full_body",
         "caramelldansen"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/A6DB0586067CA31E265250CF17C68CC8",
-      "subcategory": "东方Project"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-835a3b2e",
@@ -13049,9 +13036,9 @@
         "solo",
         "seal_(animal)"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/C86B810063A5CD01E9FEFB78414E7EE1",
-      "subcategory": "宝可梦"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-f2fb487b",
@@ -13785,9 +13772,9 @@
         "lying",
         "pixel_art"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/6F896BDB47A4163C371A6E669C95EC18",
-      "subcategory": "宝可梦"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-f5661f10",
@@ -14433,9 +14420,9 @@
         "flower",
         "nose_blush"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/0A03AF6B10EE428A05E0BED961106E2A",
-      "subcategory": "原神"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-7c79c077",
@@ -14465,9 +14452,9 @@
         "arm_up",
         "1boy"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/64C3861E9E72C481866AC8B6FCDB757A",
-      "subcategory": "咒术回战"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-40e90ecb",
@@ -14800,9 +14787,9 @@
         "happy",
         "facing_viewer"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/31D3A8E27C0E5707341B0D4BBD743C66",
-      "subcategory": "宝可梦"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-e7ba9388",
@@ -15250,9 +15237,9 @@
         "no_humans",
         "closed_eyes"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/3ED1E878911FFA59B400C554D19A58BD",
-      "subcategory": "原神"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-01e14ec8",
@@ -15344,9 +15331,9 @@
         "looking_at_viewer",
         "simple_background"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/34CE7FF38201C76B24E56F60B915A6C9",
-      "subcategory": "原神"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-3f7f4b28",
@@ -16119,9 +16106,9 @@
         "yukkuri_shiteitte_ne",
         "transparent_background"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/EB5C01F30443A29F34545A53F6A14B2E",
-      "subcategory": "超级马里奥"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-af516ca6",
@@ -16160,9 +16147,9 @@
         "open_mouth",
         "no_humans"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/7E6366373E522E341AFA4B3DC40BB42F",
-      "subcategory": "我的英雄学院"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-b08f09ce",
@@ -16713,9 +16700,9 @@
         "white_outline",
         "virtual_youtuber"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/FED300A82FAA5207A2F1BD81300D4A03",
-      "subcategory": "舰队Collection"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-ac370b17",
@@ -16734,9 +16721,9 @@
         "side_ponytail",
         "meme"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/CF499D76CFE904B553326713040EF76D",
-      "subcategory": "孤独摇滚"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-33c01438",
@@ -17202,9 +17189,9 @@
         "glowstick",
         "penguin"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/7AD7FE0926298D61E04A2CB54F27B769",
-      "subcategory": "宝可梦"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-79161e85",
@@ -17654,9 +17641,9 @@
         "clenched_hands",
         "shirt"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/25EBDD50897201B9D005A31C261EEE19",
-      "subcategory": "为美好的世界献上祝福"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-839ad10e",
@@ -17683,9 +17670,9 @@
         "long_hair",
         "yellow_eyes"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/82880AE62800D751F7A4E74511F7770E",
-      "subcategory": "机动战舰抚子号"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-208f30c1",
@@ -18237,7 +18224,7 @@
       ],
       "category": "网络",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/462E28D9319E1767F476AE04A775CB3F",
-      "subcategory": "Hololive"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-5937b66b",
@@ -18404,9 +18391,9 @@
         "black_hair",
         "nature"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/0F55324861ED48903F82DC07BF4C2153",
-      "subcategory": "进击的巨人"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-209e2078",
@@ -18492,9 +18479,9 @@
         "holding_balloon",
         "yarn_ball"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/0970F9B715E1F7C3D95B2B5876F302DD",
-      "subcategory": "宝可梦"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-7de87988",
@@ -18849,9 +18836,9 @@
         "solo",
         "short_hair"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/22C6232D9118B1C7F329F1EFFCE57FA8",
-      "subcategory": "灵能百分百"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-4ecc814d",
@@ -19061,9 +19048,9 @@
         "depth_of_field",
         "hair_bow"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/E9F2A93A1F759FDD80AF0C44CC33E041",
-      "subcategory": "进击的巨人"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-560bda98",
@@ -19153,9 +19140,9 @@
         "indoors",
         "k-pop"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/70C8B9DB032ACC07E3992A33D3B88A09",
-      "subcategory": "灌篮高手"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-c1ecaab5",
@@ -23773,9 +23760,9 @@
         "arrow_(symbol)",
         "poke_ball_symbol"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2023/04/18/168655816/779f979d0c93bd86cc4833986c75a4e6_5143714313097126467.gif",
-      "subcategory": "原神"
+      "subcategory": "网络"
     },
     {
       "id": "miyoushe-a2c7163b",
@@ -23944,9 +23931,9 @@
         "holding",
         "blue_cape"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2020/12/26/158312722/a28739cfe38666515e89f7f482f261cb_8746891011731883451.gif",
-      "subcategory": "原神"
+      "subcategory": "网络"
     },
     {
       "id": "miyoushe-c62f303f",
@@ -24618,9 +24605,9 @@
         "short_hair",
         "full_body"
       ],
-      "category": "游戏",
+      "category": "网络",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2021/01/28/158312722/8222c756433b9d596d243306c6207782_5072651430984959131.gif",
-      "subcategory": "原神"
+      "subcategory": "网络"
     },
     {
       "id": "miyoushe-b77db003",
