@@ -1,12 +1,13 @@
 /**
- * 我的表情 — 前端逻辑（匹配 App 交互）
+ * 我的表情 — 网站脚本
+ * 一级标签: 主页 | 游戏 | 动漫 | 网络
+ * 二级标签: 每个一级下的具体名称
  */
 const state = {
   stickers: [],
-  categories: [],
-  subcategories: [],
-  currentCat: 'all',
-  currentSub: null,
+  categories: {},       // {主页: {游戏: [...], 动漫: [...], 网络: [...]}}
+  primary: '主页',      // 当前一级
+  secondary: null,      // 当前二级（null=全部）
   searchQuery: '',
   currentSticker: null,
 };
@@ -20,6 +21,8 @@ const $overlay = document.getElementById('preview-overlay');
 const $previewImg = document.getElementById('preview-img');
 const $previewInfo = document.getElementById('preview-info');
 const $ctxMenu = document.getElementById('context-menu');
+const $primaryNav = document.querySelector('.primary-nav');
+const $secondaryNav = document.querySelector('.secondary-nav');
 
 // ====== 初始化 ======
 async function init() {
@@ -28,130 +31,108 @@ async function init() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     state.stickers = data.stickers || [];
-    state.categories = data.categories || [];
-    state.subcategories = data.subcategories || [];
-    renderCategories();
-    renderSubcategories();
+    state.categories = data.categories || {};
+
+    renderPrimaryNav();
+    renderSecondaryNav('主页');
     renderGallery(state.stickers);
   } catch (err) {
     $gallery.innerHTML = `<div class="empty">加载失败<br><small>${err.message}</small></div>`;
   }
 }
 
-// ====== 一级分类导航（匹配 App FilterChip） ======
-function renderCategories() {
-  const nav = document.querySelector('.categories');
-  nav.innerHTML = '';
+// ====== 一级导航 ======
+function renderPrimaryNav() {
+  $primaryNav.innerHTML = '';
+  const tabs = ['主页', '游戏', '动漫', '网络'];
 
-  const allBtn = document.createElement('button');
-  allBtn.className = 'cat-btn active';
-  allBtn.dataset.cat = 'all';
-  allBtn.textContent = '全部';
-  allBtn.addEventListener('click', () => selectCategory('all', allBtn));
-  nav.appendChild(allBtn);
-
-  // 按数量排序：放在每个分类里的 sticker 数量
-  const counts = {};
-  state.stickers.forEach(s => {
-    const c = s.category || '其他';
-    counts[c] = (counts[c] || 0) + 1;
-  });
-
-  state.categories.forEach(cat => {
+  tabs.forEach(tab => {
     const btn = document.createElement('button');
-    btn.className = 'cat-btn';
-    btn.dataset.cat = cat;
-    btn.textContent = `${cat} (${counts[cat] || 0})`;
-    btn.addEventListener('click', () => selectCategory(cat, btn));
-    nav.appendChild(btn);
+    btn.className = 'primary-btn';
+    btn.dataset.cat = tab;
+    btn.textContent = tab;
+    if (tab === state.primary) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      state.primary = tab;
+      state.secondary = null;
+      document.querySelectorAll('.primary-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderSecondaryNav(tab);
+      filterAndRender();
+    });
+    $primaryNav.appendChild(btn);
   });
 }
 
-// ====== 二级分类导航（一级选中后显示） ======
-function renderSubcategories(parentCat) {
-  const subNav = document.querySelector('.subcategories');
-  if (!subNav) return;
-  subNav.innerHTML = '';
+// ====== 二级导航 ======
+function renderSecondaryNav(primary) {
+  $secondaryNav.innerHTML = '';
 
-  if (!parentCat || parentCat === 'all') {
-    subNav.style.display = 'none';
-    state.currentSub = null;
+  if (primary === '主页') {
+    $secondaryNav.style.display = 'none';
     return;
   }
 
-  // 该一级分类下的所有二级标签（排除与一级同名的）
-  const subs = new Set();
-  state.stickers
-    .filter(s => s.category === parentCat && s.subcategory && s.subcategory !== parentCat)
-    .forEach(s => subs.add(s.subcategory));
-
-  if (subs.size === 0) {
-    subNav.style.display = 'none';
-    state.currentSub = null;
+  const subMap = (state.categories['主页'] || {})[primary] || [];
+  if (subMap.length === 0) {
+    $secondaryNav.style.display = 'none';
     return;
   }
 
-  subNav.style.display = 'flex';
+  $secondaryNav.style.display = 'flex';
 
-  const allSub = document.createElement('button');
-  allSub.className = 'sub-btn active';
-  allSub.textContent = '全部';
-  allSub.addEventListener('click', () => {
-    state.currentSub = null;
-    document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
-    allSub.classList.add('active');
-    filterStickers();
+  // "全部" 按钮
+  const allBtn = document.createElement('button');
+  allBtn.className = 'secondary-btn active';
+  allBtn.textContent = '全部';
+  allBtn.addEventListener('click', () => {
+    state.secondary = null;
+    document.querySelectorAll('.secondary-btn').forEach(b => b.classList.remove('active'));
+    allBtn.classList.add('active');
+    filterAndRender();
   });
-  subNav.appendChild(allSub);
+  $secondaryNav.appendChild(allBtn);
 
-  [...subs].sort().forEach(sub => {
+  // 具体二级标签
+  subMap.forEach(sub => {
     const btn = document.createElement('button');
-    btn.className = 'sub-btn';
+    btn.className = 'secondary-btn';
     btn.textContent = sub;
     btn.addEventListener('click', () => {
-      state.currentSub = sub;
-      document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+      state.secondary = sub;
+      document.querySelectorAll('.secondary-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      filterStickers();
+      filterAndRender();
     });
-    subNav.appendChild(btn);
+    $secondaryNav.appendChild(btn);
   });
-}
-
-function selectCategory(cat, el) {
-  state.currentCat = cat;
-  state.currentSub = null;
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  renderSubcategories(cat);
-  filterStickers();
 }
 
 // ====== 搜索 ======
 $search.addEventListener('input', () => {
   state.searchQuery = $search.value.trim().toLowerCase();
-  filterStickers();
+  filterAndRender();
 });
 $searchBtn.addEventListener('click', () => {
   state.searchQuery = $search.value.trim().toLowerCase();
-  filterStickers();
+  filterAndRender();
 });
 
-// ====== 过滤（匹配 App 逻辑） ======
-function filterStickers() {
+// ====== 过滤 ======
+function filterAndRender() {
   let list = state.stickers;
 
-  // 一级分类过滤
-  if (state.currentCat !== 'all') {
-    list = list.filter(s => s.category === state.currentCat);
+  // 一级过滤
+  if (state.primary !== '主页') {
+    list = list.filter(s => s.category === state.primary);
   }
 
-  // 二级分类过滤
-  if (state.currentSub) {
-    list = list.filter(s => s.subcategory === state.currentSub);
+  // 二级过滤
+  if (state.secondary) {
+    list = list.filter(s => s.subcategory === state.secondary);
   }
 
-  // 搜索匹配：文件名 / 一级标签 / 二级标签 / 标签
+  // 搜索
   if (state.searchQuery) {
     const q = state.searchQuery;
     list = list.filter(s =>
@@ -165,14 +146,16 @@ function filterStickers() {
   renderGallery(list);
 }
 
-// ====== 渲染图片列表（匹配 App 的 3 列网格 + 文件名标签） ======
+// ====== 渲染图片列表 ======
 function renderGallery(list) {
   if (!list.length) {
     $gallery.innerHTML = '<div class="empty">没找到表情包<br><small>试试换个关键词</small></div>';
     return;
   }
 
-  $gallery.innerHTML = list.map(s => `
+  $gallery.innerHTML = list.map(s => {
+    const label = [s.category, s.subcategory].filter(Boolean).join(' · ');
+    return `
     <div class="sticker-card"
          data-id="${s.id}"
          data-url="${s.url}"
@@ -182,9 +165,9 @@ function renderGallery(list) {
          data-tags="${s.tags.join(',')}">
       <img src="${s.url}" alt="${s.tags.join(', ')}" loading="lazy"
            onerror="this.parentElement.style.display='none'">
-      <div class="card-label">${s.category || ''}${s.subcategory && s.subcategory !== s.category ? ' · ' + s.subcategory : ''}</div>
-    </div>
-  `).join('');
+      <div class="card-label">${label}</div>
+    </div>`;
+  }).join('');
 
   $gallery.querySelectorAll('.sticker-card').forEach(card => {
     card.addEventListener('click', () => openPreview(card));
@@ -195,7 +178,7 @@ function renderGallery(list) {
   });
 }
 
-// ====== 获取 sticker 数据 ======
+// ====== 获取数据 ======
 function getStickerData(card) {
   return {
     id: card.dataset.id,
@@ -207,16 +190,13 @@ function getStickerData(card) {
   };
 }
 
-// ====== 图片预览（匹配 App 的 StickerPreview） ======
+// ====== 预览 ======
 function openPreview(card) {
   const s = getStickerData(card);
   state.currentSticker = s;
   $previewImg.src = s.url;
   $previewImg.alt = s.tags;
-
-  const label = [s.filename, s.category, s.subcategory].filter(Boolean).join(' · ');
-  $previewInfo.textContent = label;
-
+  $previewInfo.textContent = [s.filename, s.category, s.subcategory].filter(Boolean).join(' · ');
   $overlay.classList.add('show');
   document.body.style.overflow = 'hidden';
 }
@@ -231,7 +211,6 @@ $overlay.addEventListener('click', e => {
   if (e.target === $overlay) closePreview();
 });
 document.getElementById('preview-close').addEventListener('click', closePreview);
-
 document.getElementById('pa-download').addEventListener('click', () => {
   if (state.currentSticker) downloadSticker(state.currentSticker);
 });
@@ -239,58 +218,38 @@ document.getElementById('pa-related').addEventListener('click', () => {
   if (state.currentSticker) searchRelated(state.currentSticker);
   closePreview();
 });
-
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closePreview();
 });
 
 // ====== 右键菜单 ======
 function openContextMenu(card, x, y) {
-  const s = getStickerData(card);
-  state.currentSticker = s;
-
-  const w = 160, h = 132;
-  const left = Math.min(x, window.innerWidth - w);
-  const top = Math.min(y, window.innerHeight - h);
-
-  $ctxMenu.style.left = `${left}px`;
-  $ctxMenu.style.top = `${top}px`;
+  state.currentSticker = getStickerData(card);
+  $ctxMenu.style.left = `${Math.min(x, window.innerWidth - 160)}px`;
+  $ctxMenu.style.top = `${Math.min(y, window.innerHeight - 132)}px`;
   $ctxMenu.classList.add('show');
-
   setTimeout(() => {
     document.addEventListener('click', closeContextMenu, { once: true });
     document.addEventListener('contextmenu', closeContextMenu, { once: true });
   });
 }
 
-function closeContextMenu() {
-  $ctxMenu.classList.remove('show');
-}
+function closeContextMenu() { $ctxMenu.classList.remove('show'); }
 
 $ctxMenu.addEventListener('click', e => {
   const action = e.target.closest('.cm-item')?.dataset.action;
   if (!action || !state.currentSticker) return;
-
   const s = state.currentSticker;
-  switch (action) {
-    case 'view':
-      previewFromData(s);
-      break;
-    case 'download':
-      downloadSticker(s);
-      break;
-    case 'related':
-      searchRelated(s);
-      break;
-  }
+  if (action === 'view') previewFromData(s);
+  else if (action === 'download') downloadSticker(s);
+  else if (action === 'related') searchRelated(s);
   closeContextMenu();
 });
 
 function previewFromData(s) {
   $previewImg.src = s.url;
   $previewImg.alt = s.tags;
-  const label = [s.filename, s.category, s.subcategory].filter(Boolean).join(' · ');
-  $previewInfo.textContent = label;
+  $previewInfo.textContent = [s.filename, s.category, s.subcategory].filter(Boolean).join(' · ');
   $overlay.classList.add('show');
   document.body.style.overflow = 'hidden';
 }
@@ -307,16 +266,18 @@ function downloadSticker(s) {
   showToast(`已下载: ${s.filename}`);
 }
 
-// ====== 搜索关联（匹配 App 的 searchRelated） ======
+// ====== 搜索关联 ======
 function searchRelated(s) {
   const target = s.subcategory || s.category;
   if (target) {
     state.searchQuery = target;
     $search.value = target;
-    state.currentCat = 'all';
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector('.cat-btn[data-cat="all"]')?.classList.add('active');
-    filterStickers();
+    state.primary = '主页';
+    state.secondary = null;
+    document.querySelectorAll('.primary-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.primary-btn[data-cat="主页"]')?.classList.add('active');
+    $secondaryNav.style.display = 'none';
+    filterAndRender();
     showToast(`已筛选: ${target}`);
   }
 }
@@ -329,5 +290,4 @@ function showToast(msg) {
   $toast._timer = setTimeout(() => $toast.classList.remove('show'), 2500);
 }
 
-// ====== 启动 ======
 init();
