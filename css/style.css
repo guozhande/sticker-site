@@ -101,6 +101,35 @@ body {
   border-color: var(--accent);
 }
 
+/* ---- 二级分类 ---- */
+.subcategories {
+  display: flex;
+  gap: 6px;
+  padding: 0 16px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.subcategories::-webkit-scrollbar { display: none; }
+
+.sub-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  background: var(--card-bg);
+  font-size: 12px;
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.sub-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
 /* ---- Gallery ---- */
 .gallery {
   display: grid;
@@ -138,6 +167,21 @@ body {
   right: 0;
   padding: 4px 6px;
   background: linear-gradient(transparent, rgba(0,0,0,0.5));
+}
+
+.sticker-card .card-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 6px;
+  font-size: 11px;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sticker-card .tag {
