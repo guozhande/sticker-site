@@ -79,10 +79,10 @@ function renderSubcategories(parentCat) {
     return;
   }
 
-  // 该一级分类下的所有二级标签
+  // 该一级分类下的所有二级标签（排除与一级同名的）
   const subs = new Set();
   state.stickers
-    .filter(s => s.category === parentCat && s.subcategory)
+    .filter(s => s.category === parentCat && s.subcategory && s.subcategory !== parentCat)
     .forEach(s => subs.add(s.subcategory));
 
   if (subs.size === 0) {
@@ -182,7 +182,7 @@ function renderGallery(list) {
          data-tags="${s.tags.join(',')}">
       <img src="${s.url}" alt="${s.tags.join(', ')}" loading="lazy"
            onerror="this.parentElement.style.display='none'">
-      <div class="card-label">${s.subcategory || s.category || ''}</div>
+      <div class="card-label">${s.category || ''}${s.subcategory && s.subcategory !== s.category ? ' · ' + s.subcategory : ''}</div>
     </div>
   `).join('');
 
