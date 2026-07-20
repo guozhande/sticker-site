@@ -4,67 +4,57 @@
   "categories": {
     "主页": {
       "游戏": [
-        "原神",
-        "崩坏：星穹铁道",
-        "崩坏学园2",
-        "崩坏3",
-        "崩坏系列",
         "NBA 2K",
+        "原神",
         "宝可梦",
-        "王者荣耀",
-        "我的世界",
-        "球球大作战",
+        "崩坏系列",
         "恶魔城",
-        "最后生还者",
-        "空洞骑士",
+        "我的世界",
         "拳皇97",
-        "超级马里奥",
+        "最后生还者",
+        "王者荣耀",
+        "球球大作战",
+        "碧蓝航线",
+        "空洞骑士",
         "英雄联盟",
-        "崩坏星穹铁道"
+        "超级马里奥"
       ],
       "动漫": [
-        "未分类动漫",
-        "美少女战士",
-        "猫和老鼠",
-        "火影忍者",
-        "鬼灭之刃",
-        "海贼王",
-        "哆啦A梦",
-        "龙珠",
-        "阿兹漫画大王",
-        "银魂",
-        "魔道祖师",
-        "奥特曼系列",
-        "宝可梦",
         "咒术回战",
-        "蜡笔小新",
-        "原神",
-        "进击的巨人",
-        "魔法少女小圆",
-        "间谍过家家",
-        "小林家的龙女仆",
-        "葬送的芙莉莲",
-        "碧蓝航线",
+        "哆啦A梦",
+        "奥特曼系列",
         "孤独摇滚",
-        "飞出个未来",
-        "白雪公主",
-        "猫的报恩",
-        "猫儿历险记",
+        "小林家的龙女仆",
         "幸运星",
-        "轻音少女",
-        "电锯人",
-        "龙猫",
+        "未分类动漫",
         "海绵宝宝",
+        "海贼王",
+        "火影忍者",
+        "猫儿历险记",
+        "猫和老鼠",
+        "猫的报恩",
+        "电锯人",
+        "白雪公主",
         "粉红熊猫",
-        "练剑刀",
-        "绣春刀",
-        "请问您今天要来点兔子吗"
+        "美少女战士",
+        "葬送的芙莉莲",
+        "蜡笔小新",
+        "请问您今天要来点兔子吗",
+        "轻音少女",
+        "进击的巨人",
+        "银魂",
+        "间谍过家家",
+        "阿兹漫画大王",
+        "飞出个未来",
+        "鬼灭之刃",
+        "魔法少女小圆",
+        "魔道祖师",
+        "龙猫",
+        "龙珠"
       ],
       "网络": [
-        "网络",
         "猫和老鼠",
-        "绣春刀II：修罗战场",
-        "绣春刀"
+        "网络"
       ]
     }
   },
@@ -175,6 +165,7 @@
       "filename": "genshin-ganyu.gif",
       "url": "stickers/genshin-ganyu.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "银发",
@@ -183,7 +174,7 @@
         "可爱"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "genshin-furina",
@@ -235,6 +226,7 @@
       "filename": "hsr-kafka.gif",
       "url": "stickers/hsr-kafka.gif",
       "tags": [
+        "崩坏系列",
         "德丽莎·阿波卡利斯",
         "崩坏学园2",
         "德丽莎",
@@ -244,7 +236,7 @@
         "傲娇表情"
       ],
       "category": "游戏",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "hsr-jingliu",
@@ -278,6 +270,7 @@
       "filename": "honkai-kiana.gif",
       "url": "stickers/honkai-kiana.gif",
       "tags": [
+        "崩坏系列",
         "琪亚娜·卡斯兰娜",
         "崩坏学园2",
         "琪亚娜",
@@ -287,7 +280,7 @@
         "崩坏学园"
       ],
       "category": "游戏",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "honkai-seele",
@@ -323,6 +316,7 @@
       "filename": "zzz-nicole.gif",
       "url": "stickers/zzz-nicole.gif",
       "tags": [
+        "崩坏系列",
         "银狼",
         "崩坏：星穹铁道",
         "白发",
@@ -331,13 +325,14 @@
         "崩坏星穹铁道"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "zzz-anby",
       "filename": "zzz-anby.gif",
       "url": "stickers/zzz-anby.gif",
       "tags": [
+        "崩坏系列",
         "布洛妮娅·扎伊切克",
         "崩坏学园2",
         "布洛妮娅",
@@ -346,7 +341,7 @@
         "音乐符号"
       ],
       "category": "游戏",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "wuwa-jinhsi",
@@ -383,6 +378,7 @@
       "filename": "wuwa-camellya.gif",
       "url": "stickers/wuwa-camellya.gif",
       "tags": [
+        "崩坏系列",
         "卡莲·卡斯兰娜",
         "崩坏学园2",
         "卡莲",
@@ -391,7 +387,7 @@
         "疑惑表情"
       ],
       "category": "游戏",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "cat-kiss",
@@ -1455,6 +1451,7 @@
       "id": "a2081",
       "filename": "api-2080.jpg",
       "tags": [
+        "崩坏系列",
         "未明确角色",
         "崩坏3",
         "熊猫头",
@@ -1463,12 +1460,13 @@
       ],
       "category": "游戏",
       "url": "stickers/api-2080.jpg",
-      "subcategory": "崩坏3"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "a2082",
       "filename": "api-2081.jpg",
       "tags": [
+        "崩坏系列",
         "琪亚娜·卡斯兰娜",
         "崩坏3",
         "琪亚娜",
@@ -1478,7 +1476,7 @@
       ],
       "category": "游戏",
       "url": "stickers/api-2081.jpg",
-      "subcategory": "崩坏3"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "a2083",
@@ -3965,7 +3963,7 @@
         "张大嘴巴",
         "绿色背景"
       ],
-      "category": "动漫",
+      "category": "游戏",
       "subcategory": "宝可梦"
     },
     {
@@ -4426,6 +4424,7 @@
       "filename": "api-3158.jpg",
       "url": "stickers/api-3158.jpg",
       "tags": [
+        "崩坏系列",
         "雷电芽衣",
         "崩坏学园2",
         "怒吼表情",
@@ -4434,7 +4433,7 @@
         "金色头发"
       ],
       "category": "游戏",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "b5159",
@@ -4927,6 +4926,7 @@
       "filename": "giphy-6026.gif",
       "url": "stickers/giphy-6026.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "灰发",
@@ -4935,7 +4935,7 @@
         "崩坏星穹铁道"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6028",
@@ -5137,6 +5137,7 @@
       "filename": "giphy-6041.gif",
       "url": "stickers/giphy-6041.gif",
       "tags": [
+        "崩坏系列",
         "刃",
         "崩坏：星穹铁道",
         "黑发蓝边",
@@ -5145,13 +5146,14 @@
         "Q版"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6043",
       "filename": "giphy-6042.gif",
       "url": "stickers/giphy-6042.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "紫色长发",
@@ -5160,7 +5162,7 @@
         "萌系"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6044",
@@ -5182,6 +5184,7 @@
       "filename": "giphy-6044.gif",
       "url": "stickers/giphy-6044.gif",
       "tags": [
+        "崩坏系列",
         "德丽莎·阿波卡利斯",
         "崩坏学园2",
         "德丽莎",
@@ -5191,13 +5194,14 @@
         "崩坏学园"
       ],
       "category": "游戏",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6046",
       "filename": "giphy-6045.gif",
       "url": "stickers/giphy-6045.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "紫色长发",
@@ -5206,7 +5210,7 @@
         "可爱"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6047",
@@ -5243,6 +5247,7 @@
       "filename": "giphy-6048.gif",
       "url": "stickers/giphy-6048.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "猫耳",
@@ -5251,7 +5256,7 @@
         "光效闪耀"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6050",
@@ -5317,6 +5322,7 @@
       "filename": "giphy-6053.gif",
       "url": "stickers/giphy-6053.gif",
       "tags": [
+        "崩坏系列",
         "琪亚娜·卡斯兰娜",
         "崩坏学园2",
         "琪亚娜",
@@ -5325,7 +5331,7 @@
         "表情严肃"
       ],
       "category": "游戏",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6055",
@@ -5368,7 +5374,7 @@
         "智慧与知识",
         "温柔表情"
       ],
-      "category": "动漫",
+      "category": "游戏",
       "subcategory": "原神"
     },
     {
@@ -5498,6 +5504,7 @@
       "filename": "giphy-6066.gif",
       "url": "stickers/giphy-6066.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "紫色头发",
@@ -5506,7 +5513,7 @@
         "萌系"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6068",
@@ -5543,6 +5550,7 @@
       "filename": "giphy-6069.gif",
       "url": "stickers/giphy-6069.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "紫色长发",
@@ -5551,7 +5559,7 @@
         "可爱"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6071",
@@ -5573,6 +5581,7 @@
       "filename": "giphy-6071.gif",
       "url": "stickers/giphy-6071.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "紫色长发",
@@ -5581,13 +5590,14 @@
         "Q版表情"
       ],
       "category": "游戏",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6073",
       "filename": "giphy-6072.gif",
       "url": "stickers/giphy-6072.gif",
       "tags": [
+        "崩坏系列",
         "德丽莎·阿波卡利斯",
         "崩坏学园2",
         "德丽莎",
@@ -5597,7 +5607,7 @@
         "微笑"
       ],
       "category": "游戏",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "g6074",
@@ -6608,7 +6618,7 @@
         "跳跃",
         "开心"
       ],
-      "category": "动漫",
+      "category": "游戏",
       "subcategory": "碧蓝航线"
     },
     {
@@ -7377,6 +7387,7 @@
       "filename": "soogif-动漫-xdyWwchdXgNY07tuxsq0phCP7CMuJsX0.gif",
       "url": "stickers/soogif-动漫-xdyWwchdXgNY07tuxsq0phCP7CMuJsX0.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "惊讶表情",
@@ -7385,7 +7396,7 @@
       ],
       "category": "游戏",
       "source_url": "http://img.soogif.com/xdyWwchdXgNY07tuxsq0phCP7CMuJsX0.gif",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "soogif-5ac99989",
@@ -7427,7 +7438,7 @@
         "绿色背心",
         "严肃神情"
       ],
-      "category": "动漫",
+      "category": "游戏",
       "source_url": "http://img.soogif.com/mRl6U6bRkhpcc9MK5zwzx3xyKSPNtU9f.gif",
       "subcategory": "宝可梦"
     },
@@ -14812,6 +14823,7 @@
       "filename": "sogou-猫-DF5D7E731E8FDE7D2551160E118DD4D2.gif",
       "url": "stickers/sogou-猫-DF5D7E731E8FDE7D2551160E118DD4D2.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏星穹铁道",
         "黑白色头发",
@@ -14821,7 +14833,7 @@
       ],
       "category": "游戏",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/DF5D7E731E8FDE7D2551160E118DD4D2",
-      "subcategory": "崩坏星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "sogou-e9bf2128",
@@ -17555,9 +17567,9 @@
         "可爱",
         "古风"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/2A39E25D945C733E21B5408F6DC78FC9",
-      "subcategory": "练剑刀"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-3cc2d73b",
@@ -17573,7 +17585,7 @@
       ],
       "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/F582E4A6B42130FECE6A265693716DFB",
-      "subcategory": "绣春刀II：修罗战场"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-bdfbc451",
@@ -17588,7 +17600,7 @@
       ],
       "category": "网络",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/A07A390873CE4CD6CE00C4685DA2FFA1",
-      "subcategory": "绣春刀II：修罗战场"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-8abc57c9",
@@ -17603,7 +17615,7 @@
       ],
       "category": "网络",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/FE0D7E915FAD68212FEB3BCF395E2AF3",
-      "subcategory": "绣春刀II：修罗战场"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-46f54a2a",
@@ -17616,9 +17628,9 @@
         "砍洗你",
         "搞笑表情"
       ],
-      "category": "动漫",
+      "category": "网络",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/1580530010AAE40E27722147AE0F81FC",
-      "subcategory": "绣春刀"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-0ad0044f",
@@ -17635,7 +17647,7 @@
       ],
       "category": "网络",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/7389388C1E0AAFDD56A5DD119C420F35",
-      "subcategory": "绣春刀"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-b0379172",
@@ -17648,7 +17660,7 @@
         "开心表情",
         "我知道了"
       ],
-      "category": "动漫",
+      "category": "游戏",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/43C186DD06607187AA542F74340733A6",
       "subcategory": "碧蓝航线"
     },
@@ -17678,7 +17690,7 @@
         "舰娘",
         "怎么办嘛"
       ],
-      "category": "动漫",
+      "category": "游戏",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/55AAC216684C1401BED76FE815C33FD8",
       "subcategory": "碧蓝航线"
     },
@@ -17933,6 +17945,7 @@
       "filename": "sogou-动漫-B5ACD05812CE5883B4BF4989B4C2E7D8.gif",
       "url": "stickers/sogou-动漫-B5ACD05812CE5883B4BF4989B4C2E7D8.gif",
       "tags": [
+        "崩坏系列",
         "八重樱",
         "崩坏学园2",
         "紫色头发",
@@ -17942,7 +17955,7 @@
       ],
       "category": "游戏",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/B5ACD05812CE5883B4BF4989B4C2E7D8",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "sogou-782d6b27",
@@ -19647,6 +19660,7 @@
       "filename": "miyoushe-1453-6e2f6402ebd188eaa6e5e4906543a004_801824105503159222.gif",
       "url": "stickers/miyoushe-1453-6e2f6402ebd188eaa6e5e4906543a004_801824105503159222.gif",
       "tags": [
+        "崩坏系列",
         "琪亚娜·卡斯兰娜、布洛妮娅·扎伊切克、雷电芽衣、八重樱、德丽莎·阿波卡利斯",
         "崩坏学园2",
         "琪亚娜",
@@ -19657,7 +19671,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2020/12/02/168655816/6e2f6402ebd188eaa6e5e4906543a004_801824105503159222.gif",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-9e91cd6f",
@@ -20458,6 +20472,7 @@
       "filename": "miyoushe-1453-c65adaca7dde8a908c823ec35ee2d2fa_5598332461830351833.gif",
       "url": "stickers/miyoushe-1453-c65adaca7dde8a908c823ec35ee2d2fa_5598332461830351833.gif",
       "tags": [
+        "崩坏系列",
         "琪亚娜·卡斯兰娜",
         "崩坏学园2",
         "琪亚娜",
@@ -20467,7 +20482,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2021/09/01/168655816/c65adaca7dde8a908c823ec35ee2d2fa_5598332461830351833.gif",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-57b8a8f7",
@@ -20917,6 +20932,7 @@
       "filename": "miyoushe-1453-2c3ce6695200244a84f5252845f12e94_8000863642354184333.gif",
       "url": "stickers/miyoushe-1453-2c3ce6695200244a84f5252845f12e94_8000863642354184333.gif",
       "tags": [
+        "崩坏系列",
         "希儿·芙乐艾",
         "崩坏学园2",
         "紫色长发",
@@ -20927,7 +20943,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2021/12/09/168655816/2c3ce6695200244a84f5252845f12e94_8000863642354184333.gif",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-934cf85b",
@@ -21029,6 +21045,7 @@
       "filename": "miyoushe-1453-ab353d6c4115baf8cedccc58933c9bf4_5271537618055615120.gif",
       "url": "stickers/miyoushe-1453-ab353d6c4115baf8cedccc58933c9bf4_5271537618055615120.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "蓝发双马尾",
@@ -21038,7 +21055,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2022/03/25/168655816/ab353d6c4115baf8cedccc58933c9bf4_5271537618055615120.gif",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-31934071",
@@ -21061,6 +21078,7 @@
       "filename": "miyoushe-1453-ab353d6c4115baf8cedccc58933c9bf4_3422635630434313116.gif",
       "url": "stickers/miyoushe-1453-ab353d6c4115baf8cedccc58933c9bf4_3422635630434313116.gif",
       "tags": [
+        "崩坏系列",
         "雷电芽衣",
         "崩坏学园2",
         "蓝发双马尾",
@@ -21070,7 +21088,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2022/03/28/168655816/ab353d6c4115baf8cedccc58933c9bf4_3422635630434313116.gif",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-ea3bf338",
@@ -21109,6 +21127,7 @@
       "filename": "miyoushe-1453-d3a6f12aec4c815a418362475ed7eb7e_3000155404875327191.gif",
       "url": "stickers/miyoushe-1453-d3a6f12aec4c815a418362475ed7eb7e_3000155404875327191.gif",
       "tags": [
+        "崩坏系列",
         "雷电芽衣",
         "崩坏学园2",
         "猫耳",
@@ -21118,7 +21137,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2022/05/15/168655816/d3a6f12aec4c815a418362475ed7eb7e_3000155404875327191.gif",
-      "subcategory": "崩坏学园2"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-981fc860",
@@ -21203,6 +21222,7 @@
       "filename": "miyoushe-1453-c64717f71f69e2684dafefb8cbce9fd6_116311641505370640.gif",
       "url": "stickers/miyoushe-1453-c64717f71f69e2684dafefb8cbce9fd6_116311641505370640.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "紫色头发",
@@ -21212,7 +21232,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2022/06/27/168655816/c64717f71f69e2684dafefb8cbce9fd6_116311641505370640.gif",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-d119c671",
@@ -21347,6 +21367,7 @@
       "filename": "miyoushe-1453-640bf32767bd104a003aa9e05be19fa8_2115932772860411156.gif",
       "url": "stickers/miyoushe-1453-640bf32767bd104a003aa9e05be19fa8_2115932772860411156.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "猫耳",
@@ -21356,7 +21377,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2022/09/19/168655816/640bf32767bd104a003aa9e05be19fa8_2115932772860411156.gif",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-b40d0c57",
@@ -21538,6 +21559,7 @@
       "filename": "miyoushe-1453-894586c593905698d944bc36963209d9_7782901736713717219.gif",
       "url": "stickers/miyoushe-1453-894586c593905698d944bc36963209d9_7782901736713717219.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "猫耳",
@@ -21547,7 +21569,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2022/09/30/168655816/894586c593905698d944bc36963209d9_7782901736713717219.gif",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-07fa88ed",
@@ -21570,6 +21592,7 @@
       "filename": "miyoushe-1453-24a2a14ff3b3ffc45230fa9ab5f5c88e_8745615275305549967.gif",
       "url": "stickers/miyoushe-1453-24a2a14ff3b3ffc45230fa9ab5f5c88e_8745615275305549967.gif",
       "tags": [
+        "崩坏系列",
         "三月七",
         "崩坏：星穹铁道",
         "白色长发",
@@ -21579,7 +21602,7 @@
       ],
       "category": "游戏",
       "source_url": "https://upload-bbs.miyoushe.com/upload/2022/09/30/168655816/24a2a14ff3b3ffc45230fa9ab5f5c88e_8745615275305549967.gif",
-      "subcategory": "崩坏：星穹铁道"
+      "subcategory": "崩坏系列"
     },
     {
       "id": "miyoushe-d0a423b4",
