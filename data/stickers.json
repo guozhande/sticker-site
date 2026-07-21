@@ -2,8 +2,9 @@
   "name": "表情包存储站",
   "description": "游戏表情包合集——原神/崩坏/鸣潮/绝区零",
   "categories": [
-    "游戏",
     "动漫",
+    "未分类动漫",
+    "游戏",
     "网络"
   ],
   "stickers": [
@@ -823,10 +824,11 @@
       "id": "a2009",
       "filename": "api-2008.gif",
       "tags": [
+        "熊猫人",
         "熊猫",
         "网络"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "url": "stickers/api-2008.gif",
       "subcategory": "网络"
     },
@@ -7837,10 +7839,11 @@
       "filename": "sogou-搞笑-766143841A682D11E29631729D556B33.gif",
       "url": "stickers/sogou-搞笑-766143841A682D11E29631729D556B33.gif",
       "tags": [
+        "熊猫人",
         "搞笑",
         "熊猫人搞笑表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/766143841A682D11E29631729D556B33",
       "subcategory": "网络"
     },
@@ -7849,10 +7852,11 @@
       "filename": "sogou-搞笑-A51F7F591EAA25B03812F3C3E9A9BC50.gif",
       "url": "stickers/sogou-搞笑-A51F7F591EAA25B03812F3C3E9A9BC50.gif",
       "tags": [
+        "熊猫人",
         "搞笑",
         "熊猫人搞笑表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/A51F7F591EAA25B03812F3C3E9A9BC50",
       "subcategory": "网络"
     },
@@ -7861,10 +7865,11 @@
       "filename": "sogou-搞笑-8002ACE21EEA5EB2631253486F0055A2.gif",
       "url": "stickers/sogou-搞笑-8002ACE21EEA5EB2631253486F0055A2.gif",
       "tags": [
+        "熊猫人",
         "搞笑",
         "熊猫人搞笑表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/8002ACE21EEA5EB2631253486F0055A2",
       "subcategory": "网络"
     },
@@ -7873,10 +7878,11 @@
       "filename": "sogou-搞笑-678D01021929DDC7F46250CF6998DA46.gif",
       "url": "stickers/sogou-搞笑-678D01021929DDC7F46250CF6998DA46.gif",
       "tags": [
+        "熊猫人",
         "搞笑",
         "熊猫人搞笑表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/678D01021929DDC7F46250CF6998DA46",
       "subcategory": "网络"
     },
@@ -7885,10 +7891,11 @@
       "filename": "sogou-搞笑-A37730549C68D108A267AFDF74A61CF2.gif",
       "url": "stickers/sogou-搞笑-A37730549C68D108A267AFDF74A61CF2.gif",
       "tags": [
+        "熊猫人",
         "搞笑",
         "熊猫人搞笑表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/A37730549C68D108A267AFDF74A61CF2",
       "subcategory": "网络"
     },
@@ -7912,10 +7919,11 @@
       "filename": "sogou-搞笑-B22EA480E8E99015E8F52691193245D2.gif",
       "url": "stickers/sogou-搞笑-B22EA480E8E99015E8F52691193245D2.gif",
       "tags": [
+        "熊猫人",
         "搞笑",
         "熊猫人搞笑表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/B22EA480E8E99015E8F52691193245D2",
       "subcategory": "网络"
     },
@@ -7924,10 +7932,11 @@
       "filename": "sogou-搞笑-CA9A92DF1CBE5577BD1C9611832926C1.gif",
       "url": "stickers/sogou-搞笑-CA9A92DF1CBE5577BD1C9611832926C1.gif",
       "tags": [
+        "熊猫人",
         "搞笑",
         "熊猫人搞笑表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/CA9A92DF1CBE5577BD1C9611832926C1",
       "subcategory": "网络"
     },
@@ -7936,10 +7945,11 @@
       "filename": "sogou-搞笑-15A181C436D922A324B4FE4873FC1C1F.gif",
       "url": "stickers/sogou-搞笑-15A181C436D922A324B4FE4873FC1C1F.gif",
       "tags": [
+        "熊猫人",
         "搞笑",
         "熊猫人搞笑表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/15A181C436D922A324B4FE4873FC1C1F",
       "subcategory": "网络"
     },
@@ -10712,7 +10722,7 @@
         "熊猫人",
         "熊猫人嘴上说"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/6C7852531F229A20A8D4EDC33C147790",
       "subcategory": "网络"
     },
@@ -10724,7 +10734,7 @@
         "熊猫人",
         "熊猫人嘴上说"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/D912F75937951EB5300A3D99C370890F",
       "subcategory": "网络"
     },
@@ -10736,7 +10746,7 @@
         "熊猫人",
         "熊猫人嘴上说"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/E145E79C1F091DF2D6E6112766D19CF5",
       "subcategory": "网络"
     },
@@ -10748,7 +10758,7 @@
         "熊猫人",
         "熊猫人嘴上说"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/6C7852531F229A20A8D4EDC33C147790",
       "subcategory": "网络"
     },
@@ -10760,7 +10770,7 @@
         "熊猫人",
         "熊猫人魔性动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/6836AB9908C328B3499C285FE34D625D",
       "subcategory": "网络"
     },
@@ -10772,7 +10782,7 @@
         "熊猫人",
         "熊猫人魔性动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/E0D5D20C608481BE395EB45B88F7164C",
       "subcategory": "网络"
     },
@@ -10781,6 +10791,7 @@
       "filename": "sogou-熊猫人-801C32ADAB823D61D68808928AB4A9DB.gif",
       "url": "stickers/sogou-熊猫人-801C32ADAB823D61D68808928AB4A9DB.gif",
       "tags": [
+        "熊猫人",
         "Nijisanji",
         "sasaki_saku_(1st_costume)",
         "sasaki_saku",
@@ -10788,7 +10799,7 @@
         "panda_hood",
         "!"
       ],
-      "category": "Nijisanji",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/801C32ADAB823D61D68808928AB4A9DB",
       "subcategory": "网络"
     },
@@ -10797,15 +10808,16 @@
       "filename": "sogou-熊猫人-2CEB1F223444AADA6A3D6588C076693D.gif",
       "url": "stickers/sogou-熊猫人-2CEB1F223444AADA6A3D6588C076693D.gif",
       "tags": [
+        "熊猫人",
         "哆啦A梦",
         "doraemon_(character)",
         "animal_costume",
         "monochrome",
         "headphones"
       ],
-      "category": "哆啦A梦",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/2CEB1F223444AADA6A3D6588C076693D",
-      "subcategory": "动漫"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-45878ed0",
@@ -10815,7 +10827,7 @@
         "熊猫人",
         "熊猫人魔性动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/7C72DA3149EF6C31F6420E044F78F362",
       "subcategory": "网络"
     },
@@ -10827,7 +10839,7 @@
         "熊猫人",
         "熊猫人魔性动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/518E6971EF904EB3DDCBF69885400E16",
       "subcategory": "网络"
     },
@@ -10839,7 +10851,7 @@
         "熊猫人",
         "熊猫人表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/AA447FDB47B1F3C57A3F64D9316DA5D1",
       "subcategory": "网络"
     },
@@ -10851,7 +10863,7 @@
         "熊猫人",
         "熊猫人表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/692E52DF3A756C02CEA37F3BDEFCCFDF",
       "subcategory": "网络"
     },
@@ -10863,7 +10875,7 @@
         "熊猫人",
         "熊猫人表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/761B88915AA8D429E6FB0F2E09667A81",
       "subcategory": "网络"
     },
@@ -10875,7 +10887,7 @@
         "熊猫人",
         "熊猫人表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/D0DB0BA41404D567919D06E8D1C4E077",
       "subcategory": "网络"
     },
@@ -10887,7 +10899,7 @@
         "熊猫人",
         "熊猫人表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/C0EE4DE8804D1BFBCCB117DD4EE6493B",
       "subcategory": "网络"
     },
@@ -10896,15 +10908,16 @@
       "filename": "sogou-熊猫人-33CCCFD1351EEA47F03646FE7728A65E.gif",
       "url": "stickers/sogou-熊猫人-33CCCFD1351EEA47F03646FE7728A65E.gif",
       "tags": [
+        "熊猫人",
         "黑岩射手",
         "black_rock_shooter_(character)",
         "sword",
         "weapon",
         "blurry"
       ],
-      "category": "黑岩射手",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/33CCCFD1351EEA47F03646FE7728A65E",
-      "subcategory": "动漫"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-675208ef",
@@ -10914,7 +10927,7 @@
         "熊猫人",
         "熊猫人动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/8B933D122A3D85B91E4C41FDE59354EF",
       "subcategory": "网络"
     },
@@ -10926,7 +10939,7 @@
         "熊猫人",
         "熊猫人动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/1FF228970E56A46683962EDE88EAFC0B",
       "subcategory": "网络"
     },
@@ -10938,7 +10951,7 @@
         "熊猫人",
         "熊猫人动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/3A48A6FF59B63FE4867AC72DE7D58B46",
       "subcategory": "网络"
     },
@@ -10950,7 +10963,7 @@
         "熊猫人",
         "熊猫人动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/3D9486262DD679CA5A751FE1F24D591B",
       "subcategory": "网络"
     },
@@ -10962,7 +10975,7 @@
         "熊猫人",
         "熊猫人动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/10A6A1D219C213CDF9BFADEC3799A605",
       "subcategory": "网络"
     },
@@ -10974,7 +10987,7 @@
         "熊猫人",
         "熊猫人动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/FC8746E129572DB82EE79F364C4DB585",
       "subcategory": "网络"
     },
@@ -10983,15 +10996,16 @@
       "filename": "sogou-熊猫人-37D88EE109AF8AF3BEA6109C9DD08EA9.gif",
       "url": "stickers/sogou-熊猫人-37D88EE109AF8AF3BEA6109C9DD08EA9.gif",
       "tags": [
+        "熊猫人",
         "海贼王",
         "brook_(one_piece)",
         "drum",
         "drum_set",
         "instrument"
       ],
-      "category": "海贼王",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/37D88EE109AF8AF3BEA6109C9DD08EA9",
-      "subcategory": "动漫"
+      "subcategory": "网络"
     },
     {
       "id": "sogou-cff19ce3",
@@ -11001,7 +11015,7 @@
         "熊猫人",
         "熊猫人动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/02FB95819807FF26B78AECDA2F31883E",
       "subcategory": "网络"
     },
@@ -11010,10 +11024,11 @@
       "filename": "sogou-猫-ECBF55AA4DF972320C3F52779A543041.gif",
       "url": "stickers/sogou-猫-ECBF55AA4DF972320C3F52779A543041.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头摆摊 表情包"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/ECBF55AA4DF972320C3F52779A543041",
       "subcategory": "网络"
     },
@@ -11022,10 +11037,11 @@
       "filename": "sogou-猫-50A31611139D4C762A6E13B2DE39BF4D.gif",
       "url": "stickers/sogou-猫-50A31611139D4C762A6E13B2DE39BF4D.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头摆摊 表情包"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/50A31611139D4C762A6E13B2DE39BF4D",
       "subcategory": "网络"
     },
@@ -11034,10 +11050,11 @@
       "filename": "sogou-猫-A61D14AEABA1EBEEA8D5CE00C07E416A.gif",
       "url": "stickers/sogou-猫-A61D14AEABA1EBEEA8D5CE00C07E416A.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头摆摊 表情包"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/A61D14AEABA1EBEEA8D5CE00C07E416A",
       "subcategory": "网络"
     },
@@ -11046,10 +11063,11 @@
       "filename": "sogou-猫-C21FF4F17C33E3CD19B2F53B0DF7634D.gif",
       "url": "stickers/sogou-猫-C21FF4F17C33E3CD19B2F53B0DF7634D.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头摆摊 表情包"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/C21FF4F17C33E3CD19B2F53B0DF7634D",
       "subcategory": "网络"
     },
@@ -11058,10 +11076,11 @@
       "filename": "sogou-猫-FE8DF4C225D8DCC5FF1E4E0EABCBCA9A.gif",
       "url": "stickers/sogou-猫-FE8DF4C225D8DCC5FF1E4E0EABCBCA9A.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头摆摊 表情包"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/FE8DF4C225D8DCC5FF1E4E0EABCBCA9A",
       "subcategory": "网络"
     },
@@ -11070,10 +11089,11 @@
       "filename": "sogou-猫-B1BC41C3D71DD3BF91122E9AD9DFAD00.gif",
       "url": "stickers/sogou-猫-B1BC41C3D71DD3BF91122E9AD9DFAD00.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头摆摊 表情包"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/B1BC41C3D71DD3BF91122E9AD9DFAD00",
       "subcategory": "网络"
     },
@@ -11082,10 +11102,11 @@
       "filename": "sogou-猫-451C655AC38F6EA45277CF80B10D32A1.gif",
       "url": "stickers/sogou-猫-451C655AC38F6EA45277CF80B10D32A1.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "沙雕熊猫头好使"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/451C655AC38F6EA45277CF80B10D32A1",
       "subcategory": "网络"
     },
@@ -11094,10 +11115,11 @@
       "filename": "sogou-猫-59FB808053A383F47FB3844500B82E26.gif",
       "url": "stickers/sogou-猫-59FB808053A383F47FB3844500B82E26.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头傻屌图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/59FB808053A383F47FB3844500B82E26",
       "subcategory": "网络"
     },
@@ -11106,10 +11128,11 @@
       "filename": "sogou-猫-91F4C0300EA3638A920BB84C23FC45F5.gif",
       "url": "stickers/sogou-猫-91F4C0300EA3638A920BB84C23FC45F5.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头傻屌图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/91F4C0300EA3638A920BB84C23FC45F5",
       "subcategory": "网络"
     },
@@ -11118,10 +11141,11 @@
       "filename": "sogou-猫-C10874BD10AA747FA42F1611D49E6217.gif",
       "url": "stickers/sogou-猫-C10874BD10AA747FA42F1611D49E6217.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫头傻屌图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/C10874BD10AA747FA42F1611D49E6217",
       "subcategory": "网络"
     },
@@ -11910,10 +11934,11 @@
       "filename": "sogou-猫-4072BEB39167669B32BC043B28462D08.gif",
       "url": "stickers/sogou-猫-4072BEB39167669B32BC043B28462D08.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫滚滚表情"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/4072BEB39167669B32BC043B28462D08",
       "subcategory": "网络"
     },
@@ -12281,10 +12306,11 @@
       "filename": "sogou-猫-E1643E8D4A2AD7AA8A837B90076F6A50.gif",
       "url": "stickers/sogou-猫-E1643E8D4A2AD7AA8A837B90076F6A50.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫配字"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/E1643E8D4A2AD7AA8A837B90076F6A50",
       "subcategory": "网络"
     },
@@ -12293,10 +12319,11 @@
       "filename": "sogou-猫-59C474E916F9B345363BDEB81EE490DF.gif",
       "url": "stickers/sogou-猫-59C474E916F9B345363BDEB81EE490DF.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/59C474E916F9B345363BDEB81EE490DF",
       "subcategory": "网络"
     },
@@ -12320,10 +12347,11 @@
       "filename": "sogou-猫-3BB91D4862A7C46515C00E25E55DC7E1.gif",
       "url": "stickers/sogou-猫-3BB91D4862A7C46515C00E25E55DC7E1.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/3BB91D4862A7C46515C00E25E55DC7E1",
       "subcategory": "网络"
     },
@@ -12332,10 +12360,11 @@
       "filename": "sogou-猫-8E98732E05AAE90E8651938226675743.gif",
       "url": "stickers/sogou-猫-8E98732E05AAE90E8651938226675743.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/8E98732E05AAE90E8651938226675743",
       "subcategory": "网络"
     },
@@ -12344,10 +12373,11 @@
       "filename": "sogou-猫-BE11AD3654BB38B5937E22243896D303.gif",
       "url": "stickers/sogou-猫-BE11AD3654BB38B5937E22243896D303.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/BE11AD3654BB38B5937E22243896D303",
       "subcategory": "网络"
     },
@@ -12356,10 +12386,11 @@
       "filename": "sogou-猫-4B4CA35940FD61A989B7A8B3EF30926D.gif",
       "url": "stickers/sogou-猫-4B4CA35940FD61A989B7A8B3EF30926D.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/4B4CA35940FD61A989B7A8B3EF30926D",
       "subcategory": "网络"
     },
@@ -12368,10 +12399,11 @@
       "filename": "sogou-猫-FC5D017E7CC58EB22DFB4B15D73CD0EB.gif",
       "url": "stickers/sogou-猫-FC5D017E7CC58EB22DFB4B15D73CD0EB.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/FC5D017E7CC58EB22DFB4B15D73CD0EB",
       "subcategory": "网络"
     },
@@ -12380,10 +12412,11 @@
       "filename": "sogou-猫-3B13B6F305DBBB73E19A5A35A4508275.gif",
       "url": "stickers/sogou-猫-3B13B6F305DBBB73E19A5A35A4508275.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/3B13B6F305DBBB73E19A5A35A4508275",
       "subcategory": "网络"
     },
@@ -12392,10 +12425,11 @@
       "filename": "sogou-猫-CAAF0D760FAC21051E2C6F77D28BB054.gif",
       "url": "stickers/sogou-猫-CAAF0D760FAC21051E2C6F77D28BB054.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫动图"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/CAAF0D760FAC21051E2C6F77D28BB054",
       "subcategory": "网络"
     },
@@ -12404,10 +12438,11 @@
       "filename": "sogou-猫-56C575F91D5629B9D43359B9167937B7.gif",
       "url": "stickers/sogou-猫-56C575F91D5629B9D43359B9167937B7.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "金馆长熊猫头"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/56C575F91D5629B9D43359B9167937B7",
       "subcategory": "网络"
     },
@@ -12524,10 +12559,11 @@
       "filename": "sogou-猫-9E8CD4CD77705ABDCCB560CB12C351FF.gif",
       "url": "stickers/sogou-猫-9E8CD4CD77705ABDCCB560CB12C351FF.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫呐喊"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/9E8CD4CD77705ABDCCB560CB12C351FF",
       "subcategory": "网络"
     },
@@ -12536,10 +12572,11 @@
       "filename": "sogou-猫-652A24841D0FED34DB858A764EC602CE.gif",
       "url": "stickers/sogou-猫-652A24841D0FED34DB858A764EC602CE.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫呐喊"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/652A24841D0FED34DB858A764EC602CE",
       "subcategory": "网络"
     },
@@ -12548,10 +12585,11 @@
       "filename": "sogou-猫-9E8CD4CD77705ABDCCB560CB12C351FF-635.gif",
       "url": "stickers/sogou-猫-9E8CD4CD77705ABDCCB560CB12C351FF-635.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫呐喊"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/9E8CD4CD77705ABDCCB560CB12C351FF",
       "subcategory": "网络"
     },
@@ -12560,10 +12598,11 @@
       "filename": "sogou-猫-640BE2B239EB159C7456AD62A060DD5A.gif",
       "url": "stickers/sogou-猫-640BE2B239EB159C7456AD62A060DD5A.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫呐喊"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/640BE2B239EB159C7456AD62A060DD5A",
       "subcategory": "网络"
     },
@@ -12572,10 +12611,11 @@
       "filename": "sogou-猫-640BE2B239EB159C7456AD62A060DD5A-637.gif",
       "url": "stickers/sogou-猫-640BE2B239EB159C7456AD62A060DD5A-637.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫呐喊"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/640BE2B239EB159C7456AD62A060DD5A",
       "subcategory": "网络"
     },
@@ -12584,10 +12624,11 @@
       "filename": "sogou-猫-B3371A5F8671E0AA2E482663CCB992AB.gif",
       "url": "stickers/sogou-猫-B3371A5F8671E0AA2E482663CCB992AB.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫呐喊"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/B3371A5F8671E0AA2E482663CCB992AB",
       "subcategory": "网络"
     },
@@ -12596,10 +12637,11 @@
       "filename": "sogou-猫-B93B8953916980B85FCCEFA0762C49D1.gif",
       "url": "stickers/sogou-猫-B93B8953916980B85FCCEFA0762C49D1.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫呐喊"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/B93B8953916980B85FCCEFA0762C49D1",
       "subcategory": "网络"
     },
@@ -12608,10 +12650,11 @@
       "filename": "sogou-猫-640BE2B239EB159C7456AD62A060DD5A-640.gif",
       "url": "stickers/sogou-猫-640BE2B239EB159C7456AD62A060DD5A-640.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫呐喊"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/640BE2B239EB159C7456AD62A060DD5A",
       "subcategory": "网络"
     },
@@ -12635,10 +12678,11 @@
       "filename": "sogou-猫-FDBD1E580A753BA6E81D3E1AB19C5FE3.gif",
       "url": "stickers/sogou-猫-FDBD1E580A753BA6E81D3E1AB19C5FE3.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "音乐熊猫滚滚"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/FDBD1E580A753BA6E81D3E1AB19C5FE3",
       "subcategory": "网络"
     },
@@ -12647,10 +12691,11 @@
       "filename": "sogou-猫-40900C74949845EA9545B0361AF3F9F1.gif",
       "url": "stickers/sogou-猫-40900C74949845EA9545B0361AF3F9F1.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "音乐熊猫滚滚"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/40900C74949845EA9545B0361AF3F9F1",
       "subcategory": "网络"
     },
@@ -12704,10 +12749,11 @@
       "filename": "sogou-猫-6B1827030E92AB3227C6206A49E738FD.gif",
       "url": "stickers/sogou-猫-6B1827030E92AB3227C6206A49E738FD.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "音乐熊猫滚滚"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/6B1827030E92AB3227C6206A49E738FD",
       "subcategory": "网络"
     },
@@ -12939,10 +12985,11 @@
       "filename": "sogou-猫-761940311B114DCBEF925101A5301547.gif",
       "url": "stickers/sogou-猫-761940311B114DCBEF925101A5301547.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "金馆长熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/761940311B114DCBEF925101A5301547",
       "subcategory": "网络"
     },
@@ -12951,10 +12998,11 @@
       "filename": "sogou-猫-56C575F91D5629B9D43359B9167937B7-685.gif",
       "url": "stickers/sogou-猫-56C575F91D5629B9D43359B9167937B7-685.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "金馆长熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/56C575F91D5629B9D43359B9167937B7",
       "subcategory": "网络"
     },
@@ -13258,10 +13306,11 @@
       "filename": "sogou-猫-991AEBC106E59CDA1C42EA5B40458CCC.gif",
       "url": "stickers/sogou-猫-991AEBC106E59CDA1C42EA5B40458CCC.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img03.sogoucdn.com/app/a/100520021/991AEBC106E59CDA1C42EA5B40458CCC",
       "subcategory": "网络"
     },
@@ -13270,10 +13319,11 @@
       "filename": "sogou-猫-0A266CAF307FE5C677024000B84D2F3C.gif",
       "url": "stickers/sogou-猫-0A266CAF307FE5C677024000B84D2F3C.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/0A266CAF307FE5C677024000B84D2F3C",
       "subcategory": "网络"
     },
@@ -13282,10 +13332,11 @@
       "filename": "sogou-猫-DF5D7E731E8FDE7D2551160E118DD4D2.gif",
       "url": "stickers/sogou-猫-DF5D7E731E8FDE7D2551160E118DD4D2.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/DF5D7E731E8FDE7D2551160E118DD4D2",
       "subcategory": "网络"
     },
@@ -13294,10 +13345,11 @@
       "filename": "sogou-猫-55BB6D730EBE2237CA693F93AC004DAB.gif",
       "url": "stickers/sogou-猫-55BB6D730EBE2237CA693F93AC004DAB.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/55BB6D730EBE2237CA693F93AC004DAB",
       "subcategory": "网络"
     },
@@ -13306,10 +13358,11 @@
       "filename": "sogou-猫-ACC31EF30BD7CF6478C5FC8CDE4907A4.gif",
       "url": "stickers/sogou-猫-ACC31EF30BD7CF6478C5FC8CDE4907A4.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/ACC31EF30BD7CF6478C5FC8CDE4907A4",
       "subcategory": "网络"
     },
@@ -13318,10 +13371,11 @@
       "filename": "sogou-猫-AFB784E91CC10F4C7ADD7B05E11D9893.gif",
       "url": "stickers/sogou-猫-AFB784E91CC10F4C7ADD7B05E11D9893.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/AFB784E91CC10F4C7ADD7B05E11D9893",
       "subcategory": "网络"
     },
@@ -13330,10 +13384,11 @@
       "filename": "sogou-猫-4E18240E8F839E1E099FC6D6ECFB23F9.gif",
       "url": "stickers/sogou-猫-4E18240E8F839E1E099FC6D6ECFB23F9.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/4E18240E8F839E1E099FC6D6ECFB23F9",
       "subcategory": "网络"
     },
@@ -13342,10 +13397,11 @@
       "filename": "sogou-猫-576E7305FB9EF452D0A6816920BDAA0C.gif",
       "url": "stickers/sogou-猫-576E7305FB9EF452D0A6816920BDAA0C.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img02.sogoucdn.com/app/a/100520021/576E7305FB9EF452D0A6816920BDAA0C",
       "subcategory": "网络"
     },
@@ -13354,10 +13410,11 @@
       "filename": "sogou-猫-38157DA2470E7883262B55D2749804F6.gif",
       "url": "stickers/sogou-猫-38157DA2470E7883262B55D2749804F6.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/38157DA2470E7883262B55D2749804F6",
       "subcategory": "网络"
     },
@@ -13464,10 +13521,11 @@
       "filename": "sogou-猫-2C100DFA5A5CDD4DC9EDDD3DB0D6EFAB.gif",
       "url": "stickers/sogou-猫-2C100DFA5A5CDD4DC9EDDD3DB0D6EFAB.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "小熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img04.sogoucdn.com/app/a/100520021/2C100DFA5A5CDD4DC9EDDD3DB0D6EFAB",
       "subcategory": "网络"
     },
@@ -13567,10 +13625,11 @@
       "filename": "sogou-猫-2A052FFD62476B594B5D7A715B01B48F.gif",
       "url": "stickers/sogou-猫-2A052FFD62476B594B5D7A715B01B48F.gif",
       "tags": [
+        "熊猫人",
         "猫",
         "小熊猫"
       ],
-      "category": "沙雕",
+      "category": "熊猫人",
       "source_url": "https://img01.sogoucdn.com/app/a/100520021/2A052FFD62476B594B5D7A715B01B48F",
       "subcategory": "网络"
     },
