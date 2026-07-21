@@ -74,7 +74,7 @@ function renderSecondaryNav(primary) {
   }
 
   const subSet = new Set();
-  state.stickers.forEach(s => { if (s.category === primary && s.subcategory) subSet.add(s.subcategory); });
+  state.stickers.forEach(s => { if (s.subcategory === primary && s.category) subSet.add(s.category); });
   const subMap = [...subSet].sort();
   if (subMap.length === 0) {
     $secondaryNav.style.display = 'none';
@@ -126,12 +126,12 @@ function filterAndRender() {
 
   // 一级过滤
   if (state.primary !== '主页') {
-    list = list.filter(s => s.category === state.primary);
+    list = list.filter(s => s.subcategory === state.primary);
   }
 
   // 二级过滤
   if (state.secondary) {
-    list = list.filter(s => s.subcategory === state.secondary);
+    list = list.filter(s => s.category === state.secondary);
   }
 
   // 搜索
