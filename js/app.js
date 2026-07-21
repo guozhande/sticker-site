@@ -73,7 +73,9 @@ function renderSecondaryNav(primary) {
     return;
   }
 
-  const subMap = (state.categories['主页'] || {})[primary] || [];
+  const subSet = new Set();
+  state.stickers.forEach(s => { if (s.category === primary && s.subcategory) subSet.add(s.subcategory); });
+  const subMap = [...subSet].sort();
   if (subMap.length === 0) {
     $secondaryNav.style.display = 'none';
     return;
