@@ -68,7 +68,7 @@ function renderPrimaryNav() {
 function renderSecondaryNav(primary) {
   $secondaryNav.innerHTML = '';
 
-  if (primary === '主页' || primary === '二次元') {
+  if (primary === '主页') {
     $secondaryNav.style.display = 'none';
     return;
   }
