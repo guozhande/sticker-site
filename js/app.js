@@ -1,6 +1,6 @@
 /**
  * 我的表情 — 网站脚本
- * 一级标签: 主页 | 游戏 | 动漫 | 网络
+ * 一级标签: 主页 | 二次元 | 网络
  * 二级标签: 每个一级下的具体名称
  */
 const state = {
@@ -44,7 +44,7 @@ async function init() {
 // ====== 一级导航 ======
 function renderPrimaryNav() {
   $primaryNav.innerHTML = '';
-  const tabs = ['主页', '游戏', '动漫', '网络'];
+  const tabs = ['主页', '二次元', '网络'];
 
   tabs.forEach(tab => {
     const btn = document.createElement('button');
@@ -68,7 +68,7 @@ function renderPrimaryNav() {
 function renderSecondaryNav(primary) {
   $secondaryNav.innerHTML = '';
 
-  if (primary === '主页') {
+  if (primary === '主页' || primary === '二次元') {
     $secondaryNav.style.display = 'none';
     return;
   }
