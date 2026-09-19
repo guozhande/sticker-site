@@ -80,6 +80,17 @@ def filename_for(url: str, idx: int, prefix: str) -> str:
         fname = f"{prefix}-{stem}-{idx}{ext}"
     return fname
 
+def sha256_file(path: Path) -> str | None:
+    """图片内容哈希（SHA256）。同一张图哪怕换了文件名/URL 也会得到相同值；
+    文件不存在返回 None。注意：这是独立实现，不依赖其他脚本。"""
+    if not path.exists():
+        return None
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
 # ── 搜狗表情 API ─────────────────────────────────────────
 
 SOGOU_API = "https://pic.sogou.com/napi/wap/emoji/searchlist"
@@ -374,12 +385,27 @@ def update_json(new_entries: list[dict]):
     existing_filenames = {s["filename"] for s in data["stickers"]}
     existing_ids = {s["id"] for s in data["stickers"]}
 
+    # 内容哈希索引：已有图片按 SHA256 建表，用于拦截"换名换 URL 的同一张图"
+    existing_hashes = {}
+    for s in data["stickers"]:
+        h = sha256_file(STICKERS_DIR / s["filename"])
+        if h:
+            existing_hashes.setdefault(h, s["filename"])
+
     really_new = []
     for e in new_entries:
-        if e["filename"] not in existing_filenames and e["id"] not in existing_ids:
-            really_new.append(e)
-            existing_filenames.add(e["filename"])
-            existing_ids.add(e["id"])
+        if e["filename"] in existing_filenames or e["id"] in existing_ids:
+            continue
+        h = sha256_file(STICKERS_DIR / e["filename"])
+        if h and h in existing_hashes:
+            print(f"  ⏭️ 跳过（内容重复）: {e['filename']} — "
+                  f"SHA256 {h[:12]}… 与已有图片 {existing_hashes[h]} 相同")
+            continue
+        really_new.append(e)
+        existing_filenames.add(e["filename"])
+        existing_ids.add(e["id"])
+        if h:
+            existing_hashes[h] = e["filename"]
 
     data["stickers"].extend(really_new)
     DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")

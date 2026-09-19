@@ -12,6 +12,12 @@ const state = {
   currentSticker: null,
 };
 
+// 内容级去重：canonical 指向同内容主条目，非主条目（别名）不渲染。
+// 兼容旧数据——没有 canonical 字段的条目一律视为有效条目。
+function isDuplicate(s) {
+  return !!s.canonical && s.canonical !== s.id;
+}
+
 // ====== DOM ======
 const $gallery = document.getElementById('gallery');
 const $search = document.getElementById('search');
@@ -30,7 +36,9 @@ async function init() {
     const res = await fetch('data/stickers.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    state.stickers = data.stickers || [];
+    // 只保留主条目：别名（canonical 指向他条）在此一次性剔除，
+    // 之后的一级/二级导航、条目计数、列表渲染、搜索均基于去重后的结果。
+    state.stickers = (data.stickers || []).filter(s => !isDuplicate(s));
     state.categories = data.categories || {};
 
     renderPrimaryNav();
