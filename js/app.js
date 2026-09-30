@@ -6,6 +6,7 @@
 const state = {
   stickers: [],
   categories: {},       // {主页: {游戏: [...], 动漫: [...], 网络: [...]}}
+  categoryOrder: [],    // 二级标签的展示顺序（首字母序，写入侧用拼音算好）
   primary: '主页',      // 当前一级
   secondary: null,      // 当前二级（null=全部）
   searchQuery: '',
@@ -40,6 +41,7 @@ async function init() {
     // 之后的一级/二级导航、条目计数、列表渲染、搜索均基于去重后的结果。
     state.stickers = (data.stickers || []).filter(s => !isDuplicate(s));
     state.categories = data.categories || {};
+    state.categoryOrder = data.category_order || [];
 
     renderPrimaryNav();
     renderSecondaryNav('主页');
@@ -80,6 +82,20 @@ function labelsOf(s) {
     : (s.category ? [s.category] : []);
 }
 
+// 二级标签排序：优先用数据里算好的首字母序（category_order），
+// 缺了就退回浏览器自带的拼音排序（注意：该方式会把拉丁字母标签甩到最后）
+function compareLabels(a, b) {
+  const order = state.categoryOrder;
+  if (order && order.length) {
+    const ia = order.indexOf(a);
+    const ib = order.indexOf(b);
+    if (ia !== -1 && ib !== -1) return ia - ib;
+    if (ia !== -1) return -1;
+    if (ib !== -1) return 1;
+  }
+  return a.localeCompare(b, 'zh-Hans-CN');
+}
+
 function renderSecondaryNav(primary) {
   $secondaryNav.innerHTML = '';
 
@@ -93,7 +109,7 @@ function renderSecondaryNav(primary) {
     if (s.subcategory !== primary) return;
     labelsOf(s).forEach(c => subSet.add(c));
   });
-  const subMap = [...subSet].sort();
+  const subMap = [...subSet].sort(compareLabels);
   if (subMap.length === 0) {
     $secondaryNav.style.display = 'none';
     return;
