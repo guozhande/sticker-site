@@ -73,6 +73,13 @@ function renderPrimaryNav() {
 }
 
 // ====== 二级导航 ======
+// 兼容旧数据：只有 category 字符串时当单标签用
+function labelsOf(s) {
+  return Array.isArray(s.categories) && s.categories.length
+    ? s.categories
+    : (s.category ? [s.category] : []);
+}
+
 function renderSecondaryNav(primary) {
   $secondaryNav.innerHTML = '';
 
@@ -82,7 +89,10 @@ function renderSecondaryNav(primary) {
   }
 
   const subSet = new Set();
-  state.stickers.forEach(s => { if (s.subcategory === primary && s.category) subSet.add(s.category); });
+  state.stickers.forEach(s => {
+    if (s.subcategory !== primary) return;
+    labelsOf(s).forEach(c => subSet.add(c));
+  });
   const subMap = [...subSet].sort();
   if (subMap.length === 0) {
     $secondaryNav.style.display = 'none';
@@ -137,9 +147,9 @@ function filterAndRender() {
     list = list.filter(s => s.subcategory === state.primary);
   }
 
-  // 二级过滤
+  // 二级过滤（多标签：任一命中即显示）
   if (state.secondary) {
-    list = list.filter(s => s.category === state.secondary);
+    list = list.filter(s => labelsOf(s).includes(state.secondary));
   }
 
   // 搜索
@@ -147,7 +157,7 @@ function filterAndRender() {
     const q = state.searchQuery;
     list = list.filter(s =>
       (s.filename || '').toLowerCase().includes(q) ||
-      (s.category || '').includes(q) ||
+      labelsOf(s).some(c => c.toLowerCase().includes(q)) ||
       (s.subcategory || '').includes(q) ||
       s.tags.some(t => t.includes(q))
     );
@@ -164,13 +174,14 @@ function renderGallery(list) {
   }
 
   $gallery.innerHTML = list.map(s => {
-    const label = [s.category, s.subcategory].filter(Boolean).join(' · ');
+    const label = [...labelsOf(s), s.subcategory].filter(Boolean).join(' · ');
     return `
     <div class="sticker-card"
          data-id="${s.id}"
          data-url="${s.url}"
          data-filename="${s.filename}"
          data-category="${s.category || ''}"
+         data-categories="${labelsOf(s).join(',')}"
          data-subcategory="${s.subcategory || ''}"
          data-tags="${s.tags.join(',')}">
       <img src="${s.url}" alt="${s.tags.join(', ')}" loading="lazy"
