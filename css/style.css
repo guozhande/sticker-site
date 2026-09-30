@@ -101,14 +101,26 @@ body {
 .secondary-nav {
   display: flex;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 8px 16px 6px;
   overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
   background: var(--bg);
+  /* 二级标签上百个，滚动条必须常显 —— 藏起来用户就不知道右边还有 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--border);
 }
 
-.secondary-nav::-webkit-scrollbar { display: none; }
+/* WebKit（Chrome / Safari / Edge）：可见的横向滚动条 */
+.secondary-nav::-webkit-scrollbar { height: 6px; }
+.secondary-nav::-webkit-scrollbar-track {
+  background: var(--border);
+  border-radius: 3px;
+}
+.secondary-nav::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+.secondary-nav::-webkit-scrollbar-thumb:hover { background: var(--accent-hover); }
 
 .secondary-btn {
   padding: 4px 14px;
