@@ -8,6 +8,7 @@ const state = {
   categories: {},       // {主页: {游戏: [...], 动漫: [...], 网络: [...]}}
   categoryOrder: [],    // 作品名的展示顺序（首字母序，写入侧用拼音算好）
   categoryGroups: {},   // {A: [作品名...], B: [...]} 首字母 → 该字母下的作品名
+  uploads: [],          // 用户上传的图（来自 /api/uploads），单独记一份便于筛选
   letter: null,         // 当前选中的首字母（null=全部）
   primary: '主页',      // 当前一级
   secondary: null,      // 当前二级（null=全部）
@@ -50,8 +51,53 @@ async function init() {
     renderPrimaryNav();
     renderSecondaryNav('主页');
     renderGallery(state.stickers);
+
+    loadUploads();   // 用户上传的图异步补上；接口不通也不影响网站主体
   } catch (err) {
     $gallery.innerHTML = `<div class="empty">加载失败<br><small>${err.message}</small></div>`;
+  }
+}
+
+// ====== 用户上传的图 ======
+// 接口在 Pages Functions 上（见 js/config.js）。拉不到就静默跳过 —— 网站主体不依赖它。
+const API_BASE = window.STICKER_API_BASE ?? '';
+
+/** 把上传接口返回的条目，转成和图库一致的结构。 */
+function uploadToSticker(u) {
+  return {
+    id: `up-${u.id}`,
+    uploadId: u.id,
+    filename: u.filename,
+    url: u.url.startsWith('http') ? u.url : `${API_BASE}${u.url}`,
+    tags: [u.work, ...(u.characters || [])].filter(Boolean),
+    category: u.work,
+    categories: [u.work],
+    subcategory: '二次元',   // 上传时只问了作品名，统一归二次元
+    source: 'upload',
+  };
+}
+
+async function loadUploads() {
+  try {
+    const res = await fetch(`${API_BASE}/api/uploads?limit=300`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const items = ((await res.json()).items || []).map(uploadToSticker);
+    if (!items.length) return;
+
+    state.uploads = items;
+    // 先剔除上一次拉进来的上传条目，再插最新的一批 —— 否则重复调用（比如刚上传完刷新）会越堆越多
+    state.stickers = [...items, ...state.stickers.filter((s) => s.source !== 'upload')];
+
+    // 上传的作品名可能不在网站的字母表里 —— 单独归一个「★」组放在最前，
+    // 这样字母栏、三级筛选的既有逻辑完全不用改。
+    const works = [...new Set(items.map((s) => s.category))].sort(compareLabels);
+    state.categoryGroups = { '★': works, ...state.categoryGroups };
+
+    renderLetterNav(state.primary);
+    renderSecondaryNav(state.primary);
+    filterAndRender();
+  } catch (_) {
+    /* 离线或接口异常：跳过上传内容，不影响浏览 */
   }
 }
 
@@ -255,6 +301,7 @@ function renderGallery(list) {
          data-tags="${s.tags.join(',')}">
       <img src="${s.url}" alt="${s.tags.join(', ')}" loading="lazy"
            onerror="this.parentElement.style.display='none'">
+      ${s.source === 'upload' ? '<span class="up-badge">新</span>' : ''}
       <div class="card-label">${label}</div>
     </div>`;
   }).join('');

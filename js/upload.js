@@ -10,12 +10,8 @@
  * 依赖：页面里有一个 id="upload-entry" 的容器（没有就自动插到主导航后面）。
  */
 (function () {
-  // API 就在同一个域名下（Cloudflare Pages Functions）：
-  //   sticker-store-uzo.pages.dev  → 同源，直接用相对路径
-  //   guozhande.github.io          → 那边没有 Functions，走绝对地址
-  const API =
-    window.STICKER_API ??
-    (location.hostname.endsWith('.pages.dev') ? '' : 'https://sticker-store-uzo.pages.dev');
+  // 接口地址见 js/config.js（API 挂在网站自己域名下的 Pages Functions 上）
+  const API = window.STICKER_API_BASE ?? '';
 
   const MAX_FILE_MB = 8;
   const OK_MIME = ['image/gif', 'image/jpeg', 'image/png', 'image/webp'];
@@ -195,6 +191,8 @@
         <p class="up-hint">「${esc(work)}」· ${characters.map(esc).join('、')}</p>`;
       $primary.classList.add('hidden');
       $cancel.textContent = '关闭';
+      // 让图库立刻刷新，能马上看到自己刚传的图
+      if (typeof loadUploads === 'function') loadUploads();
       setTimeout(close, 1800);
     } catch (err) {
       toast(`上传失败：${err.message}`);

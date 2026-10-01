@@ -621,6 +621,20 @@ body {
   background: #eef5fc;
 }
 
+/* ---- 上传图的角标 ---- */
+.up-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  line-height: 16px;
+  pointer-events: none;
+}
+
 /* ---- 上传弹窗 ---- */
 .up-overlay {
   position: fixed;
