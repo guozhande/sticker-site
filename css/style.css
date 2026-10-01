@@ -98,6 +98,52 @@ body {
 }
 
 /* ---- 二级导航 ---- */
+/* ---- 二级：首字母 A-Z ---- */
+.letter-nav {
+  display: flex;
+  gap: 4px;
+  padding: 8px 16px 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--border);
+}
+
+.letter-nav::-webkit-scrollbar { height: 6px; }
+.letter-nav::-webkit-scrollbar-track {
+  background: var(--border);
+  border-radius: 3px;
+}
+.letter-nav::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.letter-btn {
+  min-width: 30px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.letter-btn:hover { background: var(--border); }
+
+.letter-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---- 三级：作品名 ---- */
 .secondary-nav {
   display: flex;
   gap: 6px;

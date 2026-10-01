@@ -6,7 +6,9 @@
 const state = {
   stickers: [],
   categories: {},       // {主页: {游戏: [...], 动漫: [...], 网络: [...]}}
-  categoryOrder: [],    // 二级标签的展示顺序（首字母序，写入侧用拼音算好）
+  categoryOrder: [],    // 作品名的展示顺序（首字母序，写入侧用拼音算好）
+  categoryGroups: {},   // {A: [作品名...], B: [...]} 首字母 → 该字母下的作品名
+  letter: null,         // 当前选中的首字母（null=全部）
   primary: '主页',      // 当前一级
   secondary: null,      // 当前二级（null=全部）
   searchQuery: '',
@@ -30,6 +32,7 @@ const $previewInfo = document.getElementById('preview-info');
 const $ctxMenu = document.getElementById('context-menu');
 const $primaryNav = document.querySelector('.primary-nav');
 const $secondaryNav = document.querySelector('.secondary-nav');
+const $letterNav = document.querySelector('.letter-nav');
 
 // ====== 初始化 ======
 async function init() {
@@ -42,6 +45,7 @@ async function init() {
     state.stickers = (data.stickers || []).filter(s => !isDuplicate(s));
     state.categories = data.categories || {};
     state.categoryOrder = data.category_order || [];
+    state.categoryGroups = data.category_groups || {};
 
     renderPrimaryNav();
     renderSecondaryNav('主页');
@@ -65,8 +69,10 @@ function renderPrimaryNav() {
     btn.addEventListener('click', () => {
       state.primary = tab;
       state.secondary = null;
+      state.letter = null;
       document.querySelectorAll('.primary-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      renderLetterNav(tab);
       renderSecondaryNav(tab);
       filterAndRender();
     });
@@ -96,6 +102,51 @@ function compareLabels(a, b) {
   return a.localeCompare(b, 'zh-Hans-CN');
 }
 
+// ====== 二级导航：首字母 A-Z ======
+// 字母本身也是拼音算出来的，前端算不了，所以用数据里的 category_groups
+function renderLetterNav(primary) {
+  $letterNav.innerHTML = '';
+
+  if (primary === '主页') {
+    $letterNav.style.display = 'none';
+    return;
+  }
+
+  // 当前一级下实际出现过的作品名
+  const present = new Set();
+  state.stickers.forEach(s => {
+    if (s.subcategory !== primary) return;
+    labelsOf(s).forEach(c => present.add(c));
+  });
+
+  // 只留这个一级下真有作品的字母（网络下可能就没有几个字母）
+  const letters = Object.keys(state.categoryGroups)
+    .filter(L => (state.categoryGroups[L] || []).some(n => present.has(n)));
+  if (!letters.length) {
+    $letterNav.style.display = 'none';
+    return;
+  }
+
+  $letterNav.style.display = 'flex';
+
+  const makeBtn = (text, value) => {
+    const btn = document.createElement('button');
+    btn.className = 'letter-btn' + (state.letter === value ? ' active' : '');
+    btn.textContent = text;
+    btn.addEventListener('click', () => {
+      state.letter = value;
+      state.secondary = null;      // 换字母时清掉三级选择
+      renderLetterNav(state.primary);
+      renderSecondaryNav(state.primary);
+      filterAndRender();
+    });
+    $letterNav.appendChild(btn);
+  };
+
+  makeBtn('全部', null);
+  letters.forEach(L => makeBtn(L, L));
+}
+
 function renderSecondaryNav(primary) {
   $secondaryNav.innerHTML = '';
 
@@ -109,7 +160,9 @@ function renderSecondaryNav(primary) {
     if (s.subcategory !== primary) return;
     labelsOf(s).forEach(c => subSet.add(c));
   });
-  const subMap = [...subSet].sort(compareLabels);
+  // 三级：按当前选中的首字母收窄
+  const allowed = state.letter ? new Set(state.categoryGroups[state.letter] || []) : null;
+  const subMap = [...subSet].filter(n => !allowed || allowed.has(n)).sort(compareLabels);
   if (subMap.length === 0) {
     $secondaryNav.style.display = 'none';
     return;
