@@ -1,0 +1,14 @@
+name = "sticker-api"
+main = "index.js"
+compatibility_date = "2026-10-01"
+
+# 图片字节存这里（用户上传的 GIF / JPG / PNG / WebP）
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "sticker-images"
+
+# 元数据（作品名 / 角色名 / 时间 / 下架状态）
+[[d1_databases]]
+binding = "DB"
+database_name = "sticker-uploads"
+database_id = "38f55b55-a102-4f36-9b7c-ec5f2aed220e"

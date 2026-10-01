@@ -602,3 +602,236 @@ body {
     font-size: 28px;
   }
 }
+
+/* ---- 上传入口 ---- */
+.upload-entry-btn {
+  display: block;
+  margin: 10px 16px;
+  padding: 10px 18px;
+  border: 1px dashed var(--accent);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.upload-entry-btn:hover {
+  background: #eef5fc;
+}
+
+/* ---- 上传弹窗 ---- */
+.up-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1000;
+}
+.up-overlay.show {
+  opacity: 1;
+}
+
+.up-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 20px 18px 14px;
+  transform: translateY(8px);
+  transition: transform 0.15s;
+}
+.up-overlay.show .up-dialog {
+  transform: none;
+}
+
+.up-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.up-title {
+  margin: 0 0 14px;
+  font-size: 17px;
+  color: var(--text);
+}
+
+.up-hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.up-field {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.up-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.up-file,
+.up-text {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  font-family: inherit;
+}
+.up-text:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.up-picked:empty {
+  display: none;
+}
+.up-thumb {
+  display: block;
+  max-width: 100%;
+  max-height: 140px;
+  margin: 0 auto 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* ---- 是否单角色 ---- */
+.up-choices {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.up-choice {
+  flex: 1;
+  padding: 14px 0;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.up-choice:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---- 角色名多行 ---- */
+.up-char-list {
+  margin-bottom: 10px;
+}
+.up-char-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.up-char-row .up-char {
+  flex: 1;
+}
+.up-remove {
+  flex: 0 0 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.up-remove:hover {
+  border-color: #d9534f;
+  color: #d9534f;
+}
+.up-add {
+  width: 100%;
+  padding: 8px 0;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background: none;
+  color: var(--accent);
+  font-size: 14px;
+  cursor: pointer;
+}
+.up-add:hover {
+  border-color: var(--accent);
+  background: #eef5fc;
+}
+
+/* ---- 底部按钮 ---- */
+.up-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+.up-btn {
+  padding: 9px 22px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+.up-btn.hidden {
+  display: none;
+}
+.up-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.up-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.up-cancel {
+  background: var(--bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+/* ---- 提示条 ---- */
+.up-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translate(-50%, 12px);
+  max-width: 80vw;
+  padding: 10px 18px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  z-index: 1100;
+}
+.up-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
