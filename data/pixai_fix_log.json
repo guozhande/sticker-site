@@ -1,0 +1,2000 @@
+{
+  "stats": {
+    "total": 1620,
+    "checked": 1620,
+    "fixed": 331,
+    "moved_to_net": 68,
+    "filename_authoritative": 0,
+    "pixai_confirmed": 77,
+    "pixai_corrected": 263,
+    "pixai_no_match": 68
+  },
+  "fixes": [
+    {
+      "file": "api-2000.gif",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/银魂",
+      "reason": "pixai_corrected (chars: ['sakata_gintoki', 'archer_(fate)'], ips: ['gintama', 'fate_(series)', 'bleach'])"
+    },
+    {
+      "file": "api-2015.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2020.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['myoukou_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "api-2021.jpg",
+      "old": "网络/网络",
+      "new": "动漫/咒术回战",
+      "reason": "pixai_corrected (chars: [\"zen'in_maki\"], ips: ['jujutsu_kaisen'])"
+    },
+    {
+      "file": "api-2023.jpg",
+      "old": "网络/网络",
+      "new": "动漫/弹丸论破",
+      "reason": "pixai_corrected (chars: ['monokuma', 'kuma_(persona_4)'], ips: ['danganronpa_(series)', 'persona', 'persona_4'])"
+    },
+    {
+      "file": "api-2032.jpg",
+      "old": "动漫/猫和老鼠",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2039.jpg",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['lapras'], ips: ['pokemon'])"
+    },
+    {
+      "file": "api-2042.gif",
+      "old": "网络/网络",
+      "new": "动漫/咒术回战",
+      "reason": "pixai_corrected (chars: [\"zen'in_maki\"], ips: ['jujutsu_kaisen'])"
+    },
+    {
+      "file": "api-2045.jpg",
+      "old": "动漫/猫和老鼠",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2053.jpg",
+      "old": "网络/网络",
+      "new": "动漫/间谍过家家",
+      "reason": "pixai_corrected (chars: ['bond_(spy_x_family)', 'doraemon_(character)'], ips: ['spy_x_family', 'doraemon'])"
+    },
+    {
+      "file": "api-2056.jpg",
+      "old": "网络/网络",
+      "new": "动漫/光之美少女",
+      "reason": "pixai_corrected (chars: ['momozono_love'], ips: ['fresh_precure!', 'precure'])"
+    },
+    {
+      "file": "api-2061.gif",
+      "old": "网络/网络",
+      "new": "动漫/咒术回战",
+      "reason": "pixai_corrected (chars: [\"zen'in_maki\"], ips: ['jujutsu_kaisen'])"
+    },
+    {
+      "file": "api-2071.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)', 'moogle'], ips: ['doraemon', 'final_fantasy'])"
+    },
+    {
+      "file": "api-2073.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-2075.jpg",
+      "old": "网络/网络",
+      "new": "游戏/蔚蓝档案",
+      "reason": "pixai_corrected (chars: ['hoshino_(blue_archive)', 'hare_(blue_archive)'], ips: ['blue_archive', 'idolmaster', 'idolmaster_shiny_colors'])"
+    },
+    {
+      "file": "api-2077.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2080.jpg",
+      "old": "网络/网络",
+      "new": "动漫/轻音少女",
+      "reason": "pixai_corrected (chars: ['kotobuki_tsumugi'], ips: ['k-on!'])"
+    },
+    {
+      "file": "api-2081.jpg",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2084.jpg",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2086.jpg",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2088.jpg",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2091.jpg",
+      "old": "网络/网络",
+      "new": "动漫/火影忍者",
+      "reason": "pixai_corrected (chars: ['uzumaki_naruto', 'hatake_kakashi'], ips: ['naruto_(series)'])"
+    },
+    {
+      "file": "api-2095.jpg",
+      "old": "动漫/火影忍者",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2097.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-2098.jpg",
+      "old": "网络/网络",
+      "new": "动漫/火影忍者",
+      "reason": "pixai_corrected (chars: ['hatake_kakashi', 'uzumaki_naruto'], ips: ['naruto_(series)'])"
+    },
+    {
+      "file": "api-2099.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2100.jpg",
+      "old": "网络/网络",
+      "new": "动漫/海贼王",
+      "reason": "pixai_corrected (chars: ['portgas_d._ace'], ips: ['one_piece'])"
+    },
+    {
+      "file": "api-2104.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/海贼王",
+      "reason": "pixai_corrected (chars: ['portgas_d._ace', 'monkey_d._luffy'], ips: ['one_piece'])"
+    },
+    {
+      "file": "api-2107.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/海贼王",
+      "reason": "pixai_corrected (chars: ['brook_(one_piece)'], ips: ['one_piece'])"
+    },
+    {
+      "file": "api-2109.jpg",
+      "old": "网络/网络",
+      "new": "动漫/海贼王",
+      "reason": "pixai_corrected (chars: ['donquixote_doflamingo', 'brook_(one_piece)'], ips: ['one_piece'])"
+    },
+    {
+      "file": "api-2117.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2118.jpg",
+      "old": "动漫/东方Project",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2125.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "游戏/明日方舟",
+      "reason": "pixai_corrected (chars: ['nekomiya_hinata', 'gravel_(arknights)'], ips: ['hinata_channel', 'arknights'])"
+    },
+    {
+      "file": "api-2128.jpg",
+      "old": "动漫/魔道祖师",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['chikuma_(kancolle)', 'yukinoshita_yukino'], ips: ['kantai_collection', 'yahari_ore_no_seishun_lovecome_wa_machigatteiru.'])"
+    },
+    {
+      "file": "api-2131.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/请问您今天要来点兔子吗",
+      "reason": "pixai_corrected (chars: ['hoto_cocoa'], ips: ['gochuumon_wa_usagi_desu_ka?'])"
+    },
+    {
+      "file": "api-2132.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-2133.jpg",
+      "old": "游戏/火影忍者手游",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2147.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-2151.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['northern_ocean_princess', 'airfield_princess'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "api-3001.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/空之境界",
+      "reason": "pixai_corrected (chars: ['ryougi_shiki'], ips: ['kara_no_kyoukai'])"
+    },
+    {
+      "file": "api-3004.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3008.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['northern_ocean_princess', 'airfield_princess'], ips: ['kantai_collection', 'arknights'])"
+    },
+    {
+      "file": "api-3009.jpg",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['usada_pekora', 'pekomon_(usada_pekora)'], ips: ['hololive'])"
+    },
+    {
+      "file": "api-3011.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-3012.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-3013.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3016.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3018.gif",
+      "old": "网络/网络",
+      "new": "游戏/女神异闻录",
+      "reason": "pixai_corrected (chars: ['hanamura_yousuke', 'satonaka_chie'], ips: ['persona', 'persona_4'])"
+    },
+    {
+      "file": "api-3023.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['chikuma_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "api-3024.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['kiki_(majo_no_takkyuubin)', 'doraemon_(character)'], ips: ['majo_no_takkyuubin', 'doraemon'])"
+    },
+    {
+      "file": "api-3026.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['kiki_(majo_no_takkyuubin)', 'doraemon_(character)'], ips: ['majo_no_takkyuubin', 'doraemon'])"
+    },
+    {
+      "file": "api-3027.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['myoukou_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "api-3028.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3031.jpg",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['ssrb_(shishiro_botan)'], ips: ['hololive'])"
+    },
+    {
+      "file": "api-3038.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['boo_(mario)', 'sado_(kancolle)'], ips: ['mario_(series)', 'kantai_collection'])"
+    },
+    {
+      "file": "api-3040.jpg",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['ssrb_(shishiro_botan)'], ips: ['hololive'])"
+    },
+    {
+      "file": "api-3041.jpg",
+      "old": "游戏/宝可梦",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['kawashiro_nitori'], ips: ['touhou'])"
+    },
+    {
+      "file": "api-3042.jpg",
+      "old": "网络/网络",
+      "new": "动漫/钢之炼金术师",
+      "reason": "pixai_corrected (chars: ['edward_elric', 'alphonse_elric'], ips: ['fullmetal_alchemist'])"
+    },
+    {
+      "file": "api-3043.jpg",
+      "old": "网络/网络",
+      "new": "动漫/咒术回战",
+      "reason": "pixai_corrected (chars: [\"zen'in_maki\"], ips: ['jujutsu_kaisen'])"
+    },
+    {
+      "file": "api-3046.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "游戏/Fate系列",
+      "reason": "pixai_corrected (chars: ['fujimaru_ritsuka_(female)', 'fujimaru_ritsuka_(male)'], ips: ['fate/grand_order', 'fate_(series)'])"
+    },
+    {
+      "file": "api-3049.jpg",
+      "old": "动漫/猫和老鼠",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-3069.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-3070.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['myoukou_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "api-3072.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3074.jpg",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['psyduck'], ips: ['pokemon'])"
+    },
+    {
+      "file": "api-3075.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['bokukawauso', 'kuma_(persona_4)'], ips: ['kantai_collection', 'persona', 'persona_4'])"
+    },
+    {
+      "file": "api-3082.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['myoukou_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "api-3087.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3089.jpg",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['arcanine'], ips: ['pokemon'])"
+    },
+    {
+      "file": "api-3098.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3101.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['myoukou_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "api-3104.jpg",
+      "old": "网络/网络",
+      "new": "游戏/女神异闻录",
+      "reason": "pixai_corrected (chars: ['kuma_(persona_4)'], ips: ['persona', 'persona_4'])"
+    },
+    {
+      "file": "api-3110.jpg",
+      "old": "动漫/奥特曼系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-3111.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3112.jpg",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['pikachu', 'pichu'], ips: ['pokemon'])"
+    },
+    {
+      "file": "api-3113.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/银魂",
+      "reason": "pixai_corrected (chars: ['kagura_(gintama)', 'okita_sougo'], ips: ['gintama', 'axis_powers_hetalia'])"
+    },
+    {
+      "file": "api-3122.jpg",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/我的英雄学院",
+      "reason": "pixai_corrected (chars: ['todoroki_shoto'], ips: ['boku_no_hero_academia'])"
+    },
+    {
+      "file": "api-3124.jpg",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['kaga_(kancolle)', 'shoukaku_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "api-3129.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['vaporeon', 'charizard'], ips: ['pokemon'])"
+    },
+    {
+      "file": "api-3132.jpg",
+      "old": "网络/网络",
+      "new": "动漫/JOJO的奇妙冒险",
+      "reason": "pixai_corrected (chars: ['higashikata_josuke'], ips: ['diamond_wa_kudakenai', 'jojo_no_kimyou_na_bouken'])"
+    },
+    {
+      "file": "api-3136.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3150.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3152.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3154.jpg",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['houraisan_kaguya', 'myoukou_(kancolle)'], ips: ['touhou', 'kantai_collection', 'jigoku_shoujo'])"
+    },
+    {
+      "file": "api-3157.jpg",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "api-3158.jpg",
+      "old": "游戏/崩坏系列",
+      "new": "动漫/海贼王",
+      "reason": "pixai_corrected (chars: ['brook_(one_piece)', 'franky_(one_piece)'], ips: ['one_piece'])"
+    },
+    {
+      "file": "api-3163.jpg",
+      "old": "游戏/原神",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "api-3168.jpg",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6007.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6017.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6025.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6026.gif",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6027.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6028.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/鸣潮",
+      "reason": "pixai_corrected (chars: ['camellya_(wuthering_waves)'], ips: ['wuthering_waves'])"
+    },
+    {
+      "file": "giphy-6029.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6030.gif",
+      "old": "游戏/原神",
+      "new": "游戏/鸣潮",
+      "reason": "pixai_corrected (chars: ['male_rover_(wuthering_waves)', 'rover_(wuthering_waves)'], ips: ['wuthering_waves', 'genshin_impact'])"
+    },
+    {
+      "file": "giphy-6031.gif",
+      "old": "游戏/原神",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6032.gif",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6033.gif",
+      "old": "游戏/原神",
+      "new": "游戏/鸣潮",
+      "reason": "pixai_corrected (chars: ['shorekeeper_(wuthering_waves)', 'lumine_(genshin_impact)'], ips: ['wuthering_waves', 'genshin_impact'])"
+    },
+    {
+      "file": "giphy-6042.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['keqing_(genshin_impact)', 'keqing_(opulent_splendor)_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6044.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['noelle_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6045.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['keqing_(genshin_impact)', 'keqing_(opulent_splendor)_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6046.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['keqing_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6047.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['keqing_(genshin_impact)', 'keqing_(opulent_splendor)_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6048.gif",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6049.gif",
+      "old": "动漫/魔法少女小圆",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6050.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/英雄联盟",
+      "reason": "pixai_corrected (chars: [\"kai'sa\", 'd.va_(overwatch)'], ips: ['league_of_legends', 'overwatch', 'overwatch_1'])"
+    },
+    {
+      "file": "giphy-6051.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/火焰纹章",
+      "reason": "pixai_corrected (chars: ['azura_(fire_emblem)'], ips: ['fire_emblem', 'fire_emblem_fates'])"
+    },
+    {
+      "file": "giphy-6052.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/英雄联盟",
+      "reason": "pixai_corrected (chars: ['evelynn_(league_of_legends)'], ips: ['league_of_legends'])"
+    },
+    {
+      "file": "giphy-6053.gif",
+      "old": "游戏/原神",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['irys_(hololive)', 'watson_amelia'], ips: ['hololive', 'hololive_english'])"
+    },
+    {
+      "file": "giphy-6054.gif",
+      "old": "动漫/未分类动漫",
+      "new": "游戏/塞尔达传说",
+      "reason": "pixai_corrected (chars: ['ganondorf'], ips: ['the_legend_of_zelda'])"
+    },
+    {
+      "file": "giphy-6055.gif",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/进击的巨人",
+      "reason": "pixai_corrected (chars: ['eren_yeager'], ips: ['shingeki_no_kyojin'])"
+    },
+    {
+      "file": "giphy-6056.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6057.gif",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6058.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['jirachi'], ips: ['pokemon'])"
+    },
+    {
+      "file": "giphy-6059.gif",
+      "old": "游戏/崩坏系列",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6062.gif",
+      "old": "游戏/我的世界",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['pikachu', 'psyduck'], ips: ['pokemon'])"
+    },
+    {
+      "file": "giphy-6063.gif",
+      "old": "游戏/我的世界",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6064.gif",
+      "old": "游戏/我的世界",
+      "new": "动漫/孤独摇滚",
+      "reason": "pixai_corrected (chars: ['gotoh_hitori'], ips: ['bocchi_the_rock!'])"
+    },
+    {
+      "file": "giphy-6065.gif",
+      "old": "游戏/我的世界",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6066.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['keqing_(genshin_impact)', 'keqing_(opulent_splendor)_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6067.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['keqing_(genshin_impact)', 'keqing_(opulent_splendor)_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6068.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['keqing_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6069.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['keqing_(genshin_impact)', 'keqing_(opulent_splendor)_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6072.gif",
+      "old": "游戏/崩坏系列",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['hu_tao_(genshin_impact)', 'boo_tao_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6073.gif",
+      "old": "动漫/未分类动漫",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['tartaglia_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "giphy-6075.gif",
+      "old": "游戏/崩坏系列",
+      "new": "动漫/鬼灭之刃",
+      "reason": "pixai_corrected (chars: ['rengoku_kyoujurou'], ips: ['kimetsu_no_yaiba'])"
+    },
+    {
+      "file": "giphy-6077.gif",
+      "old": "动漫/鬼灭之刃",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6078.gif",
+      "old": "动漫/咒术回战",
+      "new": "动漫/进击的巨人",
+      "reason": "pixai_corrected (chars: ['eren_yeager', 'sasha_blouse'], ips: ['shingeki_no_kyojin', 'final_fantasy', 'final_fantasy_xiv'])"
+    },
+    {
+      "file": "giphy-6079.gif",
+      "old": "动漫/鬼灭之刃",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6085.gif",
+      "old": "动漫/进击的巨人",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6092.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6093.gif",
+      "old": "动漫/鬼灭之刃",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['mimikyu'], ips: ['pokemon'])"
+    },
+    {
+      "file": "giphy-6101.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6122.gif",
+      "old": "动漫/进击的巨人",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6125.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6129.gif",
+      "old": "动漫/咒术回战",
+      "new": "动漫/进击的巨人",
+      "reason": "pixai_corrected (chars: ['eren_yeager'], ips: ['shingeki_no_kyojin'])"
+    },
+    {
+      "file": "giphy-6130.gif",
+      "old": "动漫/摇曳露营△",
+      "new": "动漫/间谍过家家",
+      "reason": "pixai_corrected (chars: ['anya_(spy_x_family)'], ips: ['spy_x_family'])"
+    },
+    {
+      "file": "giphy-6131.gif",
+      "old": "动漫/孤独摇滚",
+      "new": "动漫/间谍过家家",
+      "reason": "pixai_corrected (chars: ['anya_(spy_x_family)', 'bond_(spy_x_family)'], ips: ['spy_x_family'])"
+    },
+    {
+      "file": "giphy-6132.gif",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/间谍过家家",
+      "reason": "pixai_corrected (chars: ['damian_desmond'], ips: ['spy_x_family'])"
+    },
+    {
+      "file": "giphy-6133.gif",
+      "old": "动漫/孤独摇滚",
+      "new": "动漫/间谍过家家",
+      "reason": "pixai_corrected (chars: ['anya_(spy_x_family)', 'twilight_(spy_x_family)'], ips: ['spy_x_family'])"
+    },
+    {
+      "file": "giphy-6137.gif",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/孤独摇滚",
+      "reason": "pixai_corrected (chars: ['gotoh_hitori', 'haruno_sakura'], ips: ['bocchi_the_rock!', 'naruto_(series)', 'lucky_star'])"
+    },
+    {
+      "file": "giphy-6140.gif",
+      "old": "游戏/原神",
+      "new": "动漫/葬送的芙莉莲",
+      "reason": "pixai_corrected (chars: ['frieren'], ips: ['sousou_no_frieren'])"
+    },
+    {
+      "file": "giphy-6141.gif",
+      "old": "动漫/魔法少女小圆",
+      "new": "动漫/葬送的芙莉莲",
+      "reason": "pixai_corrected (chars: ['frieren'], ips: ['sousou_no_frieren'])"
+    },
+    {
+      "file": "giphy-6142.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6143.gif",
+      "old": "游戏/崩坏系列",
+      "new": "动漫/葬送的芙莉莲",
+      "reason": "pixai_corrected (chars: ['frieren', 'aura_(sousou_no_frieren)'], ips: ['sousou_no_frieren'])"
+    },
+    {
+      "file": "giphy-6144.gif",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['reze_(chainsaw_man)'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "giphy-6145.gif",
+      "old": "动漫/小林家的龙女仆",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['power_(chainsaw_man)', 'denji_(chainsaw_man)'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "giphy-6146.gif",
+      "old": "动漫/咒术回战",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['makima_(chainsaw_man)'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "giphy-6147.gif",
+      "old": "游戏/原神",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['makima_(chainsaw_man)'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "giphy-6148.gif",
+      "old": "网络/网络",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['denji_(chainsaw_man)'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "giphy-6149.gif",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['denji_(chainsaw_man)', 'hayakawa_aki'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "giphy-6150.gif",
+      "old": "动漫/咒术回战",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['hayakawa_aki'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "giphy-6151.gif",
+      "old": "动漫/孤独摇滚",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['power_(chainsaw_man)'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "giphy-6152.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6153.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6154.gif",
+      "old": "动漫/咒术回战",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6155.gif",
+      "old": "动漫/咒术回战",
+      "new": "动漫/新世纪福音战士",
+      "reason": "pixai_corrected (chars: ['ikari_shinji'], ips: ['neon_genesis_evangelion'])"
+    },
+    {
+      "file": "giphy-6156.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6157.gif",
+      "old": "动漫/未分类动漫",
+      "new": "动漫/JOJO的奇妙冒险",
+      "reason": "pixai_corrected (chars: ['kakyoin_noriaki'], ips: ['jojo_no_kimyou_na_bouken', 'stardust_crusaders'])"
+    },
+    {
+      "file": "giphy-6158.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6159.gif",
+      "old": "动漫/我独自升级",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6160.gif",
+      "old": "动漫/咒术回战",
+      "new": "动漫/死神",
+      "reason": "pixai_corrected (chars: ['kurosaki_ichigo', 'gojou_satoru'], ips: ['bleach', 'jujutsu_kaisen'])"
+    },
+    {
+      "file": "giphy-6163.gif",
+      "old": "动漫/咒术回战",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "giphy-6175.gif",
+      "old": "动漫/小林家的龙女仆",
+      "new": "动漫/鬼灭之刃",
+      "reason": "pixai_corrected (chars: ['agatsuma_zenitsu'], ips: ['kimetsu_no_yaiba'])"
+    },
+    {
+      "file": "soogif-搞笑-bgNAsSrgHNvTYP5JcK6wXk7xTSJRaFxt.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "soogif-动漫-e7FHv6Qf6KoWbx7Gi0WLs2D0EO00Vrcb.gif",
+      "old": "动漫/美少女战士",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-动漫-9EX5LsxqL6GhH17GiPWPcgLMoMHGRpkp.gif",
+      "old": "动漫/龙珠",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-动漫-xdyWwchdXgNY07tuxsq0phCP7CMuJsX0.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-动漫-wnAX8NxzG5ZauIwwjgsN6ydAg3GPaeUv.gif",
+      "old": "动漫/龙珠",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-动漫-66ALLh8JYyimpMhZDVsEvp9gRVc9WsM5.gif",
+      "old": "动漫/猫的报恩",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-动漫-LwbZTeHJJmMfyvvqTr3wr60hORN0TO0V.gif",
+      "old": "动漫/火影忍者",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-动漫-2xESnaoesgKC0dzdUQuD72WDSZxOFZsL.gif",
+      "old": "动漫/花木兰",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-动漫-KaCHwJJcMYF93iiqFJjTBePI9vEYSH5n.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-动漫-PxeNNE4pUr1dI8LhCPFGnH1B0xpSGf8k.gif",
+      "old": "动漫/猫和老鼠",
+      "new": "动漫/光之美少女",
+      "reason": "pixai_corrected (chars: ['nekoyashiki_yuki'], ips: ['precure', 'wonderful_precure!'])"
+    },
+    {
+      "file": "soogif-动物-BIc5u49otWinyRWc6XD76e1Pp3HNSjWm.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['charmander'], ips: ['pokemon'])"
+    },
+    {
+      "file": "soogif-动物-Rwh0AUpftwis9Zq8fLhe17FWwSsVzBKR.gif",
+      "old": "网络/网络",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['hayakawa_aki'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "soogif-萌宠-biTiv0pUiTHzsCH5UyW251o1I9Ac7l9r.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "soogif-萌宠-pYkBmoantbshun1WRl4mMOeDEtIRbqbp.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "soogif-萌宠-UXvy6C44v6VpfjkaFpQJlxl1LVyME7uc.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "soogif-萌宠-orY4QKRic1qISTSrQbYDE5SBmW3KxdMj.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['mimikyu'], ips: ['pokemon'])"
+    },
+    {
+      "file": "soogif-萌宠-AjPpzdlE1iBaZEY1s1BhV7dxD8XF0Kgj.gif",
+      "old": "网络/网络",
+      "new": "动漫/弹丸论破",
+      "reason": "pixai_corrected (chars: ['monokuma'], ips: ['danganronpa_(series)'])"
+    },
+    {
+      "file": "soogif-游戏-uU3Kv4BsfBcX88KIBx40X59WGGZ1y0Sc.gif",
+      "old": "游戏/未分类游戏",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-游戏-qVW55xjtKfWLgqzULJ1j8MwGx0ARSlTY.gif",
+      "old": "游戏/猴岛小英雄",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-游戏-VDci3kxh3B3tljYzChunGzaC37tKFrTG.gif",
+      "old": "游戏/女神异闻录",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-游戏-zZFtrilIEkzkRePaZuE2s47YATUfy9HX.gif",
+      "old": "游戏/绝区零",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-游戏-yeIk52WIx8CRl6TAHtU51CUaNSQdY34I.gif",
+      "old": "游戏/原神",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['lugia'], ips: ['pokemon'])"
+    },
+    {
+      "file": "soogif-游戏-YSrMILbYpeRxcl0B2G600VV7QA9ULpqf.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-游戏-CRnpZlJeAz1ZiUR346EGvRkKYvx9tgcX.gif",
+      "old": "游戏/女神异闻录",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "soogif-游戏-EKsVCm1ibic57hRL4wxYOwwDTBsEGJ07.gif",
+      "old": "网络/网络",
+      "new": "动漫/进击的巨人",
+      "reason": "pixai_corrected (chars: ['titan_(shingeki_no_kyojin)', 'mawile'], ips: ['shingeki_no_kyojin', 'pokemon'])"
+    },
+    {
+      "file": "soogif-游戏-XqWv4kSmkbAmcOJSx8xM89GfYW5taINR.gif",
+      "old": "游戏/拳皇97",
+      "new": "游戏/街霸",
+      "reason": "pixai_corrected (chars: ['ken_masters', 'ryu_(street_fighter)'], ips: ['street_fighter', 'the_king_of_fighters', 'fatal_fury'])"
+    },
+    {
+      "file": "pdan-B9.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['alolan_vulpix', 'vulpix'], ips: ['pokemon', 'genshin_impact'])"
+    },
+    {
+      "file": "pdan-C15.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "pdan-H29.gif",
+      "old": "网络/网络",
+      "new": "动漫/进击的巨人",
+      "reason": "pixai_corrected (chars: ['bertolt_hoover', 'amuro_ray'], ips: ['shingeki_no_kyojin', 'gundam'])"
+    },
+    {
+      "file": "pdan-2021011228.gif",
+      "old": "动漫/未分类动漫",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "pdan-D6_260613140755.gif",
+      "old": "网络/网络",
+      "new": "游戏/生化危机",
+      "reason": "pixai_corrected (chars: ['chris_redfield'], ips: ['resident_evil'])"
+    },
+    {
+      "file": "pdan-H16.gif",
+      "old": "游戏/原神",
+      "new": "网络/网络",
+      "reason": "pixai_no_match"
+    },
+    {
+      "file": "sogou-搞笑-946F8472E6A5716C0DA5C6C0AF79205A.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "sogou-搞笑-A1719DD603327C6CFBA354DB899B9836.gif",
+      "old": "网络/网络",
+      "new": "游戏/碧蓝航线",
+      "reason": "pixai_corrected (chars: ['manjuu_(azur_lane)'], ips: ['azur_lane'])"
+    },
+    {
+      "file": "sogou-搞笑-EE6BF9DE0445CB0B7BD0F745B94CCA40.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['arare_(kancolle)', 'kishinami_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-搞笑-509584E10989849333C0261757E3F1FA.gif",
+      "old": "网络/网络",
+      "new": "游戏/Fate系列",
+      "reason": "pixai_corrected (chars: ['kayneth_el-melloi_archibald', 'shiina_mayuri'], ips: ['fate/zero', 'fate_(series)', 'steins;gate'])"
+    },
+    {
+      "file": "sogou-搞笑-822CC6FA5030885BBE6EC86E56096475.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['lion_(kemono_friends)', 'san_(mononoke_hime)'], ips: ['kemono_friends', 'mononoke_hime', 'axis_powers_hetalia'])"
+    },
+    {
+      "file": "sogou-搞笑-7C7C8BD314D10665C529D81038C79935.gif",
+      "old": "网络/网络",
+      "new": "游戏/动物森友会",
+      "reason": "pixai_corrected (chars: ['isabelle_(animal_crossing)'], ips: ['animal_crossing'])"
+    },
+    {
+      "file": "sogou-搞笑-F1A3D2235A1CA8B04D36B5AFACC3A349.gif",
+      "old": "网络/网络",
+      "new": "动漫/弹丸论破",
+      "reason": "pixai_corrected (chars: ['monokuma', 'nyon_(cookie)'], ips: ['danganronpa_(series)', 'cookie_(touhou)', 'touhou'])"
+    },
+    {
+      "file": "sogou-搞笑-6E51C85B08655B18FBEDF5731E075F8F.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['hakurei_reimu_(pc-98)', 'hakurei_reimu'], ips: ['touhou', 'touhou_(pc-98)'])"
+    },
+    {
+      "file": "sogou-搞笑-4396568B2809790CC2DCF43880B65835.gif",
+      "old": "网络/网络",
+      "new": "网络/Nijisanji",
+      "reason": "pixai_corrected (chars: ['tsukino_mito'], ips: ['nijisanji'])"
+    },
+    {
+      "file": "sogou-搞笑-E4A2917204642CF9FA2908008EFA8EF9.gif",
+      "old": "网络/网络",
+      "new": "游戏/动物森友会",
+      "reason": "pixai_corrected (chars: ['isabelle_(animal_crossing)'], ips: ['animal_crossing'])"
+    },
+    {
+      "file": "sogou-搞笑-A41BC6AC1AE0956865F8181B6514C0CD.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['enemy_lifebuoy_(kancolle)', 'doraemon_(character)'], ips: ['kantai_collection', 'doraemon', 'mario_(series)'])"
+    },
+    {
+      "file": "sogou-搞笑-66AD795BE748B084E2716E19D854D806.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['shigure_(kancolle)', 'admiral_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-搞笑-A73823E544A52D814F8A28BC022C46A8.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['dawn_(pokemon)', 'gastly'], ips: ['pokemon', 'pokemon_legends:_arceus', 'pokemon_swsh'])"
+    },
+    {
+      "file": "sogou-搞笑-4F54E88D84AE575BC5DC2EF1FE8AF33D.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['magikarp'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-搞笑-D12E359907F6A0D010E9289E8B80BE66.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['sin_sack'], ips: ['touhou'])"
+    },
+    {
+      "file": "sogou-搞笑-8A15A6BEB94BA9ECFE090E58BB461CB5.gif",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['pekomon_(usada_pekora)', 'homu_(honkai_impact)'], ips: ['hololive', 'honkai_(series)', 'honkai_impact_3rd'])"
+    },
+    {
+      "file": "sogou-搞笑-AC689B831DEC4671C78312B2F239336F.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['scorbunny'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-搞笑-E62D40B11DA9CC359631942C1B37158E.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['sin_sack', 'kotobuki_tsumugi'], ips: ['touhou', 'k-on!'])"
+    },
+    {
+      "file": "sogou-搞笑-020A7F906E17C545A064FAA3C1E62806.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['pikachu', 'pichu'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-搞笑-76D5C001E1D0BBDEC14D7D96D4C472B7.gif",
+      "old": "网络/网络",
+      "new": "动漫/轻音少女",
+      "reason": "pixai_corrected (chars: ['hirasawa_yui'], ips: ['k-on!'])"
+    },
+    {
+      "file": "sogou-搞笑-BEF0197529DE324D37F753A7161CB012.gif",
+      "old": "网络/网络",
+      "new": "动漫/阿兹漫画大王",
+      "reason": "pixai_corrected (chars: ['kasuga_ayumu'], ips: ['azumanga_daioh'])"
+    },
+    {
+      "file": "sogou-搞笑-49B66C441B59CE824F96F670B9E65252.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['enemy_lifebuoy_(kancolle)', 'admiral_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-搞笑-01E4D0795AD2E6791E20DE0CCD0D6923.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['psyduck'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-搞笑-D1A32CE46F1CF55B3F05A6FF9D525019.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)', 'kuma_(persona_4)'], ips: ['doraemon', 'persona', 'persona_4'])"
+    },
+    {
+      "file": "sogou-搞笑-ED30EDD284BAE92A11871ECDAE7B6DE1.gif",
+      "old": "网络/网络",
+      "new": "动漫/进击的巨人",
+      "reason": "pixai_corrected (chars: ['titan_(shingeki_no_kyojin)', 'zangief'], ips: ['shingeki_no_kyojin', 'street_fighter'])"
+    },
+    {
+      "file": "sogou-搞笑-A75090667C198594DC4A7768871302ED.gif",
+      "old": "网络/网络",
+      "new": "游戏/少女前线",
+      "reason": "pixai_corrected (chars: [\"kalina_(girls'_frontline)\", \"springfield_(girls'_frontline)\"], ips: [\"girls'_frontline\"])"
+    },
+    {
+      "file": "sogou-搞笑-8B3EEF6A09407BBB9B5D62473BBAC63E.gif",
+      "old": "网络/网络",
+      "new": "动漫/请问您今天要来点兔子吗",
+      "reason": "pixai_corrected (chars: ['tippy_(gochiusa)', 'hoto_cocoa'], ips: ['gochuumon_wa_usagi_desu_ka?'])"
+    },
+    {
+      "file": "sogou-搞笑-12FBAFE5171E75B2A2342B65D9857EC0.gif",
+      "old": "网络/网络",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['pochita_(chainsaw_man)'], ips: ['chainsaw_man'])"
+    },
+    {
+      "file": "sogou-搞笑-C2AC62651EE339415784D2B46CB1F312.gif",
+      "old": "网络/网络",
+      "new": "游戏/女神异闻录",
+      "reason": "pixai_corrected (chars: ['kuma_(persona_4)'], ips: ['persona', 'persona_4'])"
+    },
+    {
+      "file": "sogou-搞笑-5E4071CEEF3842817533F2D262A160C5.gif",
+      "old": "网络/网络",
+      "new": "动漫/电锯人",
+      "reason": "pixai_corrected (chars: ['pochita_(chainsaw_man)', 'kuma_(persona_4)'], ips: ['chainsaw_man', 'persona', 'persona_4'])"
+    },
+    {
+      "file": "sogou-搞笑-734DC76F550BCD4826CF4FD7FDC1C8F5.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)', 'nikki_(nikki)'], ips: ['doraemon', 'nikki_(series)'])"
+    },
+    {
+      "file": "sogou-搞笑-D3B2B90201CF53FCEDDB6E7372CDBAC1.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "sogou-搞笑-047D3B11242FBDF6A97F4E76D91E6FD4.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)', 'hello_kitty_(character)'], ips: ['doraemon', 'hello_kitty', 'sanrio'])"
+    },
+    {
+      "file": "sogou-搞笑-0CA2E162AC8779A081DA609DD04B885F.gif",
+      "old": "网络/网络",
+      "new": "动漫/魔法少女小圆",
+      "reason": "pixai_corrected (chars: ['kaname_madoka', 'tomoe_mami'], ips: ['mahou_shoujo_madoka_magica', 'mahou_shoujo_madoka_magica_(anime)'])"
+    },
+    {
+      "file": "sogou-搞笑-C9FA58D755EB4EC3194D4516859A91C0.gif",
+      "old": "网络/网络",
+      "new": "动漫/阿兹漫画大王",
+      "reason": "pixai_corrected (chars: ['kasuga_ayumu'], ips: ['azumanga_daioh'])"
+    },
+    {
+      "file": "sogou-搞笑-CD86035404FAC2F671793C22540A9248.gif",
+      "old": "网络/网络",
+      "new": "游戏/女神异闻录",
+      "reason": "pixai_corrected (chars: ['adachi_tooru'], ips: ['persona', 'persona_4'])"
+    },
+    {
+      "file": "sogou-搞笑-FAE246BE7F2C84C106851297C587AC84.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "sogou-搞笑-DF681F743670BB633707A3C208F36437.gif",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['inugami_korone', 'bubba_(watson_amelia)'], ips: ['hololive', 'hololive_english'])"
+    },
+    {
+      "file": "sogou-搞笑-1650353896EBC476095424F767CBC144.gif",
+      "old": "网络/网络",
+      "new": "游戏/动物森友会",
+      "reason": "pixai_corrected (chars: ['isabelle_(animal_crossing)'], ips: ['animal_crossing'])"
+    },
+    {
+      "file": "sogou-搞笑-EBAAE4F31E886D7589053DC211C4B1FF.gif",
+      "old": "网络/网络",
+      "new": "游戏/女神异闻录",
+      "reason": "pixai_corrected (chars: ['kawakami_sadayo'], ips: ['persona', 'persona_5'])"
+    },
+    {
+      "file": "sogou-搞笑-D1BF917F0261823EBE15358486A89E87.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['boo_tao_(genshin_impact)', 'boo_(mario)'], ips: ['genshin_impact', 'mario_(series)', 'touhou'])"
+    },
+    {
+      "file": "sogou-搞笑-E60D46410BB712F232B416A45C706C08.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['sin_sack'], ips: ['touhou'])"
+    },
+    {
+      "file": "sogou-搞笑-C8389F3384534C2548A40824A43F78F9.gif",
+      "old": "网络/网络",
+      "new": "游戏/碧蓝航线",
+      "reason": "pixai_corrected (chars: ['manjuu_(azur_lane)', 'mori_calliope'], ips: ['azur_lane', 'hololive', 'hololive_english'])"
+    },
+    {
+      "file": "sogou-熊猫人-801C32ADAB823D61D68808928AB4A9DB.gif",
+      "old": "网络/网络",
+      "new": "网络/Nijisanji",
+      "reason": "pixai_corrected (chars: ['sasaki_saku_(1st_costume)', 'sasaki_saku'], ips: ['nijisanji'])"
+    },
+    {
+      "file": "sogou-熊猫人-2CEB1F223444AADA6A3D6588C076693D.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "sogou-熊猫人-33CCCFD1351EEA47F03646FE7728A65E.gif",
+      "old": "网络/网络",
+      "new": "动漫/黑岩射手",
+      "reason": "pixai_corrected (chars: ['black_rock_shooter_(character)'], ips: ['black_rock_shooter'])"
+    },
+    {
+      "file": "sogou-熊猫人-37D88EE109AF8AF3BEA6109C9DD08EA9.gif",
+      "old": "网络/网络",
+      "new": "动漫/海贼王",
+      "reason": "pixai_corrected (chars: ['brook_(one_piece)'], ips: ['one_piece'])"
+    },
+    {
+      "file": "sogou-猫-A6DB0586067CA31E265250CF17C68CC8.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['rumia'], ips: ['touhou'])"
+    },
+    {
+      "file": "sogou-猫-0306AFF4E69CC67917E4BE22945AA807.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "sogou-猫-C86B810063A5CD01E9FEFB78414E7EE1.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['emolga'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-685DC7FE0D754AD37473F5FF27355CFC.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['psyduck'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-E6D6529A3865C5CB512407B00A92809D.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)', 'pochita_(chainsaw_man)'], ips: ['doraemon', 'chainsaw_man'])"
+    },
+    {
+      "file": "sogou-猫-529C58EA33DF362AA5A46E62E12FA367.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)'], ips: ['doraemon'])"
+    },
+    {
+      "file": "sogou-猫-65F9608210EDD3ED399CF9BB7753867F.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['popplio', 'doraemon_(character)'], ips: ['pokemon', 'doraemon', 'sonic_(series)'])"
+    },
+    {
+      "file": "sogou-猫-CAFF73D83964B6C47344286FF0B6ABBB.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['litten', 'rotom'], ips: ['pokemon', 'onegai_my_melody', 'sanrio'])"
+    },
+    {
+      "file": "sogou-猫-A50832BB740C32A5154DA2A30D6E7A50.gif",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['35p_(sakura_miko)'], ips: ['hololive'])"
+    },
+    {
+      "file": "sogou-猫-E7D746EF6532669C7D62F3BF8BF7EB94.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['maru-yu_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-猫-F59E66EEEC479FA4D51534F45F8F76F6.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['litten'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-9F6315375747C92A6BC447E5C5C038A0.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['maru-yu_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-猫-BBA6A64A644849CD70505ECBE3AD5C0E.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['furret'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-BBA6A64A644849CD70505ECBE3AD5C0E-287.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['furret'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-BBA6A64A644849CD70505ECBE3AD5C0E-289.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['furret'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-6F896BDB47A4163C371A6E669C95EC18.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['arcanine', 'typhlosion'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-FC946AA00987D3D4C50C332DD20BB969.gif",
+      "old": "网络/网络",
+      "new": "游戏/最终幻想",
+      "reason": "pixai_corrected (chars: ['moogle'], ips: ['final_fantasy'])"
+    },
+    {
+      "file": "sogou-猫-92383B9FE6C1114F925C1C7A1DA2B9AC.gif",
+      "old": "网络/网络",
+      "new": "动漫/老虎与兔子",
+      "reason": "pixai_corrected (chars: ['barnaby_brooks_jr.', 'kaburagi_t._kotetsu'], ips: ['tiger_&_bunny'])"
+    },
+    {
+      "file": "sogou-猫-ACEFDB3A1691B639DAFC4477CFB5132F.gif",
+      "old": "网络/网络",
+      "new": "动漫/咒术回战",
+      "reason": "pixai_corrected (chars: [\"zen'in_maki\"], ips: ['jujutsu_kaisen'])"
+    },
+    {
+      "file": "sogou-猫-C712716F8848FD61536444820E3A182B.gif",
+      "old": "网络/网络",
+      "new": "游戏/女神异闻录",
+      "reason": "pixai_corrected (chars: ['kuma_(persona_4)'], ips: ['persona', 'persona_4'])"
+    },
+    {
+      "file": "sogou-猫-8B07F7260F642E76F775535E829621A1.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['guoba_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "sogou-猫-24DAF81502F2A4F91ACA898B1512C107.gif",
+      "old": "网络/网络",
+      "new": "动漫/弹丸论破",
+      "reason": "pixai_corrected (chars: ['hoshi_ryoma'], ips: ['danganronpa_(series)', 'danganronpa_v3:_killing_harmony'])"
+    },
+    {
+      "file": "sogou-猫-0A03AF6B10EE428A05E0BED961106E2A.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['guoba_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "sogou-猫-64C3861E9E72C481866AC8B6FCDB757A.gif",
+      "old": "网络/网络",
+      "new": "动漫/咒术回战",
+      "reason": "pixai_corrected (chars: [\"zen'in_maki\"], ips: ['jujutsu_kaisen'])"
+    },
+    {
+      "file": "sogou-猫-935B80FED3D08D99F54522B70619F19C.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['jigglypuff', 'boo_(mario)'], ips: ['pokemon', 'mario_(series)'])"
+    },
+    {
+      "file": "sogou-猫-E4BE08845AF457F1C0557B64ACC4F33C.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['meowth'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-31D3A8E27C0E5707341B0D4BBD743C66.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['meowth'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-3F7EF0D3603C0A1F7C3B9D06081E9238.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['komeiji_satori'], ips: ['touhou'])"
+    },
+    {
+      "file": "sogou-猫-78BDD59AF5542F801FAA5059C16B72CC.gif",
+      "old": "网络/网络",
+      "new": "游戏/动物森友会",
+      "reason": "pixai_corrected (chars: ['villager_(animal_crossing)'], ips: ['animal_crossing'])"
+    },
+    {
+      "file": "sogou-猫-F59E8C66E7B8C66475B6E1B9654D60B5.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['kagiyama_hina'], ips: ['touhou'])"
+    },
+    {
+      "file": "sogou-猫-778F79315022BFD211BE2CA4D2073855.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['boo_(mario)', 'enemy_lifebuoy_(kancolle)'], ips: ['mario_(series)', 'kantai_collection'])"
+    },
+    {
+      "file": "sogou-猫-6348D0C0255B6B8B17B7A055285F2E81.gif",
+      "old": "网络/网络",
+      "new": "动漫/海贼王",
+      "reason": "pixai_corrected (chars: ['tony_tony_chopper'], ips: ['one_piece'])"
+    },
+    {
+      "file": "sogou-猫-8477308F27595A9BB7EDFE704CED721F.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)', 'meowth'], ips: ['doraemon', 'pokemon'])"
+    },
+    {
+      "file": "sogou-猫-B7E81E4138EFF594C3B2DFF4C147ABE6.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['meowth'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-猫-7918EA2A7E711308E52E56BAE97ECF15.gif",
+      "old": "网络/网络",
+      "new": "动漫/哆啦A梦",
+      "reason": "pixai_corrected (chars: ['doraemon_(character)', 'meowth'], ips: ['doraemon', 'pokemon'])"
+    },
+    {
+      "file": "sogou-猫-3ED1E878911FFA59B400C554D19A58BD.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['guoba_(genshin_impact)', 'kuma_(persona_4)'], ips: ['genshin_impact', 'persona', 'persona_4'])"
+    },
+    {
+      "file": "sogou-猫-D31023A2D7213283F1BEDDDA6DD4F8DC.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['guoba_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "sogou-猫-5AF3822C14EDF71700EFCE4A461DD130.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['guoba_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "sogou-猫-8542B3EB187DB8EDDB13650136F3F15F.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['guoba_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "sogou-猫-2C6A07467FD1F6BE77F627EDF466A641.gif",
+      "old": "网络/网络",
+      "new": "游戏/女神异闻录",
+      "reason": "pixai_corrected (chars: ['kuma_(persona_4)'], ips: ['persona', 'persona_4'])"
+    },
+    {
+      "file": "sogou-猫-25F5467C279CDAD26153BF41959C5B13.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['guoba_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "sogou-猫-34CE7FF38201C76B24E56F60B915A6C9.gif",
+      "old": "网络/网络",
+      "new": "游戏/原神",
+      "reason": "pixai_corrected (chars: ['guoba_(genshin_impact)'], ips: ['genshin_impact'])"
+    },
+    {
+      "file": "sogou-猫-FC68AF99069F718216D7E2010B14887E.gif",
+      "old": "网络/网络",
+      "new": "游戏/动物森友会",
+      "reason": "pixai_corrected (chars: ['isabelle_(animal_crossing)', 'guoba_(genshin_impact)'], ips: ['animal_crossing', 'genshin_impact', 'pokemon'])"
+    },
+    {
+      "file": "sogou-狗-325D4046CA401CD2D026CF5852178629.gif",
+      "old": "网络/网络",
+      "new": "游戏/明日方舟",
+      "reason": "pixai_corrected (chars: ['ceobe_(arknights)'], ips: ['arknights'])"
+    },
+    {
+      "file": "sogou-狗-381A9E835F2B5C711E1672CBA886DCCF.gif",
+      "old": "网络/网络",
+      "new": "游戏/明日方舟",
+      "reason": "pixai_corrected (chars: ['ceobe_(arknights)'], ips: ['arknights'])"
+    },
+    {
+      "file": "sogou-狗-7E6366373E522E341AFA4B3DC40BB42F.gif",
+      "old": "网络/网络",
+      "new": "动漫/我的英雄学院",
+      "reason": "pixai_corrected (chars: ['midoriya_izuku'], ips: ['boku_no_hero_academia'])"
+    },
+    {
+      "file": "sogou-狗-1BA4C41E11C352EAFB3849ABDB13A1E0.gif",
+      "old": "网络/网络",
+      "new": "动漫/火影忍者",
+      "reason": "pixai_corrected (chars: ['hatake_kakashi', 'uzumaki_naruto'], ips: ['naruto_(series)'])"
+    },
+    {
+      "file": "sogou-狗-5BB6B5CF26CAF6F89F2240FA44CC5859.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['typhlosion', 'arcanine'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-狗-B9F2424C5A0FB5036C91B7DC2E7D9F6B.gif",
+      "old": "网络/网络",
+      "new": "游戏/生化危机",
+      "reason": "pixai_corrected (chars: ['leon_s._kennedy'], ips: ['resident_evil'])"
+    },
+    {
+      "file": "sogou-狗-7EB196B55C6066ACE34C6EDE1B6270F0.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['raichu'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-狗-61B36CB672FC52AE3860B9B6E6B1036D.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['koakuma'], ips: ['touhou'])"
+    },
+    {
+      "file": "sogou-狗-C308703D2FC1F69733EB181CBAC2222C.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['ushio_(kancolle)', 'non-human_admiral_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-狗-632EAF234234BBE5DA3DF1F7D6B06D1E.gif",
+      "old": "网络/网络",
+      "new": "动漫/孤独摇滚",
+      "reason": "pixai_corrected (chars: ['ijichi_nijika', 'nishikigi_chisato'], ips: ['bocchi_the_rock!', 'lycoris_recoil'])"
+    },
+    {
+      "file": "sogou-狗-FED300A82FAA5207A2F1BD81300D4A03.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['enemy_lifebuoy_(kancolle)', \"takodachi_(ninomae_ina'nis)\"], ips: ['kantai_collection', 'hololive', 'hololive_english'])"
+    },
+    {
+      "file": "sogou-狗-CF499D76CFE904B553326713040EF76D.gif",
+      "old": "网络/网络",
+      "new": "动漫/孤独摇滚",
+      "reason": "pixai_corrected (chars: ['gotoh_hitori', 'ijichi_nijika'], ips: ['bocchi_the_rock!', 'lycoris_recoil'])"
+    },
+    {
+      "file": "sogou-狗-1B122E11459180998F6E6D385D0E4323.gif",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['gawr_gura'], ips: ['hololive', 'hololive_english'])"
+    },
+    {
+      "file": "sogou-狗-FDD18DC031EF9AC43C3FB331C5696DF2.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['enemy_lifebuoy_(kancolle)', 'non-human_admiral_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-狗-F4819DA2537961C334F0998AEAD7689A.gif",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['gawr_gura'], ips: ['hololive', 'hololive_english'])"
+    },
+    {
+      "file": "sogou-狗-FD5FA168C8F27696DF7C860FAADC721D.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['enemy_lifebuoy_(kancolle)', \"takodachi_(ninomae_ina'nis)\"], ips: ['kantai_collection', 'hololive', 'hololive_english'])"
+    },
+    {
+      "file": "sogou-狗-5F20CC07E4B4E502FA73276D7E238B33.gif",
+      "old": "网络/网络",
+      "new": "网络/Hololive",
+      "reason": "pixai_corrected (chars: ['watson_amelia', 'bubba_(watson_amelia)'], ips: ['hololive', 'hololive_english'])"
+    },
+    {
+      "file": "sogou-狗-D44C56EA1ED240943EB67FA403326687.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['enemy_lifebuoy_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-狗-9925F2FB560CE97491EC7B470354F859.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['riolu', 'doraemon_(character)'], ips: ['pokemon', 'doraemon'])"
+    },
+    {
+      "file": "sogou-可爱-7AD7FE0926298D61E04A2CB54F27B769.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['piplup'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-可爱-756DDE861ED0B0EE4345043B2F4B0E85.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['kongou_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-可爱-7CAF8C3018E6D148ACEB9A564D2CC7BA.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['northern_ocean_princess'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-动漫-D40E785D9689B13ABC56B3B2C2609045.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['ditto', 'gengar'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-动漫-43C186DD06607187AA542F74340733A6.gif",
+      "old": "网络/网络",
+      "new": "动漫/为美好的世界献上祝福",
+      "reason": "pixai_corrected (chars: ['aqua_(konosuba)', 'hoshimachi_suisei'], ips: ['kono_subarashii_sekai_ni_shukufuku_wo!', 'hololive'])"
+    },
+    {
+      "file": "sogou-动漫-EF44A21A567EEF8F375E19D9CD6A7611.gif",
+      "old": "网络/网络",
+      "new": "动漫/为美好的世界献上祝福",
+      "reason": "pixai_corrected (chars: ['aqua_(konosuba)', 'hoshimachi_suisei'], ips: ['kono_subarashii_sekai_ni_shukufuku_wo!', 'hololive', 'hololive_indonesia'])"
+    },
+    {
+      "file": "sogou-动漫-25EBDD50897201B9D005A31C261EEE19.gif",
+      "old": "网络/网络",
+      "new": "动漫/为美好的世界献上祝福",
+      "reason": "pixai_corrected (chars: ['aqua_(konosuba)'], ips: ['kono_subarashii_sekai_ni_shukufuku_wo!'])"
+    },
+    {
+      "file": "sogou-动漫-8CDE9B3A0DE0A2A514BADC1E63CACBD6.gif",
+      "old": "网络/网络",
+      "new": "动漫/请问您今天要来点兔子吗",
+      "reason": "pixai_corrected (chars: ['kafuu_chino', 'tippy_(gochiusa)'], ips: ['gochuumon_wa_usagi_desu_ka?'])"
+    },
+    {
+      "file": "sogou-动漫-0E4A293957EA6E44ADAE6405703A7744.gif",
+      "old": "网络/网络",
+      "new": "游戏/Fate系列",
+      "reason": "pixai_corrected (chars: ['illyasviel_von_einzbern', 'chloe_von_einzbern'], ips: ['fate_(series)', 'fate/kaleid_liner_prisma_illya'])"
+    },
+    {
+      "file": "sogou-动漫-9F21561534CAAFC511124736A30ED556.gif",
+      "old": "网络/网络",
+      "new": "动漫/幸运星",
+      "reason": "pixai_corrected (chars: ['izumi_konata', 'mochizuki_anna'], ips: ['lucky_star', 'idolmaster', 'idolmaster_million_live!'])"
+    },
+    {
+      "file": "sogou-动漫-BB56F426CF64DF7D85C9DACFC0072B9F.gif",
+      "old": "网络/网络",
+      "new": "动漫/轻音少女",
+      "reason": "pixai_corrected (chars: ['hirasawa_yui'], ips: ['k-on!'])"
+    },
+    {
+      "file": "sogou-动漫-E9B94F43DB18E397D035DE623EAFF945.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['kuroshio_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-动漫-4C5DE0135938BFD3E02E262F4F71A665.gif",
+      "old": "网络/网络",
+      "new": "游戏/舰队Collection",
+      "reason": "pixai_corrected (chars: ['yuudachi_kai_ni_(kancolle)', 'yuudachi_(kancolle)'], ips: ['kantai_collection'])"
+    },
+    {
+      "file": "sogou-动漫-052BF49C3267E8CF508B642155021118.gif",
+      "old": "网络/网络",
+      "new": "游戏/勇者斗恶龙",
+      "reason": "pixai_corrected (chars: ['slime_(dragon_quest)'], ips: ['dragon_quest'])"
+    },
+    {
+      "file": "sogou-动漫-B5ACD05812CE5883B4BF4989B4C2E7D8.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['komeiji_satori'], ips: ['touhou'])"
+    },
+    {
+      "file": "sogou-游戏-95881BC685FC75A094601E6873F7D9D3.gif",
+      "old": "网络/网络",
+      "new": "游戏/东方Project",
+      "reason": "pixai_corrected (chars: ['sin_sack'], ips: ['touhou'])"
+    },
+    {
+      "file": "sogou-摸鱼-8B3DBE04EBF8D8837A295AE622C98AEE.gif",
+      "old": "网络/网络",
+      "new": "动漫/海贼王",
+      "reason": "pixai_corrected (chars: ['monkey_d._luffy'], ips: ['one_piece'])"
+    },
+    {
+      "file": "sogou-摸鱼-0970F9B715E1F7C3D95B2B5876F302DD.gif",
+      "old": "网络/网络",
+      "new": "游戏/宝可梦",
+      "reason": "pixai_corrected (chars: ['magikarp', 'squirtle'], ips: ['pokemon'])"
+    },
+    {
+      "file": "sogou-日常-8B513A642C74599C00563D1CC499AEE9.gif",
+      "old": "网络/网络",
+      "new": "游戏/女神异闻录",
+      "reason": "pixai_corrected (chars: ['kuma_(persona_4)'], ips: ['persona', 'persona_4'])"
+    },
+    {
+      "file": "sogou-比心-E9F2A93A1F759FDD80AF0C44CC33E041.gif",
+      "old": "网络/网络",
+      "new": "动漫/进击的巨人",
+      "reason": "pixai_corrected (chars: ['bertolt_hoover'], ips: ['shingeki_no_kyojin'])"
+    },
+    {
+      "file": "sogou-比心-D1731C141E209A535A41FC6574A0B6FB.gif",
+      "old": "网络/网络",
+      "new": "动漫/JOJO的奇妙冒险",
+      "reason": "pixai_corrected (chars: ['kira_yoshikage'], ips: ['diamond_wa_kudakenai', 'jojo_no_kimyou_na_bouken'])"
+    },
+    {
+      "file": "sogou-比心-8C21BC0917F838F26ED917115E71B886.gif",
+      "old": "网络/网络",
+      "new": "动漫/一拳超人",
+      "reason": "pixai_corrected (chars: ['saitama_(one-punch_man)'], ips: ['one-punch_man'])"
+    },
+    {
+      "file": "sogou-比心-EC38D6881A2513972619A9514B4F2D16.gif",
+      "old": "网络/网络",
+      "new": "动漫/一拳超人",
+      "reason": "pixai_corrected (chars: ['saitama_(one-punch_man)'], ips: ['one-punch_man'])"
+    },
+    {
+      "file": "sogou-比心-EC38D6881A2513972619A9514B4F2D16-79.gif",
+      "old": "网络/网络",
+      "new": "动漫/一拳超人",
+      "reason": "pixai_corrected (chars: ['saitama_(one-punch_man)'], ips: ['one-punch_man'])"
+    },
+    {
+      "file": "sogou-比心-8C21BC0917F838F26ED917115E71B886-80.gif",
+      "old": "网络/网络",
+      "new": "动漫/一拳超人",
+      "reason": "pixai_corrected (chars: ['saitama_(one-punch_man)'], ips: ['one-punch_man'])"
+    }
+  ]
+}
