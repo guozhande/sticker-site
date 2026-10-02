@@ -1,5 +1,9 @@
 name: Deploy to GitHub Pages
 
+# ⚠️ 2026-10-02：站点已设为私密。
+# 这份 GitHub Pages 是 Cloudflare 之外的公开副本，没有访问控制能力，
+# 所以这里改成「只发布一个占位页」，把原来公开的内容盖掉。
+# 将来要恢复公开镜像：把下面 upload-pages-artifact 的 path 改回 '.' 即可。
 on:
   push:
     branches: [master, gh-pages]
@@ -22,9 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: 只准备占位页（不发布站点内容）
+        run: |
+          mkdir -p _public
+          cp .github/placeholder.html _public/index.html
+          ls -la _public
+
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_public'
       - id: deployment
         uses: actions/deploy-pages@v4
