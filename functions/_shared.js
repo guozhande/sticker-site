@@ -51,6 +51,23 @@ export async function sha256Hex(text) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+/**
+ * 口令校验 —— 和根目录 `functions/[[path]].js` 用的是同一套规则。
+ *
+ * ⚠️ 为什么 api/ 和 img/ 要各自再查一遍：Pages 的路由规则是「更具体的路由优先」，
+ * `functions/api/[[path]].js` 比根 catch-all 更具体，所以**它不会经过根门的检查**。
+ * 不在这儿补一遍，上传接口就是敞开的。
+ */
+export function isAuthorized(request, env) {
+  const key = env.ACCESS_KEY;
+  if (!key) return true;                       // 没配口令就不拦
+  const url = new URL(request.url);
+  if (url.searchParams.get("k") === key) return true;
+  const cookie = request.headers.get("Cookie") ?? "";
+  if (cookie.split(";").some((c) => c.trim() === `sticker_key=${key}`)) return true;
+  return request.headers.get("X-Access-Key") === key;
+}
+
 /** 清洗用户输入的标签：去空白、限长、去重。 */
 function cleanLabels(raw, maxLen) {
   const list = Array.isArray(raw) ? raw : [raw];
