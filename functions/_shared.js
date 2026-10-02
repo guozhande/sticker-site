@@ -9,7 +9,24 @@
 
 // ---- 限制 ----
 export const MAX_BYTES = 8 * 1024 * 1024;          // 单文件 8MB
-const ALLOWED_MIME = new Set(["image/gif", "image/jpeg", "image/png", "image/webp"]);
+/**
+ * 按**文件头**判断真实格式，不信任客户端声明的 MIME。
+ *
+ * 只认这四种：GIF 动图 / JPEG / PNG / WebP。
+ * 不做这一步的话，.exe 改名成 .gif 再声明 image/gif 就能传上来。
+ *
+ * 返回真实的 MIME；不是这四种就返回 null。
+ */
+async function detectImageType(file) {
+  const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+  const at = (text, offset) => [...text].every((ch, i) => head[offset + i] === ch.charCodeAt(0));
+
+  if (at("GIF87a", 0) || at("GIF89a", 0)) return "image/gif";
+  if (head[0] === 0xff && head[1] === 0xd8 && head[2] === 0xff) return "image/jpeg";
+  if (head[0] === 0x89 && at("PNG", 1) && head[4] === 0x0d) return "image/png";
+  if (at("RIFF", 0) && at("WEBP", 8)) return "image/webp";
+  return null;
+}
 const EXT_OF = { "image/gif": "gif", "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 const MAX_WORK_LEN = 60;
 const MAX_CHAR_LEN = 40;
@@ -51,15 +68,31 @@ export async function sha256Hex(text) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-/** 清洗用户输入的标签：去空白、限长、去重。 */
+/** 清洗用户输入的标签：去掉能进 HTML 的字符、限长、去重。 */
 function cleanLabels(raw, maxLen) {
   const list = Array.isArray(raw) ? raw : [raw];
   const out = [];
   for (const item of list) {
-    const s = String(item ?? "").replace(/[\r\n\t]+/g, " ").trim().slice(0, maxLen);
+    // 这些字符会被拼进网页的 HTML 里（卡片标签、alt、data-*），必须去掉，
+    // 否则起个 `<img src=x onerror=...>` 的名字就是 XSS。
+    const s = String(item ?? "")
+      .replace(/[\r\n\t<>"'`\\&=]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, maxLen);
     if (s && !out.includes(s)) out.push(s);
   }
   return out;
+}
+
+/** 清洗文件名：同样的道理，它会出现在网页的 data-filename 上。 */
+function cleanFilename(name) {
+  return (
+    String(name ?? "")
+      .replace(/[\r\n\t<>"'`\\/]+/g, "_")
+      .replace(/_{2,}/g, "_")
+      .slice(0, 120) || "upload"
+  );
 }
 
 function rowToItem(row) {
@@ -87,8 +120,10 @@ export async function handleUpload(request, env, origin) {
   if (file.size === 0) return fail("文件为空", 400, origin);
   if (file.size > MAX_BYTES) return fail(`文件超过 ${MAX_BYTES / 1024 / 1024}MB`, 413, origin);
 
-  const mime = file.type || "application/octet-stream";
-  if (!ALLOWED_MIME.has(mime)) return fail(`不支持的格式：${mime}`, 415, origin);
+  const mime = await detectImageType(file);
+  if (!mime) {
+    return fail("只支持图片和 GIF 动图（GIF / JPG / PNG / WebP）", 415, origin);
+  }
 
   const work = cleanLabels(form.get("work"), MAX_WORK_LEN)[0];
   if (!work) return fail("作品名不能为空", 400, origin);
@@ -120,7 +155,7 @@ export async function handleUpload(request, env, origin) {
       "INSERT INTO uploads (id, r2_key, filename, mime, size, work, characters, created_at, ip_hash, status) " +
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'visible')"
     )
-    .bind(id, r2Key, file.name.slice(0, 200), mime, file.size, work, JSON.stringify(characters), Date.now(), ipHash)
+    .bind(id, r2Key, cleanFilename(file.name), mime, file.size, work, JSON.stringify(characters), Date.now(), ipHash)
     .run();
 
   return json({ ok: true, id, url: `/img/${r2Key}`, work, characters }, { origin });
