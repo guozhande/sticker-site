@@ -52,6 +52,7 @@
   <div class="search-bar">
     <input type="text" id="search" placeholder="搜索表情包..." autocomplete="off">
     <button id="search-btn">🔍</button>
+    <div class="search-suggest" id="search-suggest" hidden></div>
   </div>
 </header>
 
@@ -72,6 +73,9 @@
 <main class="gallery" id="gallery">
   <div class="loading">加载中...</div>
 </main>
+
+<!-- 固定分页页码条（每页 100 张；总页数 <= 1 时由脚本清空隐藏） -->
+<nav class="pagination" id="pagination" aria-label="分页"></nav>
 
 <div class="toast" id="toast"></div>
 
@@ -101,6 +105,7 @@
 </footer>
 
 <script src="js/config.js"></script>
+<script src="js/fuzzy.js"></script>
 <script src="js/app.js"></script>
 <!-- 上传入口暂未开放（见上方说明）。
      恢复时取消下面这行注释，并把 #upload-entry 那行也取消注释。 -->
