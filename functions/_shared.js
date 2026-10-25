@@ -40,7 +40,7 @@ const AI_PROMPT_MAX = 500;                         // 提示词最大长度
 const AI_SIZES = new Set(["1K", "2K"]);            // size 白名单
 const AI_MODEL = "doubao-seedream-5-0-pro-260628";
 const ARK_IMAGES_URL = "https://ark.cn-beijing.volces.com/api/v3/images/generations";
-const AI_FETCH_TIMEOUT_MS = 60_000;                // 生成 / 下载图 各自 60s 超时
+const AI_FETCH_TIMEOUT_MS = 180_000;              // 生成 / 下载图 各自 180s 超时（CF edge 到 ark.cn-beijing 实测慢，60s 会误杀）
 const AI_EXT_OF = { jpeg: "jpg", png: "png" };     // output_format → 文件扩展名
 const AI_MIME_OF = { jpg: "image/jpeg", png: "image/png" };
 
