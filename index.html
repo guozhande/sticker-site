@@ -49,13 +49,26 @@
 </section>
 
 <header class="header">
+  <button id="menu-btn" class="menu-btn" type="button" aria-label="菜单" aria-expanded="false" aria-controls="menu-drawer">
+    <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
+  </button>
   <div class="search-bar">
     <input type="text" id="search" placeholder="搜索表情包..." autocomplete="off">
     <button id="search-btn">🔍</button>
     <div class="search-suggest" id="search-suggest" hidden></div>
   </div>
-  <a class="maker-entry" href="maker/" aria-label="自制表情制作器">🎨 制作</a>
 </header>
+
+<nav class="menu-drawer" id="menu-drawer" aria-label="站点菜单">
+  <div class="menu-section-label">制作</div>
+  <button class="menu-group" id="menu-group-manual" type="button" aria-expanded="false">手工制作 <span class="menu-arrow">▸</span></button>
+  <div class="menu-sub" id="menu-sub-manual">
+    <button class="menu-item" id="menu-tpl" type="button">模板制作</button>
+    <a class="menu-item" href="maker/">自定义制作 <span class="menu-note">· 可导入相册图片</span></a>
+  </div>
+  <button class="menu-item" id="menu-ai" type="button">AI 制作</button>
+</nav>
+<div class="menu-backdrop" id="menu-backdrop" hidden></div>
 
 <nav class="primary-nav">
   <button class="primary-btn active" data-cat="主页">主页</button>
@@ -108,6 +121,7 @@
 <script src="js/config.js"></script>
 <script src="js/fuzzy.js"></script>
 <script src="js/app.js"></script>
+<script src="js/menu.js"></script>
 <!-- 上传入口暂未开放（见上方说明）。
      恢复时取消下面这行注释，并把 #upload-entry 那行也取消注释。 -->
 <!-- <script src="js/upload.js"></script> -->

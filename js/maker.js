@@ -38,6 +38,7 @@
   const ERASER_WIDTH = 16;                    // 橡皮固定笔宽
   const STROKE_WIDTH = 2;                     // 白/黑描边固定 2px
   const BLACK = '#333333';                    // 面板「黑」（与色盘同款）
+  const DEFAULT_SIZE = 240;                   // 启动默认画布边长（微信表情规格）；尺寸可随时从菜单第一项改
 
   // ---------- 状态 ----------
   let canvas = null;
@@ -218,6 +219,7 @@
     // 第 21 次操作后把锚点挤掉、无法撤销回初始空画布。S0 永远留在 index 0。
     if (undoStack.length > UNDO_LIMIT + 1) undoStack.splice(1, 1);
     dirty = true;
+    syncDirtyBridge();
     ensureButtons();
   }
 
@@ -233,6 +235,7 @@
         await canvas.loadFromJSON(JSON.parse(target));
       } finally { suppressUndo = false; }
       dirty = canvas.getObjects().length > 0;
+      syncDirtyBridge();
       canvas.discardActiveObject();       // loadFromJSON→clear 不自动丢选中，防幽灵选中残留
       renderPanel();
       canvas.requestRenderAll();
@@ -262,6 +265,7 @@
     for (const url of objectUrls) URL.revokeObjectURL(url);   // ③ 统一 revoke（此刻无快照再引用）
     objectUrls.clear();
     dirty = false;
+    syncDirtyBridge();
     canvas.discardActiveObject();   // ④ v6 clear 不自动丢选中，防幽灵选中残留
     renderPanel();
     canvas.requestRenderAll();
@@ -274,7 +278,6 @@
   }
 
   function requestSize(w, h) {
-    if (!canvas) { initCanvas(w, h); closeModal('mk-size-modal'); return; }
     if (canvas.getObjects().length > 0) {
       openConfirm('切换尺寸？', '切换画布尺寸会清空画布上的所有内容。', '切换', () => applySize(w, h));
       return;
@@ -292,7 +295,6 @@
 
   function showSizeModal() {
     showModal('mk-size-modal');
-    $('mk-size-cancel').hidden = !canvas;   // 首次进入必须选尺寸，不给取消
     $('mk-cw').value = '';
     $('mk-ch').value = '';
   }
@@ -395,17 +397,59 @@
     return blob;
   }
 
+  // ---------- 导出 PNG：浏览器 a[download] / App WebView 分块桥 ----------
+  let bridgeSaving = false;   // 分块协议防重入：协议要求独占缓冲，连点导出只提示不并发
+
+  /** App WebView 脏状态同步：Android WebView 不派发 beforeunload，App 靠此感知丢稿风险 */
+  function syncDirtyBridge() {
+    window.AndroidBridge?.setDirty(!!(dirty && canvas && canvas.getObjects().length));
+  }
+
+  /** App 桥分块保存：单块 ≤128KB（base64 经 Binder 以 UTF-16 传输后约 256KB，远低于 ~1MB 事务上限），
+   *  1000×1000 复杂 PNG（数 MB）也不会触发 TransactionTooLargeException，故不设体积上限。
+   *  savePngEnd 同步返回保存结果（@JavascriptInterface 返回值同步回传 JS）——只有 true 才清 dirty。 */
+  function bridgeSavePng(blob, name) {
+    return new Promise((resolve) => {
+      const fr = new FileReader();
+      fr.onload = () => {
+        try {
+          const dataUrl = String(fr.result);
+          const b64 = dataUrl.slice(dataUrl.indexOf('base64,') + 7);
+          const CHUNK = 128 * 1024;                     // 分块长度（Binder 事务护栏）
+          window.AndroidBridge.savePngStart(name, Math.ceil(b64.length / CHUNK));
+          for (let i = 0; i < b64.length; i += CHUNK) {
+            window.AndroidBridge.savePngChunk(Math.floor(i / CHUNK), b64.slice(i, i + CHUNK));
+          }
+          resolve(window.AndroidBridge.savePngEnd(name) === true);
+        } catch (err) { resolve(false); }
+      };
+      fr.onerror = () => resolve(false);
+      fr.readAsDataURL(blob);
+    });
+  }
+
   async function exportPng() {
+    if (bridgeSaving) return toast('正在保存，请稍候');
     try {   // 不捕获会成 unhandled promise rejection：用户看到「点了导出没反应」而非提示
       const blob = await canvasToPngBlob();
-      const url = URL.createObjectURL(blob);   // 导出临时 URL，用后即 revoke（不动导入集合）
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `sticker_${stamp()}.png`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      const name = `sticker_${stamp()}.png`;
+      if (window.AndroidBridge?.savePngChunk) {   // App WebView：分块交给原生保存到相册
+        let saved;
+        bridgeSaving = true;
+        try { saved = await bridgeSavePng(blob, name); } finally { bridgeSaving = false; }
+        if (!saved) return toast('保存失败，请重试');   // R15：失败不清脏，退出仍提示丢稿
+      } else {                                     // 浏览器：a[download]（不限体积，无需护栏）
+        const url = URL.createObjectURL(blob);     // 导出临时 URL，用后即 revoke（不动导入集合）
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      }
+      dirty = false;                        // R14/R15：只有保存成功才清脏（失败已在上面 return）
+      syncDirtyBridge();
     } catch (err) {
       toast('导出失败，请重试');
     }
@@ -448,6 +492,7 @@
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
       dirty = false;
+      syncDirtyBridge();
       closeModal('mk-upload-modal');
       showUploadSuccess(work.trim());
     } catch (err) {
@@ -477,6 +522,29 @@
     const over = screenBottom - vv.height * 0.6;   // 对象底部越入可视区下 40%
     stageShift.style.transform = over > 0 ? `translateY(${-Math.min(over, vv.height * 0.5)}px)` : '';
   }
+
+  // ---------- 汉堡菜单 ----------
+  const $mkMenu = $('mk-menu');
+  const $mkMenuBtn = $('mk-menu-btn');
+  const $mkMenuBackdrop = $('mk-menu-backdrop');
+  function openMenu() {
+    if (canvas) canvas.discardActiveObject();   // R12：退出文本编辑/收起键盘，防抽屉与编辑态冲突
+    $mkMenu.classList.add('open');
+    $mkMenuBackdrop.hidden = false;
+    $mkMenuBtn.setAttribute('aria-expanded', 'true');
+  }
+  function closeMenu() {
+    $mkMenu.classList.remove('open');
+    $mkMenuBackdrop.hidden = true;
+    $mkMenuBtn.setAttribute('aria-expanded', 'false');
+  }
+  $mkMenuBtn.addEventListener('click', () => ($mkMenu.classList.contains('open') ? closeMenu() : openMenu()));
+  $mkMenuBackdrop.addEventListener('click', closeMenu);
+  // R7：捕获阶段关闭。disabled 按钮（撤销/删除/导出灰态）点击被浏览器重定向到容器（target=$mkMenu），
+  // 目标/冒泡阶段监听收不到，捕获阶段能收到——点灰项菜单也收起、不显「卡死」。
+  // 捕获先于目标执行：菜单先关，叶子项自身动作（showSizeModal 等）随后照常执行，互不依赖。
+  $mkMenu.addEventListener('click', closeMenu, true);
+  closeMenu();   // R1：载入兜底（HTML 已带 hidden 属性，双保险）
 
   // ---------- 事件绑定 ----------
   $('mk-size-btn').addEventListener('click', showSizeModal);
@@ -561,18 +629,18 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    for (const id of ['mk-confirm-modal', 'mk-upload-modal', 'mk-success-modal']) {
+    if ($mkMenu.classList.contains('open')) return closeMenu();   // 优先级：抽屉 > 弹窗
+    for (const id of ['mk-size-modal', 'mk-confirm-modal', 'mk-upload-modal', 'mk-success-modal']) {
       if ($(id).classList.contains('show')) return closeModal(id);
     }
-    const sizeModal = $('mk-size-modal');
-    if (sizeModal.classList.contains('show') && canvas) closeModal('mk-size-modal');   // 首次进入必须选尺寸
   });
 
   window.addEventListener('beforeunload', (e) => {
+    syncDirtyBridge();   // Android WebView 不派发本事件：靠 setDirty 桥让 App 端感知
     if (dirty && canvas && canvas.getObjects().length) { e.preventDefault(); e.returnValue = ''; }
   });
 
   // ---------- 启动 ----------
-  ensureButtons();   // 画布未建：初始全部禁用
-  showSizeModal();   // 首次进入：弹「选择画布尺寸」
+  initCanvas(DEFAULT_SIZE, DEFAULT_SIZE);   // 默认 240×240 直启可用；initCanvas 内部已 ensureButtons()
+  syncDirtyBridge();                        // App 端初始置非脏
 })();

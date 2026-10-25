@@ -12,11 +12,12 @@
 
 <div class="mk-app">
 
-  <!-- ====== 顶栏 ====== -->
+  <!-- ====== 顶栏：汉堡菜单入口 / 标题 / 上传 ====== -->
   <header class="mk-topbar">
-    <a class="mk-back" href="../" aria-label="返回主页">‹</a>
+    <button class="mk-menu-btn" id="mk-menu-btn" type="button" aria-label="菜单" aria-expanded="false" aria-controls="mk-menu">
+      <span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span>
+    </button>
     <h1 class="mk-title">自制表情</h1>
-    <button class="mk-top-btn" id="mk-size-btn" type="button">尺寸</button>
     <button class="mk-top-btn mk-top-primary" id="mk-upload" type="button">上传</button>
   </header>
 
@@ -86,19 +87,23 @@
       </div>
     </div>
   </main>
-
-  <!-- ====== 底部工具栏（横滚，触控按钮 ≥44px） ====== -->
-  <nav class="mk-toolbar" aria-label="制作工具">
-    <button class="mk-tool-btn" id="mk-import" type="button">🖼 导入</button>
-    <button class="mk-tool-btn" id="mk-text" type="button">A 文字</button>
-    <button class="mk-tool-btn" id="mk-pen" type="button">✏️ 画笔</button>
-    <button class="mk-tool-btn" id="mk-eraser" type="button">🧽 橡皮</button>
-    <button class="mk-tool-btn" id="mk-undo" type="button">↩ 撤销</button>
-    <button class="mk-tool-btn" id="mk-del" type="button">🗑 删除</button>
-    <button class="mk-tool-btn" id="mk-clear" type="button">🧹 清空</button>
-    <button class="mk-tool-btn" id="mk-export" type="button">⬇ 导出</button>
-  </nav>
 </div>
+
+<!-- ====== 汉堡菜单：全部制作工具统一入口（顺序：尺寸/导入/文字/画笔/橡皮/撤销/删除/清空/导出/返回） ====== -->
+<nav class="mk-menu" id="mk-menu" aria-label="制作工具菜单">
+  <button class="mk-menu-item" id="mk-size-btn" type="button">📐 选择画布尺寸</button>
+  <button class="mk-menu-item" id="mk-import" type="button">🖼 导入图片</button>
+  <button class="mk-menu-item" id="mk-text" type="button">A 文字</button>
+  <button class="mk-menu-item" id="mk-pen" type="button">✏️ 画笔</button>
+  <button class="mk-menu-item" id="mk-eraser" type="button">🧽 橡皮</button>
+  <button class="mk-menu-item" id="mk-undo" type="button">↩ 撤销</button>
+  <button class="mk-menu-item" id="mk-del" type="button">🗑 删除</button>
+  <button class="mk-menu-item" id="mk-clear" type="button">🧹 清空</button>
+  <button class="mk-menu-item" id="mk-export" type="button">⬇ 导出PNG</button>
+  <hr class="mk-menu-sep">
+  <a class="mk-menu-item" href="../" aria-label="返回主页">‹ 返回主页</a>
+</nav>
+<div class="mk-menu-backdrop" id="mk-menu-backdrop" hidden></div>
 
 <!-- 导入图片的隐藏文件框（移动端弹系统相册/相机选择器） -->
 <input type="file" accept="image/*" id="mk-file" hidden>

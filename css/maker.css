@@ -30,19 +30,6 @@ body.mk-page {
   border-bottom: 1px solid var(--border);
 }
 
-.mk-back {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  font-size: 30px;
-  line-height: 1;
-  color: var(--text);
-  text-decoration: none;
-}
-
 .mk-title {
   flex: 1;
   font-size: 17px;
@@ -183,56 +170,24 @@ body.mk-page {
   display: block;
 }
 
-/* ---- 底部工具栏 ---- */
-.mk-toolbar {
-  flex-shrink: 0;
-  display: flex;
-  gap: 8px;
-  padding: 8px 12px;
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
-  background: var(--card-bg);
-  border-top: 1px solid var(--border);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent) var(--border);
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-}
-
-.mk-toolbar::-webkit-scrollbar { height: 4px; }
-.mk-toolbar::-webkit-scrollbar-track { background: var(--border); border-radius: 2px; }
-.mk-toolbar::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
-
-.mk-tool-btn {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  min-width: 56px;
-  height: 44px;                /* 触控最小尺寸 */
-  padding: 0 12px;
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  background: var(--card-bg);
-  font-size: 13px;
-  color: var(--text);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.mk-tool-btn.active {          /* 画笔/橡皮激活态 */
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
-
-.mk-tool-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+/* ---- 汉堡菜单（工具统一入口） ---- */
+.mk-menu-btn { flex-shrink:0; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:4px; width:44px; height:44px; border:none;
+  background:transparent; cursor:pointer; }
+.mk-menu-btn .menu-bar { width:18px; height:2px; background:var(--text); border-radius:1px; }
+.mk-menu { position:fixed; top:0; left:0; bottom:0; width:min(280px,82vw);
+  background:var(--card-bg); z-index:900; transform:translateX(-100%);
+  transition:transform .22s ease; padding:12px; overflow-y:auto;
+  display:flex; flex-direction:column; gap:2px; }
+.mk-menu.open { transform:translateX(0); }
+.mk-menu-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:899; }
+.mk-menu-item { display:flex; align-items:center; gap:8px; width:100%; min-height:44px;
+  padding:0 14px; border:none; border-radius:8px; background:transparent;
+  font-size:15px; color:var(--text); text-decoration:none; cursor:pointer; text-align:left; }
+.mk-menu-item:hover { background:var(--bg); }
+.mk-menu-item.active { background:var(--accent); color:#fff; }
+.mk-menu-item:disabled { opacity:.45; cursor:not-allowed; }
+.mk-menu-sep { border:none; border-top:1px solid var(--border); margin:6px 8px; }
 
 /* ---- 尺寸选择弹窗 ---- */
 .mk-size-presets {
