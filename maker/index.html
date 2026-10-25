@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="自制表情 - 我的表情。自由绘画、写字、导入图片，制作自己的专属表情并导出 PNG 或上传到站。">
+<title>自制表情 - 我的表情</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/maker.css">
+</head>
+<body class="mk-page">
+
+<div class="mk-app">
+
+  <!-- ====== 顶栏 ====== -->
+  <header class="mk-topbar">
+    <a class="mk-back" href="../" aria-label="返回主页">‹</a>
+    <h1 class="mk-title">自制表情</h1>
+    <button class="mk-top-btn" id="mk-size-btn" type="button">尺寸</button>
+    <button class="mk-top-btn mk-top-primary" id="mk-upload" type="button">上传</button>
+  </header>
+
+  <!-- ====== 上下文面板：画笔/橡皮激活或选中文字时显示相关一组 ====== -->
+  <div class="mk-panel" id="mk-panel" hidden>
+
+    <!-- 画笔/橡皮激活 -->
+    <div class="mk-panel-group" id="mk-panel-draw" hidden>
+      <span class="mk-panel-label">画笔颜色</span>
+      <div class="mk-swatches" id="mk-draw-swatches">
+        <button type="button" class="mk-swatch" data-color="#333333" style="background:#333333" aria-label="深灰"></button>
+        <button type="button" class="mk-swatch" data-color="#e53935" style="background:#e53935" aria-label="红"></button>
+        <button type="button" class="mk-swatch" data-color="#fb8c00" style="background:#fb8c00" aria-label="橙"></button>
+        <button type="button" class="mk-swatch" data-color="#fdd835" style="background:#fdd835" aria-label="黄"></button>
+        <button type="button" class="mk-swatch" data-color="#43a047" style="background:#43a047" aria-label="绿"></button>
+        <button type="button" class="mk-swatch" data-color="#1e88e5" style="background:#1e88e5" aria-label="蓝"></button>
+        <button type="button" class="mk-swatch" data-color="#8e24aa" style="background:#8e24aa" aria-label="紫"></button>
+        <button type="button" class="mk-swatch" data-color="#ffffff" style="background:#ffffff" aria-label="白"></button>
+      </div>
+      <span class="mk-panel-label">笔宽</span>
+      <div class="mk-opts" id="mk-draw-widths">
+        <button type="button" class="mk-opt" data-width="3">细 3</button>
+        <button type="button" class="mk-opt" data-width="8">中 8</button>
+        <button type="button" class="mk-opt" data-width="16">粗 16</button>
+      </div>
+      <!-- 橡皮固定白 16，不显示色盘/笔宽 -->
+      <span class="mk-eraser-hint" id="mk-eraser-hint" hidden>橡皮：白色笔宽 16（白底上等于擦除）</span>
+    </div>
+
+    <!-- 选中文字对象 -->
+    <div class="mk-panel-group" id="mk-panel-text" hidden>
+      <span class="mk-panel-label">字号</span>
+      <div class="mk-opts" id="mk-font-sizes">
+        <button type="button" class="mk-opt" data-size="12">12</button>
+        <button type="button" class="mk-opt" data-size="16">16</button>
+        <button type="button" class="mk-opt" data-size="20">20</button>
+        <button type="button" class="mk-opt" data-size="24">24</button>
+        <button type="button" class="mk-opt" data-size="32">32</button>
+        <button type="button" class="mk-opt" data-size="48">48</button>
+        <button type="button" class="mk-opt" data-size="64">64</button>
+      </div>
+      <span class="mk-panel-label">颜色</span>
+      <div class="mk-swatches" id="mk-text-swatches">
+        <button type="button" class="mk-swatch" data-color="#333333" style="background:#333333" aria-label="深灰"></button>
+        <button type="button" class="mk-swatch" data-color="#e53935" style="background:#e53935" aria-label="红"></button>
+        <button type="button" class="mk-swatch" data-color="#fb8c00" style="background:#fb8c00" aria-label="橙"></button>
+        <button type="button" class="mk-swatch" data-color="#fdd835" style="background:#fdd835" aria-label="黄"></button>
+        <button type="button" class="mk-swatch" data-color="#43a047" style="background:#43a047" aria-label="绿"></button>
+        <button type="button" class="mk-swatch" data-color="#1e88e5" style="background:#1e88e5" aria-label="蓝"></button>
+        <button type="button" class="mk-swatch" data-color="#8e24aa" style="background:#8e24aa" aria-label="紫"></button>
+        <button type="button" class="mk-swatch" data-color="#ffffff" style="background:#ffffff" aria-label="白"></button>
+      </div>
+      <span class="mk-panel-label">描边</span>
+      <div class="mk-opts" id="mk-stroke-opts">
+        <button type="button" class="mk-opt" data-stroke="none">无</button>
+        <button type="button" class="mk-opt" data-stroke="white">白描边</button>
+        <button type="button" class="mk-opt" data-stroke="black">黑描边</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== 画布区（flex:1 居中；stage-shift 为 iOS 键盘位移层） ====== -->
+  <main class="stage" id="stage">
+    <div class="stage-shift" id="stage-shift">
+      <div class="stage-inner" id="stage-inner">
+        <canvas id="mk-canvas" width="240" height="240"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <!-- ====== 底部工具栏（横滚，触控按钮 ≥44px） ====== -->
+  <nav class="mk-toolbar" aria-label="制作工具">
+    <button class="mk-tool-btn" id="mk-import" type="button">🖼 导入</button>
+    <button class="mk-tool-btn" id="mk-text" type="button">A 文字</button>
+    <button class="mk-tool-btn" id="mk-pen" type="button">✏️ 画笔</button>
+    <button class="mk-tool-btn" id="mk-eraser" type="button">🧽 橡皮</button>
+    <button class="mk-tool-btn" id="mk-undo" type="button">↩ 撤销</button>
+    <button class="mk-tool-btn" id="mk-del" type="button">🗑 删除</button>
+    <button class="mk-tool-btn" id="mk-clear" type="button">🧹 清空</button>
+    <button class="mk-tool-btn" id="mk-export" type="button">⬇ 导出</button>
+  </nav>
+</div>
+
+<!-- 导入图片的隐藏文件框（移动端弹系统相册/相机选择器） -->
+<input type="file" accept="image/*" id="mk-file" hidden>
+
+<!-- ====== 选择画布尺寸 ====== -->
+<div class="up-overlay" id="mk-size-modal" role="dialog" aria-modal="true">
+  <div class="up-dialog">
+    <h3 class="up-title">选择画布尺寸</h3>
+    <div class="mk-size-presets">
+      <button type="button" class="mk-size-preset" data-w="240" data-h="240">
+        <span class="mk-size-name">240 × 240</span>
+        <span class="mk-size-desc">微信表情（默认）</span>
+      </button>
+      <button type="button" class="mk-size-preset" data-w="500" data-h="500">
+        <span class="mk-size-name">500 × 500</span>
+        <span class="mk-size-desc">自由高清</span>
+      </button>
+    </div>
+    <div class="mk-size-custom">
+      <span class="up-label">自定义（64–1000 整数，两格必填）</span>
+      <div class="mk-size-inputs">
+        <input type="number" id="mk-cw" min="64" max="1000" inputmode="numeric" placeholder="宽">
+        <span class="mk-size-times">×</span>
+        <input type="number" id="mk-ch" min="64" max="1000" inputmode="numeric" placeholder="高">
+        <button type="button" class="mk-size-go" id="mk-custom-go">确定</button>
+      </div>
+    </div>
+    <div class="up-actions">
+      <button class="up-btn up-cancel" id="mk-size-cancel" type="button">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 确认弹窗（清空 / 切换尺寸共用） ====== -->
+<div class="up-overlay" id="mk-confirm-modal" role="dialog" aria-modal="true">
+  <div class="up-dialog">
+    <h3 class="up-title" id="mk-confirm-title">清空画布？</h3>
+    <p class="up-hint" id="mk-confirm-hint">画布上的所有内容都会被删除，且无法撤销恢复。</p>
+    <div class="up-actions">
+      <button class="up-btn up-cancel" id="mk-confirm-cancel" type="button">取消</button>
+      <button class="up-btn up-primary" id="mk-confirm-ok" type="button">清空</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 上传表单（作品名必填、角色名选填） ====== -->
+<div class="up-overlay" id="mk-upload-modal" role="dialog" aria-modal="true">
+  <div class="up-dialog">
+    <button class="up-close" id="mk-upload-close" type="button" aria-label="关闭">&times;</button>
+    <h3 class="up-title">上传作品</h3>
+    <label class="up-field">
+      <span class="up-label">作品名称（必填）</span>
+      <input class="up-text" id="mk-work" type="text" maxlength="60" placeholder="例如：自制小恐龙">
+    </label>
+    <label class="up-field">
+      <span class="up-label">角色名（选填，多个用逗号分隔）</span>
+      <input class="up-text" id="mk-chars" type="text" placeholder="例如：原神，胡桃">
+    </label>
+    <div class="up-actions">
+      <button class="up-btn up-cancel" id="mk-upload-cancel" type="button">取消</button>
+      <button class="up-btn up-primary" id="mk-upload-submit" type="button" disabled>提交</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 上传成功 ====== -->
+<div class="up-overlay" id="mk-success-modal" role="dialog" aria-modal="true">
+  <div class="up-dialog">
+    <h3 class="up-title">上传成功 🎉</h3>
+    <p class="up-hint">作品「<span id="mk-success-work"></span>」已上传，回主页即可看到。</p>
+    <div class="up-actions mk-success-actions">
+      <a class="up-btn up-primary" href="../index.html">再去看看</a>
+      <button class="up-btn up-cancel" id="mk-success-close" type="button">继续制作</button>
+    </div>
+  </div>
+</div>
+
+<div class="up-toast" id="up-toast"></div>
+
+<!-- 编辑器组件（fabric）加载失败时的降级提示，不白屏 -->
+<div class="mk-fail" id="fabric-fail" hidden>
+  <p>编辑器组件加载失败，请检查网络后刷新重试。</p>
+</div>
+
+<!-- 脚本顺序：config.js 必须先加载（提供 window.STICKER_API_BASE） -->
+<script src="../js/config.js"></script>
+<script src="../vendor/fabric-6.9.1.min.js"></script>
+<script src="../js/maker.js"></script>
+</body>
+</html>

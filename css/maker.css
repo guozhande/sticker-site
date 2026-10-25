@@ -1,0 +1,325 @@
+/* ====== 制作器专属样式（复用 style.css 的 CSS 变量与 .up-* 弹窗类） ====== */
+
+/* 制作页整页不滚动：三段式布局自己管高度 */
+body.mk-page {
+  overflow: hidden;
+}
+
+/* 弹窗静态放在页面里（不是 upload.js 那样现开现插），未打开时不能挡点击 */
+[hidden] { display: none !important; }
+.up-overlay { pointer-events: none; }
+.up-overlay.show { pointer-events: auto; }
+.mk-success-actions a { text-decoration: none; }
+
+.mk-app {
+  height: 100vh;              /* 回退 */
+  height: 100dvh;             /* iOS 地址栏/键盘收缩 */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---- 顶栏 ---- */
+.mk-topbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.mk-back {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.mk-title {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.mk-top-btn {
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--card-bg);
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.mk-top-btn.mk-top-primary {
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.mk-top-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---- 上下文面板（横滚，模式照 letter-nav） ---- */
+.mk-panel {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--border);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.mk-panel::-webkit-scrollbar { height: 4px; }
+.mk-panel::-webkit-scrollbar-track { background: var(--border); border-radius: 2px; }
+.mk-panel::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+.mk-panel-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.mk-panel-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-right: 2px;
+}
+
+.mk-swatches,
+.mk-opts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mk-swatch {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mk-swatch.active {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.mk-opt {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg);
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mk-opt.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.mk-eraser-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ---- 画布区 ---- */
+.stage {
+  flex: 1;
+  min-height: 0;               /* flex 子项允许收缩，画布按比例缩放 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #e9e9e9;         /* 衬底色，突出白画布 */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* iOS 键盘位移层：位移与 fitStage 的 scale 分层互不干扰 */
+.stage-shift {
+  transition: transform 0.15s ease-out;
+}
+
+.stage-inner {
+  transform-origin: top left;  /* fitStage 以左上角为缩放锚点 */
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+}
+
+.stage-inner .canvas-container {
+  display: block;
+}
+
+/* ---- 底部工具栏 ---- */
+.mk-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--border);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.mk-toolbar::-webkit-scrollbar { height: 4px; }
+.mk-toolbar::-webkit-scrollbar-track { background: var(--border); border-radius: 2px; }
+.mk-toolbar::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+.mk-tool-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 56px;
+  height: 44px;                /* 触控最小尺寸 */
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--card-bg);
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mk-tool-btn.active {          /* 画笔/橡皮激活态 */
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.mk-tool-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---- 尺寸选择弹窗 ---- */
+.mk-size-presets {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.mk-size-preset {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 0;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--card-bg);
+  cursor: pointer;
+}
+
+.mk-size-preset:hover {
+  background: #eef5fc;
+}
+
+.mk-size-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.mk-size-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.mk-size-inputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.mk-size-inputs input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 16px;             /* ≥16px 防 iOS 聚焦自动放大 */
+  font-family: inherit;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.mk-size-inputs input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.mk-size-times {
+  color: var(--text-secondary);
+}
+
+.mk-size-go {
+  flex-shrink: 0;
+  height: 38px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ---- 编辑器组件加载失败提示 ---- */
+.mk-fail {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  text-align: center;
+}
