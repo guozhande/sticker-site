@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="AI 制作表情 - 我的表情。输入一句话，豆包 Seedream 为你生成专属表情图片，可一键上传到站。">
+<title>AI 制作表情 - 我的表情</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/ai.css">
+</head>
+<body class="ai-page">
+
+<header class="ai-topbar">
+  <a class="ai-back" href="../index.html" aria-label="返回主页">‹ 返回</a>
+  <h1 class="ai-title">AI 制作表情</h1>
+  <span class="ai-spacer"></span>
+</header>
+
+<main class="ai-main">
+  <label class="ai-field">
+    <span class="ai-label">描述你想画的表情（限 500 字）</span>
+    <textarea id="ai-prompt" class="ai-textarea" maxlength="500" rows="3"
+              placeholder="例如：一只圆滚滚的小恐龙举着爱心，卡通风格，白底"></textarea>
+    <span class="ai-count"><span id="ai-count">0</span>/500</span>
+  </label>
+
+  <div class="ai-field">
+    <span class="ai-label">图片尺寸</span>
+    <div class="ai-sizes" role="group" aria-label="图片尺寸">
+      <button type="button" class="ai-size active" data-size="1K">1K 竖图<small>864 × 1152</small></button>
+      <button type="button" class="ai-size" data-size="2K">2K 高清<small>更大尺寸</small></button>
+    </div>
+  </div>
+
+  <button type="button" class="ai-generate" id="ai-generate" disabled>生成</button>
+
+  <section class="ai-result" id="ai-result" aria-live="polite">
+    <div class="ai-empty" id="ai-empty">生成后的图片会显示在这里</div>
+    <div class="ai-loading" id="ai-loading" hidden>
+      <span class="ai-spinner"></span>正在生成，约需 10–30 秒…
+    </div>
+    <div class="ai-error" id="ai-error" hidden></div>
+    <figure class="ai-figure" id="ai-figure" hidden>
+      <img id="ai-img" alt="AI 生成的表情图片">
+      <figcaption class="ai-figure-actions">
+        <button type="button" class="ai-upload-btn" id="ai-upload-btn">上传到站</button>
+        <button type="button" class="ai-regen-btn" id="ai-regen-btn">重新生成</button>
+      </figcaption>
+    </figure>
+  </section>
+</main>
+
+<!-- 上传表单（作品名必填、角色名选填） -->
+<div class="up-overlay" id="ai-upload-modal" role="dialog" aria-modal="true">
+  <div class="up-dialog">
+    <button class="up-close" id="ai-upload-close" type="button" aria-label="关闭">&times;</button>
+    <h3 class="up-title">上传作品</h3>
+    <label class="up-field">
+      <span class="up-label">作品名称（必填）</span>
+      <input class="up-text" id="ai-work" type="text" maxlength="60" placeholder="例如：AI 小恐龙">
+    </label>
+    <label class="up-field">
+      <span class="up-label">角色名（选填，多个用逗号分隔）</span>
+      <input class="up-text" id="ai-chars" type="text" placeholder="例如：原神，胡桃">
+    </label>
+    <div class="up-actions">
+      <button class="up-btn up-cancel" id="ai-upload-cancel" type="button">取消</button>
+      <button class="up-btn up-primary" id="ai-upload-submit" type="button" disabled>提交</button>
+    </div>
+  </div>
+</div>
+
+<!-- 上传成功 -->
+<div class="up-overlay" id="ai-success-modal" role="dialog" aria-modal="true">
+  <div class="up-dialog">
+    <h3 class="up-title">上传成功 🎉</h3>
+    <p class="up-hint">作品「<span id="ai-success-work"></span>」已上传，回主页即可看到。</p>
+    <div class="up-actions ai-success-actions">
+      <a class="up-btn up-primary" href="../index.html">再去看看</a>
+      <button class="up-btn up-cancel" id="ai-success-close" type="button">继续制作</button>
+    </div>
+  </div>
+</div>
+
+<div class="up-toast" id="up-toast"></div>
+
+<script src="../js/config.js"></script>
+<script src="../js/ai.js"></script>
+</body>
+</html>

@@ -4,8 +4,9 @@
  *   POST /api/upload
  *   GET  /api/uploads?work=&limit=&offset=
  *   POST /api/report
+ *   POST /api/ai/image
  */
-import { corsHeaders, fail, json, handleList, handleReport, handleUpload } from "../_shared.js";
+import { corsHeaders, fail, json, handleAiImage, handleList, handleReport, handleUpload } from "../_shared.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -28,6 +29,9 @@ export async function onRequest(context) {
     }
     if (route === "report" && request.method === "POST") {
       return await handleReport(request, env, origin);
+    }
+    if (route === "ai/image" && request.method === "POST") {
+      return await handleAiImage(request, env, origin);
     }
     return fail("Not Found", 404, origin);
   } catch (err) {

@@ -34,6 +34,16 @@ const MAX_CHARS = 12;
 const RATE_LIMIT_PER_HOUR = 30;                    // 同一 IP 每小时最多 30 次
 const IMG_CACHE_SECONDS = 604800;                  // 边缘缓存 7 天（同时也给下架留出生效窗口）
 
+// ---- AI 生成（豆包 Seedream 文生图）----
+const AI_RATE_LIMIT_PER_HOUR = 20;                 // 同一 IP 每小时最多 AI 生成次数
+const AI_PROMPT_MAX = 500;                         // 提示词最大长度
+const AI_SIZES = new Set(["1K", "2K"]);            // size 白名单
+const AI_MODEL = "doubao-seedream-5-0-pro-260628";
+const ARK_IMAGES_URL = "https://ark.cn-beijing.volces.com/api/v3/images/generations";
+const AI_FETCH_TIMEOUT_MS = 60_000;                // 生成 / 下载图 各自 60s 超时
+const AI_EXT_OF = { jpeg: "jpg", png: "png" };     // output_format → 文件扩展名
+const AI_MIME_OF = { jpg: "image/jpeg", png: "image/png" };
+
 const ALLOWED_ORIGINS = [
   "https://sticker-store-uzo.pages.dev",
   "https://guozhande.github.io",
@@ -66,6 +76,46 @@ export function fail(message, status = 400, origin = "") {
 export async function sha256Hex(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * 同一 IP 一小时内命中指定表的次数（限流共用）。
+ *
+ * `table` 只由内部调用方传固定字符串（"uploads" / "ai_requests"），不进用户输入，
+ * 所以直接拼进 SQL 是安全的。
+ */
+async function countRecentByIp(env, ipHash, sinceMs, table) {
+  const row = await env.DB
+    .prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE ip_hash = ? AND created_at > ?`)
+    .bind(ipHash, sinceMs)
+    .first();
+  return row?.n ?? 0;
+}
+
+/** 带超时的 fetch：Seedream 生成 / 下载图都可能要等，到点 abort。 */
+async function fetchWithTimeout(url, options, ms) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { ...options, signal: ctrl.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** 清洗 AI 提示词：去控制字符、压空白、限长。提示词只进 JSON 请求体，不进 HTML。 */
+function cleanPrompt(raw) {
+  return String(raw ?? "")
+    .replace(/[\u0000-\u001f\u007f]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, AI_PROMPT_MAX);
+}
+
+/** 解析 Seedream 返回的 "864x1152" 为 {width, height}；解析不了返回 null。 */
+function parseSize(str) {
+  const m = String(str ?? "").match(/^(\d+)[xX](\d+)$/);
+  return m ? { width: Number(m[1]), height: Number(m[2]) } : null;
 }
 
 /** 清洗用户输入的标签：去掉能进 HTML 的字符、限长、去重。 */
@@ -134,12 +184,9 @@ export async function handleUpload(request, env, origin) {
 
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const ipHash = await sha256Hex(ip + "|sticker-salt");
-
-  const row = await env.DB
-    .prepare("SELECT COUNT(*) AS n FROM uploads WHERE ip_hash = ? AND created_at > ?")
-    .bind(ipHash, Date.now() - 3600_000)
-    .first();
-  if ((row?.n ?? 0) >= RATE_LIMIT_PER_HOUR) return fail("上传太频繁，请稍后再试", 429, origin);
+  if ((await countRecentByIp(env, ipHash, Date.now() - 3600_000, "uploads")) >= RATE_LIMIT_PER_HOUR) {
+    return fail("上传太频繁，请稍后再试", 429, origin);
+  }
 
   const id = crypto.randomUUID();
   const d = new Date();
@@ -223,4 +270,105 @@ export async function handleReport(request, env, origin) {
   await env.IMAGES.delete(row.r2_key);
 
   return json({ ok: true, id, status: "hidden" }, { origin });
+}
+
+/**
+ * POST /api/ai/image  豆包 Seedream 文生图（静图）
+ *
+ * 服务端先调 Seedream 拿到临时 URL，再下载图片字节存 R2，返回站内 /img/ 地址。
+ * 这样既绕开前端 fetch 临时 URL 的 CORS 限制，也把约 24h 失效的临时地址落成永久站内地址。
+ */
+export async function handleAiImage(request, env, origin) {
+  const apiKey = String(env.ARK_API_KEY ?? "").trim();
+  if (!apiKey) return fail("AI 生成未配置", 503, origin);
+
+  let body = {};
+  try { body = await request.json(); } catch { /* 非法 JSON 走下面的校验 */ }
+
+  const prompt = cleanPrompt(body.prompt);
+  if (!prompt) return fail("请输入提示词", 400, origin);
+
+  const rawSize = String(body.size ?? "1K");
+  if (!AI_SIZES.has(rawSize)) return fail("尺寸仅支持 1K 或 2K", 400, origin);
+
+  // per-IP 限流：与上传共用「IP hash + 1 小时窗口」思路，但用独立表 ai_requests
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const ipHash = await sha256Hex(ip + "|sticker-salt");
+  if ((await countRecentByIp(env, ipHash, Date.now() - 3600_000, "ai_requests")) >= AI_RATE_LIMIT_PER_HOUR) {
+    return fail("AI 生成太频繁，请稍后再试", 429, origin);
+  }
+
+  // ① 调 Seedream 拿临时 URL
+  let genRes;
+  try {
+    genRes = await fetchWithTimeout(ARK_IMAGES_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: AI_MODEL,
+        prompt,
+        response_format: "url",
+        size: rawSize,
+        stream: false,
+        watermark: false,
+      }),
+    }, AI_FETCH_TIMEOUT_MS);
+  } catch {
+    return fail("AI 生成请求失败，请稍后重试", 502, origin);
+  }
+
+  let genData = {};
+  try { genData = await genRes.json(); } catch { genData = {}; }
+  if (!genRes.ok) {
+    const msg = String(genData?.error?.message || genData?.message || `Seedream HTTP ${genRes.status}`)
+      .replace(/\s+/g, " ").trim().slice(0, 160);
+    return fail(`AI 生成失败：${msg}`, 502, origin);
+  }
+
+  const item = Array.isArray(genData?.data) ? genData.data[0] : null;
+  const tmpUrl = item?.url;
+  if (!tmpUrl) return fail("AI 生成失败：未返回图片地址", 502, origin);
+
+  const ext = AI_EXT_OF[String(item.output_format ?? "").toLowerCase()] || "jpg";
+  const mime = AI_MIME_OF[ext];
+
+  // ② 下载图片字节（临时 URL 服务端可直连，无 CORS）
+  let imgRes;
+  try {
+    imgRes = await fetchWithTimeout(tmpUrl, { method: "GET" }, AI_FETCH_TIMEOUT_MS);
+  } catch {
+    return fail("AI 图片下载失败，请稍后重试", 502, origin);
+  }
+  if (!imgRes.ok) return fail("AI 图片下载失败，请稍后重试", 502, origin);
+
+  let bytes;
+  try { bytes = new Uint8Array(await imgRes.arrayBuffer()); } catch { bytes = null; }
+  if (!bytes || bytes.byteLength === 0) return fail("AI 图片下载失败：内容为空", 502, origin);
+
+  // ③ 存 R2
+  const id = crypto.randomUUID();
+  const d = new Date();
+  const yyyymm = `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+  const r2Key = `ai/${yyyymm}/${id}.${ext}`;
+
+  try {
+    await env.IMAGES.put(r2Key, bytes, {
+      httpMetadata: { contentType: mime, cacheControl: `public, max-age=${IMG_CACHE_SECONDS}, immutable` },
+    });
+  } catch {
+    return fail("AI 图片存储失败，请稍后重试", 500, origin);
+  }
+
+  // ④ 记一次成功生成，用于限流计数（计数失败不影响已生成的结果）
+  try {
+    await env.DB
+      .prepare("INSERT INTO ai_requests (id, ip_hash, created_at) VALUES (?, ?, ?)")
+      .bind(id, ipHash, Date.now())
+      .run();
+  } catch (err) {
+    console.error("记录 AI 生成计数失败：", err.message);
+  }
+
+  const dims = parseSize(item.size) || { width: 0, height: 0 };
+  return json({ ok: true, url: `/img/${r2Key}`, width: dims.width, height: dims.height }, { origin });
 }

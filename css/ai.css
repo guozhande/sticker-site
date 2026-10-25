@@ -1,0 +1,183 @@
+/* ====== AI 制作页专属样式（复用 style.css 的 CSS 变量与 .up-* 弹窗类） ====== */
+
+body.ai-page {
+  background: var(--bg);
+}
+
+.ai-topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.ai-back {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.ai-back:hover { background: var(--bg); }
+
+.ai-title {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.ai-spacer { flex-shrink: 0; width: 44px; }
+
+.ai-main {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ai-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-label { font-size: 13px; color: var(--text-secondary); }
+
+.ai-textarea {
+  width: 100%;
+  min-height: 84px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 16px;             /* ≥16px 防 iOS 聚焦自动放大 */
+  font-family: inherit;
+  color: var(--text);
+  background: var(--card-bg);
+  resize: vertical;
+}
+
+.ai-textarea:focus { outline: none; border-color: var(--accent); }
+
+.ai-count { align-self: flex-end; font-size: 12px; color: var(--text-secondary); }
+
+.ai-sizes { display: flex; gap: 10px; }
+
+.ai-size {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  padding: 10px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  font-size: 15px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.ai-size small { font-size: 11px; color: var(--text-secondary); }
+
+.ai-size.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ai-size.active small { color: var(--accent); }
+
+.ai-generate {
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ai-generate:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.ai-result {
+  min-height: 200px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ai-empty,
+.ai-loading,
+.ai-error {
+  padding: 40px 12px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.ai-error { color: #d9534f; }
+
+.ai-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  vertical-align: -4px;
+  margin-right: 8px;
+  animation: ai-spin 0.8s linear infinite;
+}
+
+@keyframes ai-spin { to { transform: rotate(360deg); } }
+
+.ai-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.ai-figure img {
+  max-width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.ai-figure-actions { display: flex; gap: 10px; }
+
+.ai-upload-btn,
+.ai-regen-btn {
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 22px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.ai-upload-btn { border: none; background: var(--accent); color: #fff; font-weight: 600; }
+.ai-regen-btn { border: 1px solid var(--border); background: var(--card-bg); color: var(--text); }
+
+.ai-upload-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.ai-success-actions a { text-decoration: none; }
