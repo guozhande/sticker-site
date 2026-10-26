@@ -35,7 +35,7 @@ const RATE_LIMIT_PER_HOUR = 30;                    // 同一 IP 每小时最多 
 const IMG_CACHE_SECONDS = 604800;                  // 边缘缓存 7 天（同时也给下架留出生效窗口）
 
 // ---- AI 生成（豆包 Seedream 文生图）----
-const AI_RATE_LIMIT_PER_HOUR = 20;                 // 同一 IP 每小时最多 AI 生成次数
+const AI_RATE_LIMIT_PER_HOUR = 200;                // 同一 IP 每小时最多 AI 生成次数（临时放宽验证期，测完恢复 20）
 const AI_PROMPT_MAX = 500;                         // 提示词最大长度
 const AI_SIZES = new Set(["1K", "2K"]);            // size 白名单
 const AI_MODEL = "doubao-seedream-5-0-pro-260628";
@@ -50,7 +50,7 @@ const KLING_CREATE_PATH = "/image-to-video/kling-3.0";
 const KLING_TASKS_PATH = "/tasks";
 const VIDEO_DURATIONS = new Set(["3", "4", "5"]);   // 时长白名单（秒）
 const VIDEO_RATE_COST = 5;                          // 动图贵：一次计 5 次额度（共享 20/h 池 → 有效上限 4 动图/时）
-const AI_DAILY_RATE_LIMIT_ROWS = 40;                // 每日每 IP 上限（行数=8 动图/天；与小时池同表计数）
+const AI_DAILY_RATE_LIMIT_ROWS = 400;               // 每日每 IP 上限（临时放宽验证期，测完恢复 40）
 const KLING_CREATE_TIMEOUT_MS = 60_000;             // 单 host create 超时。create 是秒级 API 调用，收紧到 60s 把最坏双 host 压到 120s；
                                                      // §3.6 步骤 6 冒烟实测延迟后按数据回调
 const KLING_POLL_INTERVAL_MS = 20_000;              // 对齐侦察脚本实测 20s 间隔
