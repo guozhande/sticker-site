@@ -99,6 +99,8 @@ body.ai-page {
 
 .ai-size.active small { color: var(--accent); }
 
+.ai-size:disabled { opacity: 0.5; cursor: not-allowed; }
+
 .ai-generate {
   height: 48px;
   border: none;

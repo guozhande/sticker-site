@@ -25,10 +25,27 @@
   </label>
 
   <div class="ai-field">
+    <span class="ai-label">类型</span>
+    <div class="ai-sizes" role="group" aria-label="类型">
+      <button type="button" class="ai-size active" data-mode="image">静图<small>Seedream 文生图</small></button>
+      <button type="button" class="ai-size" data-mode="video">动图<small>可灵视频转 GIF</small></button>
+    </div>
+  </div>
+
+  <div class="ai-field" id="ai-size-field">
     <span class="ai-label">图片尺寸</span>
     <div class="ai-sizes" role="group" aria-label="图片尺寸">
       <button type="button" class="ai-size active" data-size="1K">1K 竖图<small>864 × 1152</small></button>
       <button type="button" class="ai-size" data-size="2K">2K 高清<small>更大尺寸</small></button>
+    </div>
+  </div>
+
+  <div class="ai-field" id="ai-duration-field" hidden>
+    <span class="ai-label">视频时长</span>
+    <div class="ai-sizes" role="group" aria-label="视频时长">
+      <button type="button" class="ai-size" data-duration="3">3 秒</button>
+      <button type="button" class="ai-size" data-duration="4">4 秒</button>
+      <button type="button" class="ai-size active" data-duration="5">5 秒<small>推荐</small></button>
     </div>
   </div>
 
@@ -37,7 +54,7 @@
   <section class="ai-result" id="ai-result" aria-live="polite">
     <div class="ai-empty" id="ai-empty">生成后的图片会显示在这里</div>
     <div class="ai-loading" id="ai-loading" hidden>
-      <span class="ai-spinner"></span>正在生成，约需 10–30 秒…
+      <span class="ai-spinner"></span><span id="ai-loading-text">正在生成，约需 10–30 秒…</span>
     </div>
     <div class="ai-error" id="ai-error" hidden></div>
     <figure class="ai-figure" id="ai-figure" hidden>
