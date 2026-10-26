@@ -569,7 +569,10 @@ async function klingCreate(apiKey, prompt, duration, firstFrame) {
     options: { watermark_info: { enabled: false } },
   };
   let lastErr = "未知错误";
-  for (const base of KLING_HOSTS) {                 // singapore → beijing（同侦察脚本）
+  // 实测 CF edge → 可灵北京间歇性 520/网络异常：整体重试 3 次（5s 间隔），401/402 不重试（key/余额无意义）
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    if (attempt > 1) await sleep(5000);
+    for (const base of KLING_HOSTS) {               // singapore → beijing（同侦察脚本）
     try {
       const res = await fetchWithTimeout(`${base}${KLING_CREATE_PATH}`, {
         method: "POST",
@@ -593,6 +596,7 @@ async function klingCreate(apiKey, prompt, duration, firstFrame) {
     }
   }
   return { ok: false, error: lastErr };
+  }
 }
 
 /**
