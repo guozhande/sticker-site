@@ -546,8 +546,8 @@ async function runVideoPipeline(request, env, ipHash, prompt, duration) {
     return { ok: false, error: "转码服务暂不可用，请稍后重试", code: 503 };   // 含 540s 超时/客户端断开
   } finally { clearTimeout(timer); }
   const tData = await tRes.json().catch(() => ({}));
-  if (tRes.status === 503) return { ok: false, error: "转码服务暂不可用，请稍后重试", code: 503 };   // 容器就绪超时
-  if (!tRes.ok || !tData.ok) return { ok: false, error: "GIF 转码失败，请稍后重试", code: 500 };      // exec 失败/对象未落桶
+  if (tRes.status === 503) return { ok: false, error: `转码服务暂不可用：${tData.error || "容器就绪超时"}`, code: 503 };   // 容器就绪超时（透传 Worker 具体原因）
+  if (!tRes.ok || !tData.ok) return { ok: false, error: `GIF 转码失败：${tData.error || "未知错误"}`, code: 500 };      // exec 失败/对象未落桶
 
   return { ok: true, url: `/img/${gifKey}`, duration: Number(duration), degraded: tData.degraded === true };  // degraded 透传（D11）
 }
