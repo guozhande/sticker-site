@@ -354,22 +354,28 @@ async function generateSeedreamFrame(prompt, rawSize, env) {
   const apiKey = String(env.ARK_API_KEY ?? "").trim();
   if (!apiKey) throw new FrameError("no_key", "AI 生成未配置", 503);   // 原 282-283 行行为
 
-  // ① 调 Seedream 拿临时 URL
+  // ① 调 Seedream 拿临时 URL（CF edge 到豆包北京实测间歇性网络异常：轻量重试 1 次，5s 间隔）
   let genRes;
-  try {
-    genRes = await fetchWithTimeout(ARK_IMAGES_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: AI_MODEL,
-        prompt,
-        response_format: "url",
-        size: rawSize,
-        stream: false,
-        watermark: false,
-      }),
-    }, AI_FETCH_TIMEOUT_MS);
-  } catch {
+  for (let attempt = 1; attempt <= 2 && !genRes; attempt++) {
+    if (attempt > 1) await sleep(5000);
+    try {
+      genRes = await fetchWithTimeout(ARK_IMAGES_URL, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: AI_MODEL,
+          prompt,
+          response_format: "url",
+          size: rawSize,
+          stream: false,
+          watermark: false,
+        }),
+      }, AI_FETCH_TIMEOUT_MS);
+    } catch (err) {
+      console.error(`Seedream 生成网络异常（第 ${attempt} 次）:`, truncate(err.message));
+    }
+  }
+  if (!genRes) {
     throw new FrameError("gen_request", "AI 生成请求失败，请稍后重试", 502);   // 原 316-317
   }
 
@@ -569,9 +575,10 @@ async function klingCreate(apiKey, prompt, duration, firstFrame) {
     options: { watermark_info: { enabled: false } },
   };
   let lastErr = "未知错误";
-  // 实测 CF edge → 可灵北京间歇性 520/网络异常：整体重试 3 次（5s 间隔），401/402 不重试（key/余额无意义）
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    if (attempt > 1) await sleep(5000);
+  // 实测 CF edge → 可灵北京间歇性 520/525/网络异常：整体重试 5 次（间隔 5s/10s/20s/30s 递增）
+  const RETRY_DELAYS = [0, 5000, 10000, 20000, 30000];
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    if (attempt > 1) await sleep(RETRY_DELAYS[attempt - 1]);
     for (const base of KLING_HOSTS) {               // singapore → beijing（同侦察脚本）
     try {
       const res = await fetchWithTimeout(`${base}${KLING_CREATE_PATH}`, {
