@@ -512,7 +512,7 @@ async function runVideoPipeline(request, env, ipHash, prompt, duration) {
 
   // ── ⑥ 可灵 create：host 回退 singapore → beijing，单次不循环（D5/D15）──
   const created = await klingCreate(env.KLING_API_KEY, prompt, Number(duration), dataUri);
-  if (!created) return { ok: false, error: "视频生成请求失败，请稍后重试", code: 502 };
+  if (!created.ok) return { ok: false, error: `视频生成请求失败：${created.error}`, code: 502 };
 
   // ── ⑦ 轮询：20s×12 ≤240s（复用 create 成功的 host；每次 sleep 前检查 request.signal，
   //       客户端断开立即退出——可灵已计费，记账已前置兜底）──
@@ -568,6 +568,7 @@ async function klingCreate(apiKey, prompt, duration, firstFrame) {
     settings: { resolution: "720p", duration, audio: "off", multi_shot: false },
     options: { watermark_info: { enabled: false } },
   };
+  let lastErr = "未知错误";
   for (const base of KLING_HOSTS) {                 // singapore → beijing（同侦察脚本）
     try {
       const res = await fetchWithTimeout(`${base}${KLING_CREATE_PATH}`, {
@@ -577,18 +578,21 @@ async function klingCreate(apiKey, prompt, duration, firstFrame) {
       }, KLING_CREATE_TIMEOUT_MS);
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        console.error(`kling create ${base} 失败:`, truncate(err?.message || `HTTP ${res.status}`));
+        lastErr = `${base} HTTP ${res.status}: ${truncate(err?.message || String(err?.code || ""), 120)}`;
+        console.error(`kling create 失败:`, lastErr);
         continue;                                    // 下一 host
       }
       const data = await res.json().catch(() => null);
       const id = data?.data?.id;                     // 侦察脚本：r.get("data").get("id")
-      if (id) return { taskId: id, base };
-      console.error(`kling create ${base} 无 task id:`, truncate(JSON.stringify(data)));
+      if (id) return { ok: true, taskId: id, base };
+      lastErr = `${base} 无 task id: ${truncate(JSON.stringify(data), 120)}`;
+      console.error(`kling create 异常:`, lastErr);
     } catch (err) {
-      console.error(`kling create ${base} 异常:`, truncate(err.message));
+      lastErr = `${base} 网络异常: ${truncate(err.message, 120)}`;
+      console.error(`kling create 异常:`, lastErr);
     }
   }
-  return null;
+  return { ok: false, error: lastErr };
 }
 
 /**
