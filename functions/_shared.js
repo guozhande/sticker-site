@@ -55,7 +55,7 @@ const KLING_CREATE_TIMEOUT_MS = 60_000;             // 单 host create 超时。
                                                      // §3.6 步骤 6 冒烟实测延迟后按数据回调
 const KLING_POLL_INTERVAL_MS = 20_000;              // 对齐侦察脚本实测 20s 间隔
 const KLING_POLL_TIMEOUT_MS = 240_000;              // 12 次轮询；可灵实测 1-3 分钟
-const KLING_SINGLE_FETCH_TIMEOUT_MS = 30_000;
+const KLING_SINGLE_FETCH_TIMEOUT_MS = 90_000;       // 轮询单次超时。CF edge 到可灵北京实测慢（30s 会 abort 第一轮轮询），放宽到 90s
 const MP4_DOWNLOAD_TIMEOUT_MS = 120_000;
 const TRANSCODE_FETCH_TIMEOUT_MS = 540_000;         // = DO 单档自限 480s（45 就绪+120 cp进+90×2 ffmpeg+120 cp出+15 可见）+ 60s 余量，
                                                      // 健康慢跑不误杀；卡死 DO 终被切断
