@@ -767,9 +767,11 @@ body {
   opacity: 0;
   transition: opacity 0.15s;
   z-index: 1000;
+  pointer-events: none;   /* 透明态不拦截点击（修复 AI 页「打不开」bug：无此规则时全屏透明层吞掉所有点击） */
 }
 .up-overlay.show {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .up-dialog {
