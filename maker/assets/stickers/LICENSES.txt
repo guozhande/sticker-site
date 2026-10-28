@@ -1,0 +1,23 @@
+贴纸素材许可说明（maker/assets/stickers/）
+=========================================
+
+本站内置贴纸只收三档许可：MIT / Apache-2.0 / CC0，全部允许免费商用（含表情包传播）。
+ChineseBQB 素材不可商用，本站不使用。
+
+1. fluent/ 彩色表情（30 枚）
+   来源：Microsoft Fluent Emoji（github.com/microsoft/fluentui-emoji）「高对比扁平」风格 PNG
+   许可：MIT License
+   许可全文：https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE
+
+2. noto/ 黑白表情（30 枚）
+   来源：asturur-noto-emoji npm 包（npmjs.com/package/asturur-noto-emoji）黑白 PNG
+        原素材为 Google Noto Emoji（github.com/googlefonts/noto-emoji）单色字形
+   许可：Apache License 2.0
+   许可全文：https://github.com/googlefonts/noto-emoji/blob/main/LICENSE
+
+3. peeps/ 小人（12 枚）
+   来源：Open Peeps（openpeeps.com，@dicebear/open-peeps npm 包导出 PNG）
+   许可：CC0 1.0（公有领域，可商用无需署名）
+   许可全文：https://creativecommons.org/publicdomain/zero/1.0/
+
+体积约束（入库前 tests 断言）：单枚 PNG ≤128px 且 ≤14KB；72 枚总量 ≤1MB。

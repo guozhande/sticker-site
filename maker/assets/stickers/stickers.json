@@ -1,0 +1,313 @@
+{
+  "packs": [
+    {
+      "id": "fluent",
+      "name": "彩色表情",
+      "license": "MIT (Microsoft Fluent Emoji)",
+      "items": [
+        {
+          "file": "fluent/u1f602.png",
+          "name": "笑哭"
+        },
+        {
+          "file": "fluent/u1f923.png",
+          "name": "笑趴"
+        },
+        {
+          "file": "fluent/u1f60d.png",
+          "name": "心动"
+        },
+        {
+          "file": "fluent/u1f62d.png",
+          "name": "大哭"
+        },
+        {
+          "file": "fluent/u1f914.png",
+          "name": "思考"
+        },
+        {
+          "file": "fluent/u1f92f.png",
+          "name": "爆炸头"
+        },
+        {
+          "file": "fluent/u1f644.png",
+          "name": "白眼"
+        },
+        {
+          "file": "fluent/u1f621.png",
+          "name": "生气"
+        },
+        {
+          "file": "fluent/u1f622.png",
+          "name": "哭哭"
+        },
+        {
+          "file": "fluent/u1f628.png",
+          "name": "害怕"
+        },
+        {
+          "file": "fluent/u1f634.png",
+          "name": "睡觉"
+        },
+        {
+          "file": "fluent/u1f62a.png",
+          "name": "犯困"
+        },
+        {
+          "file": "fluent/u1f635.png",
+          "name": "头晕"
+        },
+        {
+          "file": "fluent/u1f636.png",
+          "name": "闭嘴"
+        },
+        {
+          "file": "fluent/u1f60f.png",
+          "name": "得意"
+        },
+        {
+          "file": "fluent/u1f618.png",
+          "name": "亲亲"
+        },
+        {
+          "file": "fluent/u1f609.png",
+          "name": "眨眼"
+        },
+        {
+          "file": "fluent/u1f611.png",
+          "name": "冷漠"
+        },
+        {
+          "file": "fluent/u1f615.png",
+          "name": "迷惑"
+        },
+        {
+          "file": "fluent/u1f620.png",
+          "name": "愤怒"
+        },
+        {
+          "file": "fluent/u1f625.png",
+          "name": "松了口气"
+        },
+        {
+          "file": "fluent/u1f631.png",
+          "name": "尖叫"
+        },
+        {
+          "file": "fluent/u1f633.png",
+          "name": "脸红"
+        },
+        {
+          "file": "fluent/u1f92a.png",
+          "name": "搞怪"
+        },
+        {
+          "file": "fluent/u1f974.png",
+          "name": "醉了"
+        },
+        {
+          "file": "fluent/u1f975.png",
+          "name": "好热"
+        },
+        {
+          "file": "fluent/u1f976.png",
+          "name": "好冷"
+        },
+        {
+          "file": "fluent/u1f971.png",
+          "name": "打哈欠"
+        },
+        {
+          "file": "fluent/u1f921.png",
+          "name": "小丑"
+        },
+        {
+          "file": "fluent/u1f47b.png",
+          "name": "幽灵"
+        }
+      ]
+    },
+    {
+      "id": "noto",
+      "name": "黑白表情",
+      "license": "Apache-2.0 (Noto Emoji)",
+      "items": [
+        {
+          "file": "noto/u1f602.png",
+          "name": "笑哭"
+        },
+        {
+          "file": "noto/u1f923.png",
+          "name": "笑趴"
+        },
+        {
+          "file": "noto/u1f60d.png",
+          "name": "心动"
+        },
+        {
+          "file": "noto/u1f62d.png",
+          "name": "大哭"
+        },
+        {
+          "file": "noto/u1f914.png",
+          "name": "思考"
+        },
+        {
+          "file": "noto/u1f92f.png",
+          "name": "爆炸头"
+        },
+        {
+          "file": "noto/u1f644.png",
+          "name": "白眼"
+        },
+        {
+          "file": "noto/u1f621.png",
+          "name": "生气"
+        },
+        {
+          "file": "noto/u1f622.png",
+          "name": "哭哭"
+        },
+        {
+          "file": "noto/u1f628.png",
+          "name": "害怕"
+        },
+        {
+          "file": "noto/u1f634.png",
+          "name": "睡觉"
+        },
+        {
+          "file": "noto/u1f62a.png",
+          "name": "犯困"
+        },
+        {
+          "file": "noto/u1f635.png",
+          "name": "头晕"
+        },
+        {
+          "file": "noto/u1f636.png",
+          "name": "闭嘴"
+        },
+        {
+          "file": "noto/u1f60f.png",
+          "name": "得意"
+        },
+        {
+          "file": "noto/u1f618.png",
+          "name": "亲亲"
+        },
+        {
+          "file": "noto/u1f609.png",
+          "name": "眨眼"
+        },
+        {
+          "file": "noto/u1f611.png",
+          "name": "冷漠"
+        },
+        {
+          "file": "noto/u1f615.png",
+          "name": "迷惑"
+        },
+        {
+          "file": "noto/u1f620.png",
+          "name": "愤怒"
+        },
+        {
+          "file": "noto/u1f625.png",
+          "name": "松了口气"
+        },
+        {
+          "file": "noto/u1f631.png",
+          "name": "尖叫"
+        },
+        {
+          "file": "noto/u1f633.png",
+          "name": "脸红"
+        },
+        {
+          "file": "noto/u1f92a.png",
+          "name": "搞怪"
+        },
+        {
+          "file": "noto/u1f974.png",
+          "name": "醉了"
+        },
+        {
+          "file": "noto/u1f975.png",
+          "name": "好热"
+        },
+        {
+          "file": "noto/u1f976.png",
+          "name": "好冷"
+        },
+        {
+          "file": "noto/u1f971.png",
+          "name": "打哈欠"
+        },
+        {
+          "file": "noto/u1f921.png",
+          "name": "小丑"
+        },
+        {
+          "file": "noto/u1f47b.png",
+          "name": "幽灵"
+        }
+      ]
+    },
+    {
+      "id": "peeps",
+      "name": "小人",
+      "license": "CC0 (Open Peeps)",
+      "items": [
+        {
+          "file": "peeps/wave.png",
+          "name": "挥手"
+        },
+        {
+          "file": "peeps/happy.png",
+          "name": "开心"
+        },
+        {
+          "file": "peeps/calm.png",
+          "name": "淡定"
+        },
+        {
+          "file": "peeps/awe.png",
+          "name": "惊讶"
+        },
+        {
+          "file": "peeps/cheeky.png",
+          "name": "得意"
+        },
+        {
+          "file": "peeps/blank.png",
+          "name": "平静"
+        },
+        {
+          "file": "peeps/cute.png",
+          "name": "温柔"
+        },
+        {
+          "file": "peeps/serious.png",
+          "name": "认真"
+        },
+        {
+          "file": "peeps/cool.png",
+          "name": "酷炫"
+        },
+        {
+          "file": "peeps/think.png",
+          "name": "沉思"
+        },
+        {
+          "file": "peeps/tired.png",
+          "name": "困倦"
+        },
+        {
+          "file": "peeps/mystery.png",
+          "name": "神秘"
+        }
+      ]
+    }
+  ]
+}
