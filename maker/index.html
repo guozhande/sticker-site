@@ -76,6 +76,103 @@
         <button type="button" class="mk-opt" data-stroke="white">白描边</button>
         <button type="button" class="mk-opt" data-stroke="black">黑描边</button>
       </div>
+      <input type="range" class="mk-range" id="mk-stroke-width" min="1" max="8" step="1" value="2" aria-label="描边粗细" hidden>
+      <span class="mk-panel-label">阴影</span>
+      <div class="mk-opts" id="mk-shadow-opts">
+        <button type="button" class="mk-opt" data-shadow="none">无</button>
+        <button type="button" class="mk-opt" data-shadow="soft">柔和</button>
+        <button type="button" class="mk-opt" data-shadow="neon">霓虹</button>
+        <button type="button" class="mk-opt" data-shadow="hard">硬投影</button>
+      </div>
+      <span class="mk-panel-label">渐变</span>
+      <div class="mk-opts" id="mk-gradient-opts">
+        <button type="button" class="mk-opt" data-gradient="plain">纯色</button>
+        <button type="button" class="mk-opt" data-gradient="rainbow">彩虹</button>
+        <button type="button" class="mk-opt" data-gradient="pinkblue">粉蓝</button>
+        <button type="button" class="mk-opt" data-gradient="goldred">金红</button>
+      </div>
+      <span class="mk-panel-label">样式</span>
+      <div class="mk-opts" id="mk-style-opts">
+        <button type="button" class="mk-opt" data-style="bold">粗体</button>
+        <button type="button" class="mk-opt" data-style="italic">斜体</button>
+      </div>
+    </div>
+
+    <!-- 选中图片/贴纸对象 -->
+    <div class="mk-panel-group" id="mk-panel-image" hidden>
+      <span class="mk-panel-label">滤镜</span>
+      <div class="mk-opts" id="mk-filter-chips">
+        <button type="button" class="mk-opt" data-filter="原图">原图</button>
+        <button type="button" class="mk-opt" data-filter="变亮">变亮</button>
+        <button type="button" class="mk-opt" data-filter="变暗">变暗</button>
+        <button type="button" class="mk-opt" data-filter="高对比">高对比</button>
+        <button type="button" class="mk-opt" data-filter="更鲜艳">更鲜艳</button>
+        <button type="button" class="mk-opt" data-filter="黑白">黑白</button>
+        <button type="button" class="mk-opt" data-filter="反色">反色</button>
+        <button type="button" class="mk-opt" data-filter="复古">复古</button>
+        <button type="button" class="mk-opt" data-filter="老照片">老照片</button>
+        <button type="button" class="mk-opt" data-filter="冷色">冷色</button>
+        <button type="button" class="mk-opt" data-filter="暖色">暖色</button>
+        <button type="button" class="mk-opt" data-filter="模糊">模糊</button>
+        <button type="button" class="mk-opt" data-filter="像素化">像素化</button>
+      </div>
+      <input type="range" class="mk-range" id="mk-f-brightness" min="-100" max="100" step="1" value="0" aria-label="亮度">
+      <input type="range" class="mk-range" id="mk-f-contrast" min="-100" max="100" step="1" value="0" aria-label="对比度">
+      <input type="range" class="mk-range" id="mk-f-saturation" min="-100" max="100" step="1" value="0" aria-label="饱和度">
+      <button type="button" class="mk-opt" id="mk-filter-reset">重置</button>
+      <span class="mk-filter-hint" id="mk-filter-hint" hidden>点选画布中的图片即可调滤镜</span>
+      <span class="mk-panel-label">变换</span>
+      <div class="mk-opts">
+        <button type="button" class="mk-opt" id="mk-flip-h">水平翻转</button>
+        <button type="button" class="mk-opt" id="mk-flip-v">垂直翻转</button>
+      </div>
+      <div class="mk-opts" id="mk-clip-opts">
+        <button type="button" class="mk-opt" data-clip="circle">裁圆</button>
+        <button type="button" class="mk-opt" data-clip="rounded">圆角</button>
+        <button type="button" class="mk-opt" data-clip="ellipse">椭圆</button>
+        <button type="button" class="mk-opt" data-clip="none">恢复原图</button>
+      </div>
+      <select class="mk-select" id="mk-blend" aria-label="混合模式">
+        <option value="source-over">正常</option>
+        <option value="multiply">正片叠底</option>
+        <option value="screen">滤色</option>
+        <option value="overlay">叠加</option>
+        <option value="darken">变暗</option>
+        <option value="lighten">变亮</option>
+        <option value="difference">差值</option>
+        <option value="saturation">饱和度</option>
+      </select>
+    </div>
+
+    <!-- 形状工具面板（菜单「⬜ 形状」或选中任何形状对象时显示） -->
+    <div class="mk-panel-group" id="mk-panel-shapes" hidden>
+      <span class="mk-panel-label">形状</span>
+      <div class="mk-opts" id="mk-shape-kinds">
+        <button type="button" class="mk-opt" data-shape="rect">矩形</button>
+        <button type="button" class="mk-opt" data-shape="circle">圆形</button>
+        <button type="button" class="mk-opt" data-shape="ellipse">椭圆</button>
+        <button type="button" class="mk-opt" data-shape="rounded">圆角</button>
+        <button type="button" class="mk-opt" data-shape="triangle">三角</button>
+        <button type="button" class="mk-opt" data-shape="heart">心形</button>
+        <button type="button" class="mk-opt" data-shape="star">星形</button>
+      </div>
+      <span class="mk-panel-label">填充</span>
+      <div class="mk-swatches" id="mk-shape-swatches">
+        <button type="button" class="mk-swatch" data-color="#333333" style="background:#333333" aria-label="深灰"></button>
+        <button type="button" class="mk-swatch" data-color="#e53935" style="background:#e53935" aria-label="红"></button>
+        <button type="button" class="mk-swatch" data-color="#fb8c00" style="background:#fb8c00" aria-label="橙"></button>
+        <button type="button" class="mk-swatch" data-color="#fdd835" style="background:#fdd835" aria-label="黄"></button>
+        <button type="button" class="mk-swatch" data-color="#43a047" style="background:#43a047" aria-label="绿"></button>
+        <button type="button" class="mk-swatch" data-color="#1e88e5" style="background:#1e88e5" aria-label="蓝"></button>
+        <button type="button" class="mk-swatch" data-color="#8e24aa" style="background:#8e24aa" aria-label="紫"></button>
+        <button type="button" class="mk-swatch" data-color="#ffffff" style="background:#ffffff" aria-label="白"></button>
+      </div>
+      <span class="mk-panel-label">描边</span>
+      <div class="mk-opts" id="mk-shape-stroke">
+        <button type="button" class="mk-opt" data-stroke="none">无</button>
+        <button type="button" class="mk-opt" data-stroke="white">白描边</button>
+        <button type="button" class="mk-opt" data-stroke="black">黑描边</button>
+      </div>
     </div>
   </div>
 
@@ -89,13 +186,17 @@
   </main>
 </div>
 
-<!-- ====== 汉堡菜单：全部制作工具统一入口（顺序：尺寸/导入/文字/画笔/橡皮/撤销/删除/清空/导出/返回） ====== -->
+<!-- ====== 汉堡菜单：全部制作工具统一入口（顺序：尺寸/导入/贴纸/文字/形状/画笔/橡皮/滤镜/图层/撤销/删除/清空/导出/返回） ====== -->
 <nav class="mk-menu" id="mk-menu" aria-label="制作工具菜单">
   <button class="mk-menu-item" id="mk-size-btn" type="button">📐 选择画布尺寸</button>
   <button class="mk-menu-item" id="mk-import" type="button">🖼 导入图片</button>
+  <button class="mk-menu-item" id="mk-sticker" type="button">😄 贴纸素材</button>
   <button class="mk-menu-item" id="mk-text" type="button">A 文字</button>
+  <button class="mk-menu-item" id="mk-shape" type="button">⬜ 形状</button>
   <button class="mk-menu-item" id="mk-pen" type="button">✏️ 画笔</button>
   <button class="mk-menu-item" id="mk-eraser" type="button">🧽 橡皮</button>
+  <button class="mk-menu-item" id="mk-filter" type="button" title="点选画布中的图片即可调滤镜">✨ 滤镜</button>
+  <button class="mk-menu-item" id="mk-layers" type="button">📚 图层</button>
   <button class="mk-menu-item" id="mk-undo" type="button">↩ 撤销</button>
   <button class="mk-menu-item" id="mk-del" type="button">🗑 删除</button>
   <button class="mk-menu-item" id="mk-clear" type="button">🧹 清空</button>
@@ -169,6 +270,27 @@
   </div>
 </div>
 
+<!-- ====== 贴纸素材库（三包：Fluent 彩色 / Noto 黑白 / Open Peeps 小人，索引首次打开时 fetch） ====== -->
+<div class="up-overlay" id="mk-sticker-modal" role="dialog" aria-modal="true">
+  <div class="up-dialog mk-sticker-dialog">
+    <button class="up-close" id="mk-sticker-close" type="button" aria-label="关闭">&times;</button>
+    <h3 class="up-title">贴纸素材</h3>
+    <div class="mk-sticker-tabs" id="mk-sticker-tabs" role="tablist" aria-label="贴纸包"></div>
+    <div class="mk-sticker-grid" id="mk-sticker-grid" role="tabpanel"></div>
+    <p class="mk-sticker-license" id="mk-sticker-license"></p>
+  </div>
+</div>
+
+<!-- ====== 图层管理（自上而下 = 画布 z 序自顶向下） ====== -->
+<div class="up-overlay" id="mk-layers-modal" role="dialog" aria-modal="true">
+  <div class="up-dialog mk-layers-dialog">
+    <button class="up-close" id="mk-layers-close" type="button" aria-label="关闭">&times;</button>
+    <h3 class="up-title">图层</h3>
+    <p class="up-hint">从上到下即画布层叠顺序；点击图层可在画布中选中编辑。</p>
+    <div class="mk-layers-list" id="mk-layers-list"></div>
+  </div>
+</div>
+
 <!-- ====== 上传成功 ====== -->
 <div class="up-overlay" id="mk-success-modal" role="dialog" aria-modal="true">
   <div class="up-dialog">
@@ -188,9 +310,10 @@
   <p>编辑器组件加载失败，请检查网络后刷新重试。</p>
 </div>
 
-<!-- 脚本顺序：config.js 必须先加载（提供 window.STICKER_API_BASE） -->
+<!-- 脚本顺序：config.js 必须先加载（提供 window.STICKER_API_BASE）；maker-core.js 纯函数先于 maker.js -->
 <script src="../js/config.js"></script>
 <script src="../vendor/fabric-6.9.1.min.js"></script>
+<script src="../js/maker-core.js"></script>
 <script src="../js/maker.js"></script>
 </body>
 </html>

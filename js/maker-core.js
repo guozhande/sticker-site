@@ -7,8 +7,8 @@
  * 设计依据（fabric 6.9.1，均经 node 构建实测）：
  * - v6 滤镜类在顶层命名空间 fabric.filters.*（非 v5 的 fabric.Image.filters.*）；
  * - fabric.Object.customProperties 默认空数组，toObject 只序列化注册过的自定义属性
- *   → 形状标记 mkShape / 裁切标记 _mkClipKind 必须先 registerShapeSerialization 注册，
- *     否则不进撤销快照（撤销后形状面板打不开、图层名回归「涂鸦」）。
+ *   → 形状标记 mkShape / 裁切标记 _mkClipKind / 贴纸标记 mkSticker 必须先
+ *     registerShapeSerialization 注册，否则不进撤销快照（撤销后形状面板打不开、图层名失真）。
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -35,8 +35,12 @@
     return Math.max(-100, Math.min(100, Number(v) || 0)) / 100;
   }
 
-  // 11 个预设 chip 定义：[标签, 工厂]。原图为空滤镜（恢复无滤镜状态）。
+  // 13 个预设 chip 定义：[标签, 工厂]。原图为空滤镜（恢复无滤镜状态）。
   // 注意 v6 滤镜类在 fabric.filters.*（v5 的 fabric.Image.filters.* 在 v6.9.1 已不存在）。
+  // 冷色/暖色用 ColorMatrix 5×4 矩阵调色（每行 = R/G/B/A 通道系数 + 偏移）。
+  // 冷色：压红抬蓝；暖色：抬红压蓝。偏移控制在 ±15 内，避免高光/暗部溢出。
+  const COOL_MATRIX = [0.95, 0, 0, 0, -10, 0, 1, 0, 0, 0, 0, 0, 1.1, 0, 15, 0, 0, 0, 1, 0];
+  const WARM_MATRIX = [1.05, 0, 0, 0, 15, 0, 1, 0, 0, 5, 0, 0, 0.9, 0, -15, 0, 0, 0, 1, 0];
   const PRESET_DEFS = [
     ['原图', null],
     ['变亮', (F) => new F.filters.Brightness({ brightness: 0.3 })],
@@ -47,6 +51,8 @@
     ['反色', (F) => new F.filters.Invert()],
     ['复古', (F) => new F.filters.Sepia()],
     ['老照片', (F) => new F.filters.Vintage()],
+    ['冷色', (F) => new F.filters.ColorMatrix({ matrix: COOL_MATRIX })],
+    ['暖色', (F) => new F.filters.ColorMatrix({ matrix: WARM_MATRIX })],
     ['模糊', (F) => new F.filters.Blur({ blur: 0.35 })],
     ['像素化', (F) => new F.filters.Pixelate({ blocksize: 8 })],
   ];
@@ -95,16 +101,17 @@
   // ---------- 图层命名 ----------
   /**
    * 图层显示名（与 renderPanel 面板分支同一标记判定，杜绝同一对象两种名字）：
-   * IText 取文本前 8 字；mkShape 标记 → 「形状」+序号；Image → 「图片」+序号；
-   * 无标记 Path（画笔涂鸦）等其余对象 → 「涂鸦」+序号。
+   * IText 取文本前 6 字；mkSticker 标记 → 「贴纸」+序号；mkShape 标记 → 「形状」+序号；
+   * Image → 「图片」+序号；无标记 Path（画笔涂鸦）等其余对象 → 「涂鸦」+序号。
    */
   function layerName(obj, index) {
     const n = (Number(index) || 0) + 1;
     if (!obj) return '图层' + n;
     const type = String(obj.type ?? '');
     if (type === 'i-text' || type === 'text' || type === 'textbox') {
-      return String(obj.text ?? '').slice(0, 8) || ('文字' + n);
+      return String(obj.text ?? '').slice(0, 6) || ('文字' + n);
     }
+    if (obj.mkSticker === true) return '贴纸' + n;   // 贴纸是 Image，必须先于 image 分支判定
     if (obj.mkShape === true) return '形状' + n;
     if (type === 'image') return '图片' + n;
     return '涂鸦' + n;
@@ -143,9 +150,9 @@
 
   // ---------- 自定义属性序列化注册 ----------
   /**
-   * 幂等注册 mkShape / _mkClipKind 进 fabric.Object.customProperties。
+   * 幂等注册 mkShape / _mkClipKind / mkSticker 进 fabric.Object.customProperties。
    * fabric v6 toObject 只序列化注册过的自定义属性——不注册则标记不进撤销快照，
-   * 撤销后 mkShape 丢失（形状面板打不开、图层名回归「涂鸦」）。
+   * 撤销后 mkShape/mkSticker 丢失（形状面板打不开、图层名回归「涂鸦」/「图片」）。
    * 入参 = fabric.Object（类本身，其上挂 customProperties 数组）。
    * 返回是否有新注册（重复调用返回 false，供幂等断言）。
    */
@@ -153,7 +160,7 @@
     const props = FabricObject && FabricObject.customProperties;
     if (!Array.isArray(props)) return false;
     let added = false;
-    for (const key of ['mkShape', '_mkClipKind']) {
+    for (const key of ['mkShape', '_mkClipKind', 'mkSticker']) {
       if (!props.includes(key)) { props.push(key); added = true; }
     }
     return added;

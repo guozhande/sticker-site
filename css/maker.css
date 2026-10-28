@@ -278,3 +278,222 @@ body.mk-page {
   font-size: 15px;
   text-align: center;
 }
+
+/* ====== 编辑器升级：面板滚动 / 滑条 / 贴纸库 / 图层 ====== */
+
+/* 14 项菜单小屏可能超屏 */
+.mk-menu { -webkit-overflow-scrolling: touch; }
+
+/* 面板多组内容（滤镜+变换/文字特效）纵向滚动，单组行仍可横滚 */
+#mk-panel {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* ---- range 滑条（iOS 默认滑条难点：-webkit-appearance:none 定制） ---- */
+.mk-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 92px;
+  height: 36px;              /* ≥44px 含边距触控区 */
+  margin: 0 2px;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.mk-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.mk-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -9px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.mk-range::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.mk-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* ---- 混合模式下拉 ---- */
+.mk-select {
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg);
+  font-size: 13px;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+/* ---- 滤镜面板态提示（菜单「✨ 滤镜」未选中图片时） ---- */
+.mk-filter-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ---- 贴纸素材弹窗 ---- */
+.mk-sticker-dialog {
+  max-width: 420px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mk-sticker-tabs {
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.mk-sticker-tab {
+  flex: 1;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--bg);
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.mk-sticker-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.mk-sticker-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  align-content: start;
+}
+
+.mk-sticker-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.mk-sticker-cell:active { background: #eef5fc; }
+
+.mk-sticker-cell img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  pointer-events: none;   /* 点击恒落在 cell 上 */
+}
+
+.mk-sticker-license {
+  flex-shrink: 0;
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ---- 图层弹窗 ---- */
+.mk-layers-list {
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.mk-layer-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 48px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.mk-layer-row.mk-layer-off { opacity: 0.5; }
+
+.mk-layer-thumb {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #ffffff;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.mk-layer-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.mk-layer-icon {
+  width: 28px;
+  text-align: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.mk-layer-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mk-layer-btn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.mk-layer-btn:active { background: #eef5fc; }
