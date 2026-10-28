@@ -44,6 +44,17 @@ const AI_FETCH_TIMEOUT_MS = 180_000;              // 生成 / 下载图 各自 1
 const AI_EXT_OF = { jpeg: "jpg", png: "png" };     // output_format → 文件扩展名
 const AI_MIME_OF = { jpg: "image/jpeg", png: "image/png" };
 
+// ---- 图生图参考图（Seedream 官方无独立图生图端点：与文生图共用 /images/generations，仅加 image 字段，无 strength 参数）----
+export const REF_IMAGE_MAX_BYTES = 5 * 1024 * 1024;   // 参考图硬限 5MB（官方 ≤30MB；前端已压到长边 1024，约 ≤2MB）
+const REF_IMAGE_RE = /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/;
+const REF_MODES = new Set(["free", "style", "keep"]);
+/** 图生图提示词前缀（拼接后统一 slice 限长，前缀置于头部，截断只损失用户描述尾部）。
+ *  单测按本常量比对文案（禁止手抄），防「参考参考图」类错字回归。 */
+export const REF_PROMPT_PREFIX = {
+  keep: "保持参考图中主体、构图、姿势与关键细节不变，在此基础上调整：",
+  style: "参考图的整体风格、配色与质感进行创作：",
+};
+
 // ---- 可灵动图（图生视频 → GIF）----
 const KLING_HOSTS = ["https://api-singapore.klingai.com", "https://api-beijing.klingai.com"];  // 与侦察脚本 kling_test.py 同序
 const KLING_CREATE_PATH = "/image-to-video/kling-3.0";
@@ -129,6 +140,12 @@ function cleanPrompt(raw) {
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, AI_PROMPT_MAX);
+}
+
+/** base64 串解码后的字节数（公式对合法 base64 精确；不实际解码，防超大输入白耗 Worker CPU）。 */
+function base64ByteLength(b64) {
+  const pad = b64.endsWith("==") ? 2 : b64.endsWith("=") ? 1 : 0;
+  return Math.floor((b64.length * 3) / 4) - pad;
 }
 
 /** 解析 Seedream 返回的 "864x1152" 为 {width, height}；解析不了返回 null。 */
@@ -292,7 +309,11 @@ export async function handleReport(request, env, origin) {
 }
 
 /**
- * POST /api/ai/image  豆包 Seedream 文生图（静图）
+ * POST /api/ai/image  豆包 Seedream 生成（静图）
+ *
+ * 无 image 字段 → 文生图（原路径，零回归）。
+ * 带 image 字段 → 图生图：Seedream 官方无独立端点，同一请求体加 image 参数（无 strength 参数），
+ * 相似度由 ref_mode 对应的提示词前缀控制（free/style/keep）。
  *
  * 服务端先调 Seedream 拿到临时 URL，再下载图片字节存 R2，返回站内 /img/ 地址。
  * 这样既绕开前端 fetch 临时 URL 的 CORS 限制，也把约 24h 失效的临时地址落成永久站内地址。
@@ -310,6 +331,25 @@ export async function handleAiImage(request, env, origin) {
   const rawSize = String(body.size ?? "1K");
   if (!AI_SIZES.has(rawSize)) return fail("尺寸仅支持 1K 或 2K", 400, origin);
 
+  // ---- 图生图参考图校验（prompt/size 校验之后；失败快返回，不进 Seedream）----
+  // 缺省/null → 文生图原路径（零回归）
+  let image = null;
+  if (body.image !== undefined && body.image !== null) {
+    if (Array.isArray(body.image)) return fail("暂不支持多张参考图", 400, origin);
+    if (typeof body.image !== "string" || !REF_IMAGE_RE.test(body.image)) {
+      return fail("参考图无效，请重新上传", 400, origin);
+    }
+    const b64 = body.image.slice(body.image.indexOf(",") + 1);
+    if (base64ByteLength(b64) > REF_IMAGE_MAX_BYTES) return fail("参考图过大（限 5MB）", 400, origin);
+    image = body.image;
+  }
+
+  // ref_mode 守卫（R15）：无 image 时恒 'free' —— 防绕过 UI 直连 POST ref_mode=keep 却无参考图，
+  // 提示词被注入「保持参考图中主体…」而 Seedream 根本没有参考图，生成语义被污染
+  const refMode = image
+    ? (REF_MODES.has(String(body.ref_mode ?? "")) ? String(body.ref_mode) : "free")
+    : "free";
+
   // per-IP 限流：与上传共用「IP hash + 1 小时窗口」思路，但用独立表 ai_requests
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const ipHash = await sha256Hex(ip + "|sticker-salt");
@@ -317,13 +357,16 @@ export async function handleAiImage(request, env, origin) {
     return fail("AI 生成太频繁，请稍后再试", 429, origin);
   }
 
+  // 图生图提示词前缀（R6/R16）：拼接后统一再限长；前缀置于头部，截断只损失用户描述尾部、指令语义保留
+  const finalPrompt = ((REF_PROMPT_PREFIX[refMode] ?? "") + prompt).slice(0, AI_PROMPT_MAX);
+
   // ①-③ 调 Seedream 生成 + 下载 + 存 R2（抽出公共函数；按标签还原原文案，零回归）
   let frame;
   try {
-    frame = await generateSeedreamFrame(prompt, rawSize, env);
+    frame = await generateSeedreamFrame(finalPrompt, rawSize, env, image);
   } catch (err) {
     if (!(err instanceof FrameError)) throw err;   // 非首帧错误（理论不发生）交路由层 500
-    return fail(err.message, err.status, origin);  // 原 6 条文案/状态码逐条还原
+    return fail(err.message, err.status, origin);  // 原 7 条文案/状态码逐条还原（no_key/gen_request/gen_failed/no_url/download_failed/empty_body/store_failed）
   }
 
   // ④ 记一次成功生成，用于限流计数（计数失败不影响已生成的结果）
@@ -349,8 +392,11 @@ class FrameError extends Error {
  * 调 Seedream 生成一张图并落 R2，供静图（handleAiImage）与动图首帧（handleAiVideo）共用。
  * 覆盖原 handleAiImage 的「生成拿临时 URL → 解析 → 下载字节 → 存 R2」整段，
  * 并把 parseSize 并入返回值。每个原失败点抛 FrameError（tag/message/status 逐字对齐原文案）。
+ *
+ * `image` 为图生图参考图 data URI；null（默认）时请求体不含 image 字段，行为与文生图完全一致。
+ * 其余字段（model/prompt/response_format/stream/watermark/size）不随 image 变化。
  */
-async function generateSeedreamFrame(prompt, rawSize, env) {
+async function generateSeedreamFrame(prompt, rawSize, env, image = null) {
   const apiKey = String(env.ARK_API_KEY ?? "").trim();
   if (!apiKey) throw new FrameError("no_key", "AI 生成未配置", 503);   // 原 282-283 行行为
 
@@ -369,6 +415,7 @@ async function generateSeedreamFrame(prompt, rawSize, env) {
           size: rawSize,
           stream: false,
           watermark: false,
+          ...(image ? { image } : {}),   // 图生图：同端点仅加 image 字段（官方无 strength 参数，传了报 UnsupportedParameter）
         }),
       }, AI_FETCH_TIMEOUT_MS);
     } catch (err) {

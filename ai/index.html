@@ -40,6 +40,32 @@
     </div>
   </div>
 
+  <!-- 参考图（图生图，仅静图模式显示；切动图时仅隐藏、不清状态） -->
+  <div class="ai-field" id="ai-ref-field">
+    <span class="ai-label">参考图（可选，图生图）</span>
+    <button type="button" class="ai-ref-add" id="ai-ref-add">＋ 添加参考图（可选）</button>
+    <div class="ai-ref-processing" id="ai-ref-processing" hidden>
+      <span class="ai-spinner"></span>
+      <span class="ai-ref-processing-text" id="ai-ref-processing-text"></span>
+      <span>处理中…</span>
+    </div>
+    <div class="ai-ref-preview" id="ai-ref-preview" hidden>
+      <img class="ai-ref-thumb" id="ai-ref-thumb" alt="参考图预览">
+      <span class="ai-ref-name" id="ai-ref-name"></span>
+      <button type="button" class="ai-ref-remove" id="ai-ref-remove" aria-label="删除参考图">&times;</button>
+    </div>
+    <input type="file" id="ai-ref-file" accept="image/jpeg,image/png,image/webp" hidden>
+    <div class="ai-ref-modes" id="ai-ref-modes" hidden>
+      <span class="ai-label">相似度</span>
+      <div class="ai-sizes" role="group" aria-label="相似度">
+        <button type="button" class="ai-size active" data-ref-mode="free">自由发挥<small>模型参考图片自行发挥</small></button>
+        <button type="button" class="ai-size" data-ref-mode="style">参考风格<small>沿用风格、配色与质感</small></button>
+        <button type="button" class="ai-size" data-ref-mode="keep">保持主体<small>尽量保留主体外观</small></button>
+      </div>
+      <p class="ai-ref-hint">相似度由提示词控制，无法精确调节</p>
+    </div>
+  </div>
+
   <div class="ai-field" id="ai-duration-field" hidden>
     <span class="ai-label">视频时长</span>
     <div class="ai-sizes" role="group" aria-label="视频时长">
