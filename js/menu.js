@@ -25,7 +25,6 @@
     subManual.classList.toggle('open', open);
     groupManual.setAttribute('aria-expanded', String(open));
   });
-  document.getElementById('menu-tpl').addEventListener('click', () => { setOpen(false); showToast('敬请期待'); });
-  // 「AI 制作」已是 <a href="ai/">，走原生跳转；模板制作仍占位 toast 敬请期待。
+  // 「新手自定义制作」「专业级制作」「AI 制作」均为 <a> 原生跳转，无 JS 处理。
   setOpen(false);   // 载入兜底：背板 hidden（HTML 已带 hidden 属性，双保险）
 })();
