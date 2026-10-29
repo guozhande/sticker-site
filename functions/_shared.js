@@ -36,7 +36,7 @@ const IMG_CACHE_SECONDS = 604800;                  // 边缘缓存 7 天（同�
 
 // ---- AI 生成（豆包 Seedream 文生图）----
 const AI_RATE_LIMIT_PER_HOUR = 20;                 // 同一 IP 每小时最多 AI 生成次数
-const AI_PROMPT_MAX = 500;                         // 提示词最大长度
+const AI_PROMPT_MAX = 1000;                        // 提示词最大长度（用户拍板：1000 字以内）
 const AI_SIZES = new Set(["1K", "2K"]);            // size 白名单
 const AI_MODEL = "doubao-seedream-5-0-pro-260628";
 const ARK_IMAGES_URL = "https://ark.cn-beijing.volces.com/api/v3/images/generations";

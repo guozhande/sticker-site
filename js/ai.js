@@ -17,7 +17,7 @@
   'use strict';
 
   const API = window.STICKER_API_BASE ?? '';
-  const PROMPT_MAX = 500;   // 对齐 functions/_shared.js AI_PROMPT_MAX
+  const PROMPT_MAX = 1000;  // 对齐 functions/_shared.js AI_PROMPT_MAX
   const WORK_MAX = 60;      // 对齐 functions/_shared.js MAX_WORK_LEN
   const CHAR_MAX = 12;      // 对齐 functions/_shared.js MAX_CHARS
   const CHAR_LEN = 40;      // 对齐 functions/_shared.js MAX_CHAR_LEN
