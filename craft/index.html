@@ -4,17 +4,67 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>PhotoCraft</title>
-  
+
+<script>
+/* 兼容修复（设计 v3 Part B）：
+   ① Array.prototype.at / %TypedArray%.prototype.at polyfill（WebView Chrome 92 前没有，app glue 的 __wbg_at 会 TypeError）
+   ② 启动期 window.onerror 写入 #photocraft_loading，把「黑屏」变可读错误（真机可诊断）
+   ③ 10s 看门狗：中文提示，含 ?cpu 兼容模式的指引 */
+(function () {
+  function at(n) {
+    n = Math.trunc(n) || 0;
+    if (n < 0) n += this.length;
+    if (n < 0 || n >= this.length) return undefined;
+    return this[n];
+  }
+  if (!Array.prototype.at) {
+    Object.defineProperty(Array.prototype, 'at', { value: at, writable: true, configurable: true });
+  }
+  var ta = ['Int8Array','Uint8Array','Uint8ClampedArray','Int16Array','Uint16Array','Int32Array','Uint32Array','Float32Array','Float64Array'];
+  for (var i = 0; i < ta.length; i++) {
+    var C = window[ta[i]];
+    if (C && !C.prototype.at) {
+      Object.defineProperty(C.prototype, 'at', { value: at, writable: true, configurable: true });
+    }
+  }
+  var shown = false;
+  function showError(msg) {
+    if (shown) return; shown = true;
+    var box = document.getElementById('photocraft_loading');
+    if (!box) return;
+    box.innerHTML = '';
+    var p1 = document.createElement('p');
+    p1.textContent = 'PhotoCraft 启动失败：' + msg;
+    p1.style.color = '#e57373';
+    box.appendChild(p1);
+    var p2 = document.createElement('p');
+    p2.textContent = '手机浏览器可能缺少 WebGPU/WebGL 支持，请尝试兼容模式（地址后加 ?cpu），或改用桌面浏览器打开本页（专业级制作在桌面端体验更佳）。';
+    box.appendChild(p2);
+    var a = document.createElement('a');
+    a.href = location.pathname + '?cpu';
+    a.textContent = '点击切换到 CPU 兼容模式';
+    box.appendChild(a);
+  }
+  window.addEventListener('error', function (e) {
+    showError(e.message || '脚本加载失败');
+  }, true);
+  window.addEventListener('unhandledrejection', function (e) {
+    showError((e.reason && e.reason.message) || '模块执行失败');
+  });
+})();
+</script>
 <script type="module">
 import init, * as bindings from './photocraft-web-boot-e4e0960659fc7450.js';
-const wasm = await init({ module_or_path: './photocraft-web-boot-e4e0960659fc7450_bg.wasm' });
+try {
+  const wasm = await init({ module_or_path: './photocraft-web-boot-e4e0960659fc7450_bg.wasm' });
 
+  window.wasmBindings = bindings;
 
-window.wasmBindings = bindings;
-
-
-dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
-
+  dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+} catch (err) {
+  console.error('PhotoCraft 启动失败：', err);
+  window.dispatchEvent(new ErrorEvent('error', { message: (err && err.message) || 'WebAssembly 初始化失败' }));
+}
 </script>
   <style>
     html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #262626; }
@@ -25,17 +75,15 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
     #photocraft_loading a { color: #e0e0e0; pointer-events: auto; }
     /* The app removes this element once it runs. If the WebAssembly never downloads or doesn't match
        this page, no Rust runs to say so, so the page itself shows what to do after a while. */
-    #photocraft_stalled { color: #8c8c8c; visibility: hidden; animation: photocraft-stalled 0s 20s forwards; }
+    #photocraft_stalled { color: #8c8c8c; visibility: hidden; animation: photocraft-stalled 0s 10s forwards; }
     @keyframes photocraft-stalled { to { visibility: visible; } }
   </style>
 <link rel="modulepreload" href="./photocraft-web-boot-e4e0960659fc7450.js" crossorigin="anonymous" integrity="sha384-H0J7M2PYTcyUV4ABEHyH8U0TVhqddSN8vxU1SzK8DWpnjrbmZ2FpX1JwaRw0u7Ig"><link rel="preload" href="./photocraft-web-boot-e4e0960659fc7450_bg.wasm" crossorigin="anonymous" integrity="sha384-0u9b7EbpsS2LfDRotVlMdXHmOr5i436L+lD6zLTgBcCJ2/KEvh1y6vKnWx+6S4St" as="fetch" type="application/wasm"></head>
 <body>
   <canvas id="photocraft_canvas"></canvas>
   <div id="photocraft_loading">
-    <p>Loading PhotoCraft&hellip;</p>
-    <p id="photocraft_stalled">This is taking longer than usual. If PhotoCraft doesn't start, its files may have failed to
-      download or come from a different version of this page. <a href="">Reload</a> to try again; the browser
-      console lists what failed.</p>
+    <p>正在加载 PhotoCraft&hellip;</p>
+    <p id="photocraft_stalled">加载时间偏长。如果迟迟未启动，文件可能下载失败或版本不一致——<a href="">点此重载</a>；手机端若无反应，请尝试 <a href="?cpu">CPU 兼容模式</a> 或改用桌面浏览器。</p>
   </div>
 </body>
 </html>
