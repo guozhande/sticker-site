@@ -732,7 +732,8 @@
   $uploadBtn.addEventListener('click', openUpload);
   $regenBtn.addEventListener('click', generate);
 
-  // 保存：fetch 结果图（CORS 已放行）→ blob → 触发下载（文件名 ai_时间戳.后缀）
+  // 保存：fetch 结果图（CORS 已放行）→ 优先弹系统「另存为」自选位置（showSaveFilePicker，桌面浏览器）；
+  // 不支持时回退 a[download] 自动下载到默认文件夹
   $('ai-save-btn').addEventListener('click', async () => {
     if (!lastImageUrl) return;
     try {
@@ -740,14 +741,27 @@
       const resp = await fetch(`${API}${lastImageUrl}`);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const blob = await resp.blob();
+      const suggestedName = `ai_${Date.now()}.${ext}`;
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName,
+          types: [{ description: '图片', accept: { 'image/*': [`.${ext}`] } }],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        toast('已保存');
+        return;
+      }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `ai_${Date.now()}.${ext}`;
+      a.download = suggestedName;
       document.body.appendChild(a);
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
-    } catch {
+    } catch (err) {
+      if (err?.name === 'AbortError') return;   // 用户取消「另存为」：静默
       toast('保存失败，请长按图片手动保存');
     }
   });
