@@ -699,6 +699,14 @@
     syncGenerateButton();
   });
 
+  // 清理输入框：清空提示词 + 计数归零 + 刷新生成按钮态 + 焦点回输入框
+  $('ai-prompt-clear').addEventListener('click', () => {
+    $prompt.value = '';
+    $count.textContent = '0';
+    syncGenerateButton();
+    $prompt.focus();
+  });
+
   // 参考图（图生图）：添加 / 选文件 / 删除 / 相似度 chips
   $refAdd.addEventListener('click', () => $refFile.click());
   $refFile.addEventListener('change', onRefFileChange);

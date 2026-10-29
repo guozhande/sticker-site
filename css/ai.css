@@ -344,3 +344,17 @@ body.ai-page {
   font-size: 13px;
   color: #e53935;
 }
+
+/* 清理输入框按钮：与字数统计同行，低调小按钮 */
+.ai-clear-btn {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 5px 12px;
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: 16px;
+  background: transparent;
+  color: var(--text-dim, #666);
+  font-size: 12px;
+  cursor: pointer;
+}
+.ai-clear-btn:active { background: rgba(0, 0, 0, 0.06); }
