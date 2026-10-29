@@ -297,7 +297,12 @@ export async function handleImage(request, key, env, waitUntil) {
   const cacheKey = new Request(new URL(`/img/${encodeURIComponent(key)}`, request.url).toString(), { method: "GET" });
 
   const hit = await cache.match(cacheKey);
-  if (hit) return hit;
+  if (hit) {
+    // 缓存命中也要补 CORS 头（旧缓存条目无此头；图片公开）
+    const h2 = new Headers(hit.headers);
+    h2.set("Access-Control-Allow-Origin", "*");
+    return new Response(hit.body, { status: hit.status, headers: h2 });
+  }
 
   const obj = await env.IMAGES.get(key);
   if (!obj) return new Response("Not Found", { status: 404 });
@@ -306,6 +311,7 @@ export async function handleImage(request, key, env, waitUntil) {
   obj.writeHttpMetadata(headers);
   headers.set("etag", obj.httpEtag);
   headers.set("Cache-Control", `public, max-age=${IMG_CACHE_SECONDS}, immutable`);
+  headers.set("Access-Control-Allow-Origin", "*");   // 图片公开：允许跨域 fetch（前端「保存」按钮下载用）
   const res = new Response(obj.body, { headers });
 
   waitUntil(cache.put(cacheKey, res.clone()));

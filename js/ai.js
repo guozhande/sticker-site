@@ -732,6 +732,26 @@
   $uploadBtn.addEventListener('click', openUpload);
   $regenBtn.addEventListener('click', generate);
 
+  // 保存：fetch 结果图（CORS 已放行）→ blob → 触发下载（文件名 ai_时间戳.后缀）
+  $('ai-save-btn').addEventListener('click', async () => {
+    if (!lastImageUrl) return;
+    try {
+      const ext = (lastImageUrl.split('.').pop() || 'png').toLowerCase();
+      const resp = await fetch(`${API}${lastImageUrl}`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const blob = await resp.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `ai_${Date.now()}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
+    } catch {
+      toast('保存失败，请长按图片手动保存');
+    }
+  });
+
   $('ai-upload-cancel').addEventListener('click', () => closeModal('ai-upload-modal'));
   $('ai-upload-close').addEventListener('click', () => closeModal('ai-upload-modal'));
   $work.addEventListener('input', () => {
