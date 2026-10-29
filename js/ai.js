@@ -3,10 +3,13 @@
  *
  * 静图闭环：输入提示词（可选参考图 → 图生图）→ POST /api/ai/image 生成 → 展示站内 /img/ai/ 地址 →
  *           弹窗填作品名/角色名 → 复用 /api/upload 上传到站。
- * 动图闭环：输入提示词 → POST /api/ai/video（长链路心跳流式，约 2-4 分钟）→
+ * 动图闭环：输入提示词（可选动图首帧：静图直接作首帧 / GIF 检测帧数取第 N 帧）→ POST /api/ai/video
+ *           （长链路心跳流式，约 2-4 分钟；有 image 时后端跳过 Seedream、原样作可灵 first_frame）→
  *           结果同样是 <img> 展示 + 同一套上传弹窗（GIF87a/89a 后端已支持）。
  * 参考图仅对静图生效：Seedream 无独立图生图端点（同端点加 image 字段）、无强度参数，
  * 相似度由 ref_mode（free/style/keep）对应的后端提示词前缀控制。
+ * 动图首帧取帧：依赖 js/gif-frame.js（window.GifFrame）+ vendor/gifuct-js.vendor.js（window.Gifuct），
+ * GIF 只在前端解析（总帧数 + 第 1/2 帧 + 手动帧号），选中帧压缩为白底 JPEG data URI 上传。
  *
  * 依赖：js/config.js（window.STICKER_API_BASE），必须在 ai.js 之前加载。
  */
@@ -30,6 +33,14 @@
     bad_ratio: '参考图比例过窄/过宽，请换一张',
     unreadable: '图片无法读取，请换一张',
   };
+  // 动图首帧取帧失败文案（js/gif-frame.js 的 reason → toast；GIF 本体只前端解析、不上传）
+  const GIF_FAIL_TOAST = {
+    not_gif: '不是有效的 GIF 文件',
+    too_large_bytes: '动图过大（限 20MB）',
+    too_large: '动图尺寸过大，请换一张',
+    unreadable: '动图解析失败，请换一张',
+    not_loaded: '动图取帧组件未加载，请刷新重试',
+  };
 
   const $ = (id) => document.getElementById(id);
 
@@ -47,6 +58,13 @@
   let refCompressPromise = null;  // 在途压缩 Promise；非 null 时禁用生成按钮
   let refError = false;           // 最近一次压缩失败标记（选新图时清除）
   let refSelection = 0;           // 选图代次：删除/换图 +1，作废旧在途压缩的结算
+
+  // 动图首帧（仅动图模式使用）：静图压缩 data URI 或 GIF 取帧结果，共用单槽位 videoFrameDataUri
+  let videoFrameDataUri = null;       // 选中帧的白底 JPEG data URI（发请求用；null = 文生图）
+  let videoFrameSelection = 0;        // 首帧选图代次：删除/换图 +1，作废旧在途压缩/取帧的结算
+  let videoFrameBusy = null;          // 在途取帧/压缩 Promise；非 null 时禁用生成按钮
+  let videoFrameErr = false;          // 最近一次取帧失败标记（选新图时清除）
+  let gifPending = null;              // 待取帧的 GIF（{ file, gif, frameCount }）；gif 为已解析对象（只解析一次）
 
   // ---------- DOM ----------
   const $prompt = $('ai-prompt');
@@ -71,6 +89,24 @@
   const $refName = $('ai-ref-name');
   const $refRemove = $('ai-ref-remove');
   const $refModes = $('ai-ref-modes');
+  const $vidRefField = $('ai-vidref-field');
+  const $vidRefAdd = $('ai-vidref-add');
+  const $vidRefFile = $('ai-vidref-file');
+  const $vidRefProcessing = $('ai-vidref-processing');
+  const $vidRefProcessingText = $('ai-vidref-processing-text');
+  const $vidRefPreview = $('ai-vidref-preview');
+  const $vidRefThumb = $('ai-vidref-thumb');
+  const $vidRefName = $('ai-vidref-name');
+  const $vidRefRemove = $('ai-vidref-remove');
+  const $gifAdd = $('ai-gif-add');
+  const $gifFile = $('ai-gif-file');
+  const $gifPanel = $('ai-gif-panel');
+  const $gifTotal = $('ai-gif-total');
+  const $gifPick1 = $('ai-gif-pick1');
+  const $gifPick2 = $('ai-gif-pick2');
+  const $gifFrame = $('ai-gif-frame');
+  const $gifOk = $('ai-gif-ok');
+  const $gifErr = $('ai-gif-err');
   const $uploadBtn = $('ai-upload-btn');
   const $regenBtn = $('ai-regen-btn');
   const $work = $('ai-work');
@@ -117,8 +153,8 @@
   }
 
   function syncGenerateButton() {
-    // 参考图压缩中禁用生成按钮（R14：不调用的话选图瞬间存在竞态窗口）
-    $generate.disabled = busy || refCompressPromise !== null || !$prompt.value.trim();
+    // 参考图压缩中/动图首帧取帧中禁用生成按钮（R14：不调用的话选图瞬间存在竞态窗口）
+    $generate.disabled = busy || refCompressPromise !== null || videoFrameBusy !== null || !$prompt.value.trim();
   }
 
   // ---------- 参考图（图生图）----------
@@ -242,12 +278,238 @@
     syncGenerateButton();
   }
 
+  // ---------- 动图首帧（图生图：静图 / GIF 取帧）----------
+  /** 清动图首帧全部状态（× 删除 / 失败清理 / 换新图共用）；videoFrameSelection 自增作废旧在途结算。 */
+  function clearVidRefState() {
+    videoFrameSelection++;
+    videoFrameDataUri = null;
+    videoFrameErr = false;
+    $vidRefAdd.hidden = false;
+    $gifAdd.hidden = false;
+    $vidRefProcessing.hidden = true;
+    $vidRefPreview.hidden = true;
+    $vidRefThumb.removeAttribute('src');
+    $vidRefName.textContent = '';
+    $gifPanel.hidden = true;
+  }
+
+  /** 清 GIF 待取帧缓存（不触碰已选帧 videoFrameDataUri）；gifPending 置 null 同步释放已解析 gif 对象内存。 */
+  function clearGifState() {
+    gifPending = null;
+    videoFrameErr = false;
+    $gifTotal.textContent = '';
+    $gifFrame.max = '';
+    $gifFrame.value = '';
+    $gifErr.hidden = true;
+    $gifPanel.hidden = true;
+  }
+
+  /** 失败恢复：显示两个入口按钮、隐藏 processing 与取帧面板；不触碰 preview（成功路径不会调用它）。 */
+  function restoreVidRefEntries() {
+    $vidRefAdd.hidden = false;
+    $gifAdd.hidden = false;
+    $vidRefProcessing.hidden = true;
+    $gifPanel.hidden = true;
+  }
+
+  function setVidRefProcessing(text) {
+    $vidRefProcessing.hidden = false;
+    $vidRefProcessingText.textContent = text;   // textContent：文件名不进 innerHTML
+  }
+
+  function hideVidRefProcessing() {
+    $vidRefProcessing.hidden = true;
+  }
+
+  /** 动图首帧：选静图 → 清旧状态 → 处理中占位 → 压缩（复用 compressRefImage）→ 预览态/失败清理。 */
+  function onVidRefFileChange() {
+    const file = $vidRefFile.files && $vidRefFile.files[0];
+    $vidRefFile.value = '';   // 重置 input：同一文件再次选择也能触发 change
+    if (!file) return;
+
+    clearVidRefState();   // 清旧状态（作废旧在途取帧/压缩）
+    clearGifState();
+    const mySel = videoFrameSelection;
+
+    $vidRefAdd.hidden = true;
+    $gifAdd.hidden = true;
+    setVidRefProcessing(file.name);
+
+    // 与参考图同款生命周期：开始即禁用生成按钮；settle（成败皆）释放并同步按钮。
+    // identity 守卫：只清自己的锁 —— 删除/换图后旧压缩的 finally 不得误清新取帧的锁。
+    const p = compressRefImage(file)
+      .then((result) => {
+        if (videoFrameSelection !== mySel) return;   // 已被删除/换图：丢弃结算结果
+        if (result.ok) {
+          videoFrameDataUri = result.dataUri;
+          $vidRefThumb.src = result.dataUri;   // data URI 直用，无需 objectURL
+          $vidRefName.textContent = file.name;
+          $vidRefPreview.hidden = false;
+          $vidRefAdd.hidden = true;
+          $gifAdd.hidden = true;
+          hideVidRefProcessing();
+        } else {
+          if (result.reason === 'unreadable') videoFrameErr = true;   // 仅压缩失败标记，预检拒绝不算
+          toast(REF_FAIL_TOAST[result.reason] || REF_FAIL_TOAST.unreadable);
+          restoreVidRefEntries();
+        }
+      })
+      .finally(() => {
+        if (videoFrameBusy === p) videoFrameBusy = null;
+        hideVidRefProcessing();   // 兜底：任何路径都不残留 processing
+        syncGenerateButton();
+      });
+    videoFrameBusy = p;
+    syncGenerateButton();
+  }
+
+  /**
+   * 动图首帧：选 GIF → sniff → parseGIF 仅一次（gif 对象缓存进 gifPending）→ lsd 护栏 →
+   * 三路分支（0 帧拒 / 1 帧当静图 / ≥2 帧显示总帧数 + 取帧面板）。
+   * v3 修正 #1/#3/#4/#9：全程 try/catch，finally 保留 R14 释放；失败恢复走 catch 的 toast + restoreVidRefEntries。
+   */
+  function onGifFileChange() {
+    // v3 修正 #9：组件未加载守卫（vendor 被 CSP/eval 阻断等）—— 早退 + 可读提示，不产生 unhandledrejection
+    if (!window.GifFrame || !window.Gifuct) { toast(GIF_FAIL_TOAST.not_loaded); return; }
+    const file = $gifFile.files && $gifFile.files[0];
+    $gifFile.value = '';   // 重置 input：同一文件再次选择也能触发 change
+    if (!file) return;
+    clearVidRefState();
+    clearGifState();
+    const mySel = videoFrameSelection;
+    setVidRefProcessing('正在读取动图…');
+    const p = (async () => {
+      try {
+        const { gif, info } = await parseGifInput(file);   // 单次解析 + lsd 护栏，失败带 code 抛出
+        if (videoFrameSelection !== mySel) return;         // 代际守卫：期间已换/删
+        if (info.frameCount === 0) throw Object.assign(new Error('gif'), { code: 'unreadable' });  // 绝不显示「这是静图」
+        if (info.frameCount === 1) return takeSingleFrameShortcut(file, mySel, gif);
+        gifPending = { file, gif, frameCount: info.frameCount };   // ≥2：gif 对象随面板缓存，确定时复用
+        $gifTotal.textContent = String(info.frameCount);           // textContent 铁律
+        $gifFrame.max = String(info.frameCount);
+        $gifFrame.value = '';
+        $gifErr.hidden = true;
+        $gifPanel.hidden = false;
+        hideVidRefProcessing();
+      } catch (err) {
+        // v3 修正 #1/#3：任何异常（parseGIF 抛错、截断 GIF、内存异常）都落这里 ——
+        // 绝不静默产出白帧、绝不让 unhandledrejection 卡死 processing 态
+        console.error('[gif] onGifFileChange 失败:', err);
+        if (videoFrameSelection === mySel) {                         // 仍在本代才动 UI（新代自理）
+          const reason = err && err.code ? err.code : 'unreadable';
+          videoFrameErr = reason === 'unreadable';                   // 仅解析失败置标记（对齐 ref 侧语义）
+          toast(GIF_FAIL_TOAST[reason] || GIF_FAIL_TOAST.unreadable);
+          restoreVidRefEntries();                                    // 恢复入口按钮 + 隐藏 processing/面板
+        }
+      }
+    })().finally(() => {
+      // R14 释放：finally 作为 promise reaction 恒在 p 初始化后执行
+      //（若写进 async 体内且同步段先抛错，V8 会在 p 赋值前同步执行 finally → TDZ）
+      if (videoFrameBusy === p) videoFrameBusy = null;
+      hideVidRefProcessing();                                        // 兜底：任何路径都不残留 processing
+      syncGenerateButton();
+    });
+    videoFrameBusy = p;
+    syncGenerateButton();
+  }
+
+  /** 动图输入解析：大小护栏 → arrayBuffer → sniff → parseGIF 仅一次 → countGifFrames + lsd 护栏。失败带 code 抛出。 */
+  async function parseGifInput(file) {
+    if (file.size > GifFrame.GIF_MAX_UPLOAD_BYTES) throw Object.assign(new Error('gif'), { code: 'too_large_bytes' });
+    const arrayBuffer = await file.arrayBuffer();
+    if (!GifFrame.sniffGifBytes(arrayBuffer)) throw Object.assign(new Error('gif'), { code: 'not_gif' });
+    const gif = Gifuct.parseGIF(arrayBuffer);                    // v3 修正 #4：全文结构解析仅此一次
+    const info = GifFrame.countGifFrames(arrayBuffer, gif);      // 复用 gif，不再二次解析
+    if (!Number.isFinite(info.lsdWidth) || !Number.isFinite(info.lsdHeight)) {
+      throw Object.assign(new Error('gif'), { code: 'unreadable' });
+    }
+    if (Math.max(info.lsdWidth, info.lsdHeight) > GifFrame.GIF_MAX_LSD_EDGE) {
+      throw Object.assign(new Error('gif'), { code: 'too_large' });
+    }
+    return { gif, info };
+  }
+
+  /** 1 帧动图当静图：提示后直接按第 1 帧结算（不 await，settle 自管 busy）。 */
+  function takeSingleFrameShortcut(file, mySel, gif) {
+    toast('这是静图，将直接作为动图首帧');
+    hideVidRefProcessing();
+    settleGifFrame(file, 1, file.name, mySel, gif);
+  }
+
+  /** 取帧面板：第 1/2 帧按钮或手动帧号确定 → 校验（不发请求）→ settleGifFrame（复用缓存 gif）。 */
+  function onGifPick(raw) {
+    if (!window.GifFrame || !window.Gifuct) { toast(GIF_FAIL_TOAST.not_loaded); return; }
+    if (!gifPending) return;
+    const v = GifFrame.validateFrameIndex(raw, gifPending.frameCount);
+    if (!v.ok) {
+      $gifErr.textContent = '请输入 1 到 ' + gifPending.frameCount + ' 之间的整数';   // textContent：不进 innerHTML
+      $gifErr.hidden = false;
+      return;
+    }
+    $gifErr.hidden = true;
+    settleGifFrame(gifPending.file, v.n, gifPending.file.name + ' · 第 ' + v.n + ' 帧', videoFrameSelection, gifPending.gif);
+  }
+
+  /**
+   * GIF 取帧结算（count===1 与面板确定共用）：gifFrameToDataUri → 预览态/失败清理。
+   * 帧号 1 基传入，-1 换算只在 pickFramePatch 内部发生。v3 修正 #1/#3：全程 try/catch。
+   */
+  function settleGifFrame(file, frameNo, label, mySel, gif) {
+    const p = (async () => {
+      try {
+        const res = await GifFrame.gifFrameToDataUri(file, frameNo, gif);   // 复用缓存 gif（v3 修正 #4）
+        if (videoFrameSelection !== mySel) return;                          // 代际守卫：期间换/删，丢弃
+        if (res.ok) {
+          videoFrameDataUri = res.dataUri;
+          $vidRefThumb.src = res.dataUri;                                   // data URI 直用，无需 objectURL
+          $vidRefName.textContent = label;
+          $vidRefPreview.hidden = false;
+          $vidRefAdd.hidden = true;
+          $gifAdd.hidden = true;
+          gifPending = null;                                                // 释放缓存 gif
+          $gifPanel.hidden = true;
+        } else if (res.reason === 'unreadable') {
+          videoFrameErr = true;                                             // 仅解析失败标记（含截断 GIF）
+          toast(GIF_FAIL_TOAST.unreadable);
+          restoreVidRefEntries();
+        } else {
+          toast(GIF_FAIL_TOAST[res.reason] || GIF_FAIL_TOAST.unreadable);
+          restoreVidRefEntries();
+        }
+      } catch (err) {
+        // v3 修正 #1/#3：gifFrameToDataUri 内部异常（理论上不应发生）也归 unreadable，
+        // 不产出白帧、不卡 processing
+        console.error('[gif] settleGifFrame 失败:', err);
+        if (videoFrameSelection === mySel) {
+          videoFrameErr = true;
+          toast(GIF_FAIL_TOAST.unreadable);
+          restoreVidRefEntries();
+        }
+      }
+    })().finally(() => {
+      // R14 释放：与 onGifFileChange 同款 —— finally 作 reaction 恒在 p 初始化后执行，防 TDZ
+      if (videoFrameBusy === p) videoFrameBusy = null;
+      syncGenerateButton();
+    });
+    videoFrameBusy = p;
+    syncGenerateButton();
+  }
+
+  /** × 删除动图首帧：清状态 + 释放取帧锁（其 finally 的 identity 守卫不会误伤新锁）。 */
+  function onVidRefRemove() {
+    clearVidRefState();
+    clearGifState();
+    videoFrameBusy = null;   // 丢弃在途取帧的按钮锁
+    syncGenerateButton();
+  }
+
   // ---------- 生成 ----------
   async function generate() {
     if (busy) return;
     const prompt = $prompt.value.trim();
     if (!prompt) return toast('请先输入提示词');
     const isVideo = currentMode === 'video';
+    const myVidSel = videoFrameSelection;
 
     busy = true;
     setModeControlsDisabled(true);   // busy 期间锁定类型/时长按钮，防「结果与当前模式错位」
@@ -266,7 +528,7 @@
       // busy / setModeControlsDisabled / 按钮文案 / syncGenerateButton 全部照常释放。
       // 双保险：即使按钮 disabled 渲染延迟、点击先到，await 在途压缩后才构造 payload，
       // 不会发出缺 image 的静默文生图请求；压缩失败后中止生成。
-      // 动图不使用参考图（R17），两项检查仅对静图生效。
+      // 动图不使用静图参考图（R17），两项检查仅对静图生效。
       if (!isVideo) {
         if (refCompressPromise) await refCompressPromise;
         if (refError) {
@@ -275,11 +537,26 @@
           return;
         }
       }
+      // 动图首帧（图生图）：等待在途取帧/压缩 → 代际守卫（等待期间删除/换图）toast 中止 →
+      // 失败标记拒绝。绝不发 image:null 的付费文生图请求。
+      if (isVideo) {
+        if (videoFrameBusy) await videoFrameBusy;
+        if (videoFrameSelection !== myVidSel) {
+          toast('动图首帧已更换，请重新确认后生成');
+          setResultState('empty');
+          return;
+        }
+        if (videoFrameErr) {
+          toast('动图首帧无法读取，请重新选择');
+          setResultState('empty');
+          return;
+        }
+      }
       const res = await fetch(isVideo ? `${API}/api/ai/video` : `${API}/api/ai/image`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isVideo
-          ? { prompt, duration: Number(currentDuration) }
+          ? { prompt, duration: Number(currentDuration), image: videoFrameDataUri }   // image 为 null 时后端走 Seedream 首帧
           : { prompt, size: currentSize, image: refImageDataUri, ref_mode: refMode }),   // image 为 null 时后端按文生图处理
         signal: ctrl.signal,   // 静图：timer 为 0，signal 永不 abort，行为与原裸 fetch 一致
       });
@@ -392,10 +669,10 @@
       currentMode = btn.dataset.mode;
       $sizeField.hidden = currentMode === 'video';
       $durationField.hidden = currentMode !== 'video';
-      // R17：参考图仅对静图生效 —— 切动图只隐藏、不清状态（切回静图恢复预览）；
-      // 已选参考图时明示，避免「生成 2-4 分钟结果与参考图无关且无任何提示」的付费体感最差点
+      // R17：静图参考图仅对静图生效 —— 切动图只隐藏、不清状态（切回静图恢复预览）。
+      // 动图首帧字段仅动图显示；同样只隐藏不清状态（切回动图恢复预览）。
       $refField.hidden = currentMode === 'video';
-      if (currentMode === 'video' && refImageDataUri) toast('参考图仅对静图生效，本次动图生成不使用参考图');
+      $vidRefField.hidden = currentMode !== 'video';
     });
   });
 
@@ -432,6 +709,16 @@
       setRefModeActive(refMode);
     });
   });
+
+  // 动图首帧（图生图）：静图入口 / GIF 取帧入口 / 删除 / 取帧面板（第 1/2 帧 + 手动帧号）
+  $vidRefAdd.addEventListener('click', () => $vidRefFile.click());
+  $gifAdd.addEventListener('click', () => $gifFile.click());
+  $vidRefFile.addEventListener('change', onVidRefFileChange);
+  $gifFile.addEventListener('change', onGifFileChange);
+  $vidRefRemove.addEventListener('click', onVidRefRemove);
+  $gifPick1.addEventListener('click', () => onGifPick(1));
+  $gifPick2.addEventListener('click', () => onGifPick(2));
+  $gifOk.addEventListener('click', () => onGifPick($gifFrame.value));
 
   $generate.addEventListener('click', generate);
   $uploadBtn.addEventListener('click', openUpload);

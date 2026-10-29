@@ -1,0 +1,45 @@
+gifuct-js.vendor.js 许可与打包说明
+====================================
+
+本文件由以下两个 MIT 许可的 npm 包手工打包成单文件（无构建工具）：
+
+1. gifuct-js v2.1.2
+   - GitHub: https://github.com/matt-way/gifuct-js
+   - License: MIT
+   - Copyright (c) 2017 Matt Way
+
+2. js-binary-schema-parser v2.0.3
+   - GitHub: https://github.com/matt-way/js-binary-schema-parser
+   - License: MIT
+   - Copyright (c) 2017 Matt Way
+
+MIT License 全文（两包一致）：
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+手工打包说明：
+- 内容 = gifuct-js/lib/ 与 js-binary-schema-parser/lib/ 的全部源文件，
+  以字符串字面量内联进一个 IIFE，内部用迷你 require（new Function 分发）还原
+  原依赖图；最终挂 window.Gifuct = { parseGIF, decompressFrame, decompressFrames }。
+- 纯 ES5、零 DOM 依赖，Android/iOS WebView 全兼容；未压缩体积约 23.6KB。
+- 打包脚本与选型验证：D:\sometime\maker-work\gif-recon\（build_vendor.js /
+  test_gifuct.js，110/110 真实文件断言）。
+- 注意：分发使用 new Function，若未来站点加 Content-Security-Policy 会触发
+  EvalError，届时需把模块分发改成 switch-case 加载（见 js/gif-frame.js 的
+  GIFUCT_READY 防御与设计文档风险 R17）。

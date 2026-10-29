@@ -48,6 +48,26 @@ const AI_MIME_OF = { jpg: "image/jpeg", png: "image/png" };
 export const REF_IMAGE_MAX_BYTES = 5 * 1024 * 1024;   // 参考图硬限 5MB（官方 ≤30MB；前端已压到长边 1024，约 ≤2MB）
 const REF_IMAGE_RE = /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/;
 const REF_MODES = new Set(["free", "style", "keep"]);
+
+/**
+ * 图生图参考图校验（handleAiImage / handleAiVideo 共用，v3 修正 #5：原 handleAiImage 337-345 行
+ * 逐字提取为单一来源，任何未来改动（加格式/改文案）只需动此处）。
+ * 返回 { ok:true, image } | { ok:false, error, status }；失败时调用方直接 fail(error, status)。
+ * 缺省/null → { ok:true, image:null }（文生图原路径，零回归）。
+ */
+function validateRefImageBody(body) {
+  let image = null;
+  if (body.image !== undefined && body.image !== null) {
+    if (Array.isArray(body.image)) return { ok: false, error: "暂不支持多张参考图", status: 400 };
+    if (typeof body.image !== "string" || !REF_IMAGE_RE.test(body.image)) {
+      return { ok: false, error: "参考图无效，请重新上传", status: 400 };
+    }
+    const b64 = body.image.slice(body.image.indexOf(",") + 1);
+    if (base64ByteLength(b64) > REF_IMAGE_MAX_BYTES) return { ok: false, error: "参考图过大（限 5MB）", status: 400 };
+    image = body.image;
+  }
+  return { ok: true, image };
+}
 /** 图生图提示词前缀（拼接后统一 slice 限长，前缀置于头部，截断只损失用户描述尾部）。
  *  单测按本常量比对文案（禁止手抄），防「参考参考图」类错字回归。 */
 export const REF_PROMPT_PREFIX = {
@@ -332,17 +352,11 @@ export async function handleAiImage(request, env, origin) {
   if (!AI_SIZES.has(rawSize)) return fail("尺寸仅支持 1K 或 2K", 400, origin);
 
   // ---- 图生图参考图校验（prompt/size 校验之后；失败快返回，不进 Seedream）----
+  // 共享函数 validateRefImageBody（与动图 handleAiVideo 同源，v3 修正 #5）；
   // 缺省/null → 文生图原路径（零回归）
-  let image = null;
-  if (body.image !== undefined && body.image !== null) {
-    if (Array.isArray(body.image)) return fail("暂不支持多张参考图", 400, origin);
-    if (typeof body.image !== "string" || !REF_IMAGE_RE.test(body.image)) {
-      return fail("参考图无效，请重新上传", 400, origin);
-    }
-    const b64 = body.image.slice(body.image.indexOf(",") + 1);
-    if (base64ByteLength(b64) > REF_IMAGE_MAX_BYTES) return fail("参考图过大（限 5MB）", 400, origin);
-    image = body.image;
-  }
+  const refImage = validateRefImageBody(body);
+  if (!refImage.ok) return fail(refImage.error, refImage.status, origin);
+  const image = refImage.image;
 
   // ref_mode 守卫（R15）：无 image 时恒 'free' —— 防绕过 UI 直连 POST ref_mode=keep 却无参考图，
   // 提示词被注入「保持参考图中主体…」而 Seedream 根本没有参考图，生成语义被污染
@@ -496,6 +510,12 @@ export async function handleAiVideo(request, env, origin) {
   const duration = String(body.duration ?? "5");
   if (!VIDEO_DURATIONS.has(duration)) return fail("时长仅支持 3、4、5 秒", 400, origin);
 
+  // ---- 图生图首帧校验（duration 校验之后、限流之前：校验失败快返回、不计限流额度，
+  //      与 handleAiImage 同规则）---- 共享函数 validateRefImageBody（单一来源，v3 修正 #5）
+  const refImage = validateRefImageBody(body);
+  if (!refImage.ok) return fail(refImage.error, refImage.status, origin);
+  const image = refImage.image;
+
   // ── 限流：共享 ai_requests 池（小时池 + 每日池，均按行数计；动图一次计 5 行）──
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const ipHash = await sha256Hex(ip + "|sticker-salt");
@@ -516,7 +536,7 @@ export async function handleAiVideo(request, env, origin) {
         try { controller.enqueue(enc.encode("\n")); } catch { /* 客户端已断开 */ }
       }, HEARTBEAT_INTERVAL_MS);
       try {
-        const payload = await runVideoPipeline(request, env, ipHash, prompt, duration);
+        const payload = await runVideoPipeline(request, env, ipHash, prompt, duration, image);
         controller.enqueue(enc.encode(JSON.stringify(payload) + "\n"));
       } catch {
         // 客户端断开等意外：尽力补一个错误段（客户端多半收不到，纯兜底）
@@ -539,24 +559,35 @@ export async function handleAiVideo(request, env, origin) {
 /**
  * 长链路流水线：任何一步失败返回 {ok:false, error, code}（code 记录本应使用的 HTTP 状态码）。
  * 客户端断开（request.signal abort）时抛错退出，由外层 start 的 finally 关流——下游已全部 abort，无孤儿产物。
+ *
+ * image（用户上传的动图首帧 data URI，handleAiVideo 已校验）：有值 → 原样作可灵 first_frame、
+ * 跳过 Seedream 首帧；无值 → 维持 Seedream 首帧链路（回归不变）。
+ * 计费口径决策（v3 修正 #8）：有 image 时虽跳过 Seedream（省一次付费调用），但动图服务成本主体
+ * 是可灵调用，本版不区分 image 来源、仍记 VIDEO_RATE_COST 5 行。后续如需激励图生图，
+ * 可引入 VIDEO_RATE_COST_WITH_IMAGE = 4 对 image 路径记 4 行（常量化，本版不实现）。
  */
-async function runVideoPipeline(request, env, ipHash, prompt, duration) {
-  // ── ③ 首帧：复用 Seedream 流水线，固定 1K；按 FrameError 标签映射新文案 ──
-  let frame;
-  try { frame = await generateSeedreamFrame(prompt, "1K", env); }
-  catch (err) {
-    if (!(err instanceof FrameError)) throw err;
-    const message = err.tag === "no_key" ? "动图生成未配置"
-      : err.tag === "store_failed" ? "首帧图存储失败，请稍后重试"
-      : "首帧图生成失败，请稍后重试";
-    return { ok: false, error: message, code: err.status };
-  }
-  // 首帧保留 R2 不删（D9：存储便宜，未来 App 复用）
-
-  // ── ④ data URI（唯一实测成功形态；1K 图 100-300KB + 33% 膨胀可接受）──
+async function runVideoPipeline(request, env, ipHash, prompt, duration, image = null) {
+  // ── ③ 首帧：有 image → 原样作 first_frame（跳过 Seedream）；无 image → 复用 Seedream 流水线，
+  //       固定 1K；按 FrameError 标签映射新文案 ──
   let dataUri;
-  try { dataUri = await toDataUri(env, frame.r2Key, frame.mime); }
-  catch { return { ok: false, error: "首帧图读取失败，请稍后重试", code: 502 }; }
+  if (image) {
+    dataUri = image;   // 选中的帧原样成为第一帧（前端已压缩为白底 JPEG data URI）
+  } else {
+    let frame;
+    try { frame = await generateSeedreamFrame(prompt, "1K", env); }
+    catch (err) {
+      if (!(err instanceof FrameError)) throw err;
+      const message = err.tag === "no_key" ? "动图生成未配置"
+        : err.tag === "store_failed" ? "首帧图存储失败，请稍后重试"
+        : "首帧图生成失败，请稍后重试";
+      return { ok: false, error: message, code: err.status };
+    }
+    // 首帧保留 R2 不删（D9：存储便宜，未来 App 复用）
+
+    // ── ④ data URI（唯一实测成功形态；1K 图 100-300KB + 33% 膨胀可接受）──
+    try { dataUri = await toDataUri(env, frame.r2Key, frame.mime); }
+    catch { return { ok: false, error: "首帧图读取失败，请稍后重试", code: 502 }; }
+  }
 
   // ── ⑤ 记账 5 行：在 klingCreate 之前（记账=尝试而非成功；可灵 create 即计费，
   //       实测账单 3 units≈¥3/次，与后续轮询/下载/转码成败无关。失败也扣额度）──

@@ -273,3 +273,74 @@ body.ai-page {
   font-size: 12px;
   color: var(--text-secondary);
 }
+
+/* ====== 动图首帧（图生图：静图 / GIF 取帧） ====== */
+.ai-vidref-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 取帧面板：总帧数 + 第 1/2 帧按钮 + 手动帧号输入 */
+.ai-gif-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+}
+
+.ai-gif-count {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.ai-gif-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ai-gif-manual {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ai-gif-manual-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ai-gif-input {
+  width: 84px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.ai-gif-ok {
+  min-height: 40px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ai-gif-err {
+  margin: 0;
+  font-size: 13px;
+  color: #e53935;
+}

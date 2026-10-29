@@ -75,6 +75,41 @@
     </div>
   </div>
 
+  <!-- 动图首帧（图生图）：上传静图直接作首帧，或上传动图取帧（总帧数 + 第 1/2 帧 + 手动帧号）。
+       仅动图模式显示；GIF 只在前端解析取帧，本体不上传 -->
+  <div class="ai-field" id="ai-vidref-field" hidden>
+    <span class="ai-label">动图首帧（可选，图生图）</span>
+    <div class="ai-vidref-entry">
+      <button type="button" class="ai-ref-add" id="ai-vidref-add">＋ 上传静图作首帧</button>
+      <button type="button" class="ai-ref-add" id="ai-gif-add">＋ 上传动图取帧</button>
+    </div>
+    <div class="ai-ref-processing" id="ai-vidref-processing" hidden>
+      <span class="ai-spinner"></span>
+      <span class="ai-ref-processing-text" id="ai-vidref-processing-text"></span>
+      <span>处理中…</span>
+    </div>
+    <div class="ai-ref-preview" id="ai-vidref-preview" hidden>
+      <img class="ai-ref-thumb" id="ai-vidref-thumb" alt="动图首帧预览">
+      <span class="ai-ref-name" id="ai-vidref-name"></span>
+      <button type="button" class="ai-ref-remove" id="ai-vidref-remove" aria-label="删除首帧">&times;</button>
+    </div>
+    <input type="file" id="ai-vidref-file" accept="image/jpeg,image/png,image/webp" hidden>
+    <input type="file" id="ai-gif-file" accept="image/gif" hidden>
+    <div class="ai-gif-panel" id="ai-gif-panel" hidden>
+      <p class="ai-gif-count">动图共 <span id="ai-gif-total"></span> 帧，请选择取哪一帧作首帧：</p>
+      <div class="ai-gif-actions">
+        <button type="button" class="ai-size" id="ai-gif-pick1">取第 1 帧</button>
+        <button type="button" class="ai-size" id="ai-gif-pick2">取第 2 帧</button>
+      </div>
+      <div class="ai-gif-manual">
+        <label class="ai-gif-manual-label" for="ai-gif-frame">手动填写截取第几帧</label>
+        <input type="number" class="ai-gif-input" id="ai-gif-frame" min="1" inputmode="numeric" placeholder="帧号">
+        <button type="button" class="ai-gif-ok" id="ai-gif-ok">确定</button>
+      </div>
+      <p class="ai-gif-err" id="ai-gif-err" hidden></p>
+    </div>
+  </div>
+
   <button type="button" class="ai-generate" id="ai-generate" disabled>生成</button>
 
   <section class="ai-result" id="ai-result" aria-live="polite">
@@ -128,6 +163,8 @@
 <div class="up-toast" id="up-toast"></div>
 
 <script src="../js/config.js"></script>
+<script src="../vendor/gifuct-js.vendor.js"></script>
+<script src="../js/gif-frame.js"></script>
 <script src="../js/ai.js"></script>
 </body>
 </html>

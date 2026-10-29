@@ -883,7 +883,7 @@
         document.body.appendChild(a);
         a.click();
         a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 10_000);
+        setTimeout(() => URL.revokeObjectURL(url), 10000);   // 根因修复：原写法 10,000 带数字分隔符（ES2021，Chrome 75+），是全页唯一 ES2021 语法；改为 10000 后全页地板降到 ES2020（Chrome 80）
       }
       dirty = false;                        // R14/R15：只有保存成功才清脏（失败已在上面 return）
       syncDirtyBridge();

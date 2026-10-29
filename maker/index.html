@@ -7,6 +7,121 @@
 <title>自制表情 - 我的表情</title>
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/maker.css">
+
+<!-- ====== 启动诊断（纯 ES5，任何老 WebView 都能解析）：白屏根因排查 + 深色兜底面板 ======
+     根因 1（侦察结论）：maker 白屏唯一「全屏近白」代码路径 = fabric/MK_CORE 加载失败
+       → maker.js:30-34 显示 #fabric-fail → 原 css/maker.css:267-280 近白底 15px 小字，
+       与正常页面肉眼不可区分（真机报告「一片白色」）。
+     根因 2：WebView < Chrome 80 时 maker.js 的 ES2020 语法（?? / ?.）解析失败，且兜底检查
+       写在 maker.js 内部 → 自身也死，白屏。
+     三管齐下：① 页尾 4 个脚本标签挂 onload/onerror（key 与 li id 统一 mk-step-* / data-label）；
+       ② window.onerror 按 __mkBootDone 启动期/运行期分流（启动期弹面板 + 文件:行号，运行期只记 console）；
+       ③ 面板深色底 + 步骤清单 + 原因 + UA + 重试，任何失败都不再是「一片白色」。 -->
+<style>
+/* 诊断面板关键样式兜底：css/maker.css 加载失败（断网）时面板也必须深色可见。
+   与 css/maker.css 的 .mk-fail 主样式保持一致（改动需同步两处）。 */
+#fabric-fail { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2000;
+               background: #2b2b2b; color: #eee; overflow-y: auto; }
+</style>
+<script>
+(function () {
+  'use strict';
+  // 本脚本是白屏时唯一能跑的代码：纯 ES5（禁箭头函数/let/const/模板串/?. 等），改前先用 ES5 语法过一遍。
+  var STEPS = [
+    { key: 'config', label: '基础配置' },
+    { key: 'fabric', label: 'fabric 引擎' },
+    { key: 'core', label: '制作器核心' },
+    { key: 'app', label: '制作器脚本' }
+  ];
+  var DESKTOP_HINT = '若反复出现，请改用桌面浏览器打开本页（新手模板制作在桌面端体验更佳）';
+  var done = {};          // key -> 'ok' | 'fail'（每个脚本只记一次）
+  var pending = STEPS.length;
+  var reasonSet = false;  // 网络失败 / 脚本出错已写过原因（启动检查不再覆盖）
+
+  function $id(id) { return document.getElementById(id); }
+
+  function labelOf(key) {
+    for (var i = 0; i < STEPS.length; i++) { if (STEPS[i].key === key) return STEPS[i].label; }
+    return key;
+  }
+
+  // 步骤清单：textContent 铁律（诊断文案都是静态文本，不进 innerHTML）
+  function setStep(key, state) {
+    var li = $id('mk-step-' + key);
+    if (!li) return;
+    var label = li.getAttribute('data-label') || key;
+    li.textContent = label + (state === 'ok' ? ' — 已加载' : ' — 加载失败');
+  }
+
+  function showPanel(reason) {
+    var el = $id('fabric-fail');
+    if (!el) return;
+    el.hidden = false;
+    if (reason) {
+      var r = $id('mk-fail-reason');
+      if (r) r.textContent = reason;
+    }
+    var ua = $id('mk-fail-ua');
+    if (ua) ua.textContent = '当前设备：' + navigator.userAgent;
+  }
+
+  // 4 个脚本全部有结果后的总检查：决定「启动成功」或写兜底原因（此分支原因带桌面端提示）
+  function bootCheck() {
+    var failed = [];
+    var i;
+    for (i = 0; i < STEPS.length; i++) {
+      if (done[STEPS[i].key] !== 'ok') failed.push(STEPS[i].label);
+    }
+    if (reasonSet) { showPanel(null); return; }          // 已有更具体原因（网络/脚本出错），不覆盖
+    if (failed.length) {
+      showPanel('基础组件未能加载：' + failed.join('、') + '。\n' + DESKTOP_HINT);
+      return;
+    }
+    if (typeof fabric === 'undefined' || typeof MK_CORE === 'undefined') {
+      showPanel('fabric 引擎或制作器核心未就绪（文件已下载但内容异常）。\n' + DESKTOP_HINT);
+      return;
+    }
+    window.__mkBootDone = true;   // 启动成功：此后运行期错误只进 console，不再弹面板（A6-5 分流）
+  }
+
+  window.__mkScriptOk = function (key) {
+    if (done[key]) return;
+    done[key] = 'ok';
+    setStep(key, 'ok');
+    pending -= 1;
+    if (pending === 0) bootCheck();
+  };
+
+  window.__mkScriptFail = function (key) {
+    if (done[key]) return;
+    done[key] = 'fail';
+    setStep(key, 'fail');
+    // 网络下载失败属于可修问题：只提示网络，不追加桌面端提示（不误导用户离开手机）
+    if (!reasonSet) {
+      reasonSet = true;
+      showPanel('文件未下载或下载不完整：' + labelOf(key) + '。请检查网络后重试。');
+    }
+    pending -= 1;
+    if (pending === 0) bootCheck();
+  };
+
+  // 启动期/运行期分流：启动成功（__mkBootDone）后只记 console；启动期弹面板并带文件:行号（免 adb 定位）
+  window.onerror = function (msg, src, line) {
+    if (window.__mkBootDone) return false;
+    reasonSet = true;   // 「脚本出错 + 文件:行号」比网络失败原因更具体，后面原因不再覆盖它
+    var where = (typeof line === 'number' && line > 0)
+      ? ((src || '内联脚本') + ' 第 ' + line + ' 行')
+      : (src || '未知位置');
+    showPanel('脚本出错：' + msg + '（' + where + '）\n' + DESKTOP_HINT);
+    return false;   // 返回 false：浏览器 console 保留原始错误，桌面排查不丢线索
+  };
+
+  // 兜底看门狗：极端环境下某脚本既没 load 也没 error（如老 WebView 怪异行为）时仍走一次总检查
+  window.addEventListener('load', function () {
+    if (pending > 0) bootCheck();
+  });
+})();
+</script>
 </head>
 <body class="mk-page">
 
@@ -305,15 +420,28 @@
 
 <div class="up-toast" id="up-toast"></div>
 
-<!-- 编辑器组件（fabric）加载失败时的降级提示，不白屏 -->
+<!-- ====== 启动诊断面板（head 内联脚本 + maker.js:30-34 共用容器；任何失败都深色可见，不再「白屏」） ====== -->
 <div class="mk-fail" id="fabric-fail" hidden>
-  <p>编辑器组件加载失败，请检查网络后刷新重试。</p>
+  <div class="mk-fail-box">
+    <h2 class="mk-fail-title">编辑器未能启动</h2>
+    <p class="mk-fail-hint">启动步骤（供排查参考）：</p>
+    <ul class="mk-fail-steps">
+      <li id="mk-step-config" data-label="基础配置">基础配置 — 等待中</li>
+      <li id="mk-step-fabric" data-label="fabric 引擎">fabric 引擎 — 等待中</li>
+      <li id="mk-step-core" data-label="制作器核心">制作器核心 — 等待中</li>
+      <li id="mk-step-app" data-label="制作器脚本">制作器脚本 — 等待中</li>
+    </ul>
+    <p class="mk-fail-reason" id="mk-fail-reason"></p>
+    <p class="mk-fail-ua" id="mk-fail-ua"></p>
+    <button type="button" class="mk-fail-retry" id="mk-fail-retry" onclick="window.location.reload()">重试</button>
+  </div>
 </div>
 
-<!-- 脚本顺序：config.js 必须先加载（提供 window.STICKER_API_BASE）；maker-core.js 纯函数先于 maker.js -->
-<script src="../js/config.js"></script>
-<script src="../vendor/fabric-6.9.1.min.js"></script>
-<script src="../js/maker-core.js"></script>
-<script src="../js/maker.js"></script>
+<!-- 脚本顺序：config.js 必须先加载（提供 window.STICKER_API_BASE）；maker-core.js 纯函数先于 maker.js。
+     onload/onerror 由 head 内联启动诊断脚本提供（__mkScriptOk/__mkScriptFail，纯 ES5） -->
+<script src="../js/config.js" onload="__mkScriptOk('config')" onerror="__mkScriptFail('config')"></script>
+<script src="../vendor/fabric-6.9.1.min.js" onload="__mkScriptOk('fabric')" onerror="__mkScriptFail('fabric')"></script>
+<script src="../js/maker-core.js" onload="__mkScriptOk('core')" onerror="__mkScriptFail('core')"></script>
+<script src="../js/maker.js" onload="__mkScriptOk('app')" onerror="__mkScriptFail('app')"></script>
 </body>
 </html>
