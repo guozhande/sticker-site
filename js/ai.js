@@ -602,8 +602,17 @@
   }
 
   /** 动图错误文案：超时/断网提示「重新计费」，429/5xx 直接展示后端中文文案（额度/服务已区分）。 */
-  function errorMessage(err, isVideo) {
-    if (!isVideo) return err.message || '生成失败，请重试';
+  /** blob → base64（FileReader 读 data URI 取后半段；用于 AndroidBridge 分块存相册）。 */
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function errorMessage(err, isVideo) {    if (!isVideo) return err.message || '生成失败，请重试';
     if (err.name === 'TimeoutError' || err.name === 'AbortError') {
       return '生成超时，本次请求已取消；已产生的费用不退还，请勿立即重试（每次都会重新计费）';
     }
@@ -732,8 +741,10 @@
   $uploadBtn.addEventListener('click', openUpload);
   $regenBtn.addEventListener('click', generate);
 
-  // 保存：fetch 结果图（CORS 已放行）→ 优先弹系统「另存为」自选位置（showSaveFilePicker，桌面浏览器）；
-  // 不支持时回退 a[download] 自动下载到默认文件夹
+  // 图片加载失败兜底：手机端网络/缓存导致结果图裂图时给出可操作提示
+  $img.addEventListener('error', () => {
+    toast('图片加载失败，请点「保存」下载查看或重新生成');
+  });
   $('ai-save-btn').addEventListener('click', async () => {
     if (!lastImageUrl) return;
     try {
@@ -742,6 +753,21 @@
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const blob = await resp.blob();
       const suggestedName = `ai_${Date.now()}.${ext}`;
+
+      // ① App WebView：AndroidBridge 分块存相册（协议与 maker 页一致：start/chunk/end，块 128KB）
+      if (window.AndroidBridge && typeof window.AndroidBridge.savePngChunk === 'function') {
+        const b64 = await blobToBase64(blob);
+        const CHUNK = 128 * 1024;
+        window.AndroidBridge.savePngStart(suggestedName, Math.ceil(b64.length / CHUNK));
+        for (let i = 0; i < b64.length; i += CHUNK) {
+          window.AndroidBridge.savePngChunk(Math.floor(i / CHUNK), b64.slice(i, i + CHUNK));
+        }
+        const ok = window.AndroidBridge.savePngEnd(suggestedName) === true;
+        toast(ok ? '已保存到相册' : '保存失败');
+        return;
+      }
+
+      // ② 桌面浏览器：系统「另存为」自选位置
       if (window.showSaveFilePicker) {
         const handle = await window.showSaveFilePicker({
           suggestedName,
@@ -753,6 +779,8 @@
         toast('已保存');
         return;
       }
+
+      // ③ 兜底：浏览器自动下载
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = suggestedName;
