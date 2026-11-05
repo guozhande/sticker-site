@@ -46,6 +46,7 @@ const AI_MIME_OF = { jpg: "image/jpeg", png: "image/png" };
 
 // ---- 图生图参考图（Seedream 官方无独立图生图端点：与文生图共用 /images/generations，仅加 image 字段，无 strength 参数）----
 export const REF_IMAGE_MAX_BYTES = 5 * 1024 * 1024;   // 参考图硬限 5MB（官方 ≤30MB；前端已压到长边 1024，约 ≤2MB）
+export const REF_IMAGE_MAX = 10;                      // 参考图最多 10 张（Seedream image 参数接受 2–10 张数组）
 const REF_IMAGE_RE = /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/;
 const REF_MODES = new Set(["free", "style", "keep"]);
 
@@ -54,17 +55,29 @@ const REF_MODES = new Set(["free", "style", "keep"]);
  * 逐字提取为单一来源，任何未来改动（加格式/改文案）只需动此处）。
  * 返回 { ok:true, image } | { ok:false, error, status }；失败时调用方直接 fail(error, status)。
  * 缺省/null → { ok:true, image:null }（文生图原路径，零回归）。
+ * 字符串 → 单张图生图（原逻辑不变）；数组 → 多参考图（2–10 张，Seedream image 参数原生支持）。
  */
-function validateRefImageBody(body) {
+export function validateRefImageBody(body) {
   let image = null;
   if (body.image !== undefined && body.image !== null) {
-    if (Array.isArray(body.image)) return { ok: false, error: "暂不支持多张参考图", status: 400 };
-    if (typeof body.image !== "string" || !REF_IMAGE_RE.test(body.image)) {
+    if (Array.isArray(body.image)) {
+      if (body.image.length > REF_IMAGE_MAX) return { ok: false, error: "参考图最多 10 张", status: 400 };
+      if (body.image.length < 1) return { ok: false, error: "参考图无效，请重新上传", status: 400 };
+      for (const item of body.image) {
+        if (typeof item !== "string" || !REF_IMAGE_RE.test(item)) {
+          return { ok: false, error: "参考图无效，请重新上传", status: 400 };
+        }
+        const b64 = item.slice(item.indexOf(",") + 1);
+        if (base64ByteLength(b64) > REF_IMAGE_MAX_BYTES) return { ok: false, error: "参考图过大（限 5MB）", status: 400 };
+      }
+      image = body.image;
+    } else if (typeof body.image !== "string" || !REF_IMAGE_RE.test(body.image)) {
       return { ok: false, error: "参考图无效，请重新上传", status: 400 };
+    } else {
+      const b64 = body.image.slice(body.image.indexOf(",") + 1);
+      if (base64ByteLength(b64) > REF_IMAGE_MAX_BYTES) return { ok: false, error: "参考图过大（限 5MB）", status: 400 };
+      image = body.image;
     }
-    const b64 = body.image.slice(body.image.indexOf(",") + 1);
-    if (base64ByteLength(b64) > REF_IMAGE_MAX_BYTES) return { ok: false, error: "参考图过大（限 5MB）", status: 400 };
-    image = body.image;
   }
   return { ok: true, image };
 }
@@ -340,6 +353,7 @@ export async function handleReport(request, env, origin) {
  * 无 image 字段 → 文生图（原路径，零回归）。
  * 带 image 字段 → 图生图：Seedream 官方无独立端点，同一请求体加 image 参数（无 strength 参数），
  * 相似度由 ref_mode 对应的提示词前缀控制（free/style/keep）。
+ * image 为数组 → 多参考图（2–10 张），语义由用户提示词描述「图一/图二」如何结合，ref_mode 恒 free。
  *
  * 服务端先调 Seedream 拿到临时 URL，再下载图片字节存 R2，返回站内 /img/ 地址。
  * 这样既绕开前端 fetch 临时 URL 的 CORS 限制，也把约 24h 失效的临时地址落成永久站内地址。
@@ -366,9 +380,9 @@ export async function handleAiImage(request, env, origin) {
 
   // ref_mode 守卫（R15）：无 image 时恒 'free' —— 防绕过 UI 直连 POST ref_mode=keep 却无参考图，
   // 提示词被注入「保持参考图中主体…」而 Seedream 根本没有参考图，生成语义被污染
-  const refMode = image
-    ? (REF_MODES.has(String(body.ref_mode ?? "")) ? String(body.ref_mode) : "free")
-    : "free";
+  // 多参考图（数组）同样恒 'free'：多图语义由用户提示词描述，不叠加单图 keep/style 前缀
+  const isMultiRef = Array.isArray(image);
+  const refMode = (image && !isMultiRef) ? (REF_MODES.has(String(body.ref_mode ?? "")) ? String(body.ref_mode) : "free") : "free";
 
   // per-IP 限流：与上传共用「IP hash + 1 小时窗口」思路，但用独立表 ai_requests
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
@@ -521,6 +535,7 @@ export async function handleAiVideo(request, env, origin) {
   const refImage = validateRefImageBody(body);
   if (!refImage.ok) return fail(refImage.error, refImage.status, origin);
   const image = refImage.image;
+  if (Array.isArray(image)) return fail("动图首帧仅支持一张图片", 400, origin);   // 可灵 first_frame 只收单张 data URI
 
   // ── 限流：共享 ai_requests 池（小时池 + 每日池，均按行数计；动图一次计 5 行）──
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";

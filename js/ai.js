@@ -28,6 +28,7 @@
   // 参考图压缩参数（对齐 quickref：单边 >14px、宽高比 [1/16,16]；压缩后 data URI 远小于后端 5MB 硬限）
   const REF_MAX_EDGE = 1024;
   const REF_JPEG_QUALITY = 0.85;
+  const REF_IMAGE_MAX = 10;      // 对齐 functions/_shared.js REF_IMAGE_MAX（多参考图上限）
   const REF_FAIL_TOAST = {
     too_small: '参考图尺寸太小，请换一张',
     bad_ratio: '参考图比例过窄/过宽，请换一张',
@@ -51,13 +52,12 @@
   let currentSize = '1K';    // 当前选中的尺寸（静图）
   let currentDuration = '5'; // 当前视频时长（动图，秒）
   let lastImageUrl = '';     // 后端返回的相对地址 /img/ai/<yyyymm>/<uuid>.<ext>
-  // 参考图（仅静图模式使用）
-  let refImageDataUri = null;     // 压缩后的参考图 data URI（发请求用；null = 文生图）
-  let refMode = 'free';           // free | style | keep（后端提示词前缀档位）
-  let refPreviewUrl = '';         // 原图 objectURL（缩略图用；需手动 revoke）
-  let refCompressPromise = null;  // 在途压缩 Promise；非 null 时禁用生成按钮
-  let refError = false;           // 最近一次压缩失败标记（选新图时清除）
-  let refSelection = 0;           // 选图代次：删除/换图 +1，作废旧在途压缩的结算
+  // 参考图（仅静图模式使用）：多槽位数组，可并发压缩
+  let refSlots = [];              // 已就绪参考图槽位：{ id, dataUri, previewUrl, name }；顺序=id 升序
+  let refInflight = [];           // 在途压缩槽位：{ id, previewUrl, name, promise }；promise 供 generate 等待
+  let refNextId = 1;              // 自增唯一槽位号（兼作「图一/图二」顺序，删除后不复用）
+  let refMode = 'free';           // free | style | keep（后端提示词前缀档位；仅单张时生效）
+  let refError = false;           // 最近一次压缩读取失败标记（unreadable；仅 0 张就绪时阻断生成）
 
   // 动图首帧（仅动图模式使用）：静图压缩 data URI 或 GIF 取帧结果，共用单槽位 videoFrameDataUri
   let videoFrameDataUri = null;       // 选中帧的白底 JPEG data URI（发请求用；null = 文生图）
@@ -82,12 +82,7 @@
   const $refField = $('ai-ref-field');
   const $refAdd = $('ai-ref-add');
   const $refFile = $('ai-ref-file');
-  const $refProcessing = $('ai-ref-processing');
-  const $refProcessingText = $('ai-ref-processing-text');
-  const $refPreview = $('ai-ref-preview');
-  const $refThumb = $('ai-ref-thumb');
-  const $refName = $('ai-ref-name');
-  const $refRemove = $('ai-ref-remove');
+  const $refSlots = $('ai-ref-slots');
   const $refModes = $('ai-ref-modes');
   const $vidRefField = $('ai-vidref-field');
   const $vidRefAdd = $('ai-vidref-add');
@@ -153,23 +148,62 @@
   }
 
   function syncGenerateButton() {
-    // 参考图压缩中/动图首帧取帧中禁用生成按钮（R14：不调用的话选图瞬间存在竞态窗口）
-    $generate.disabled = busy || refCompressPromise !== null || videoFrameBusy !== null || !$prompt.value.trim();
+    // 参考图在途压缩/动图首帧取帧中禁用生成按钮（R14：不调用的话选图瞬间存在竞态窗口）
+    const anyRefInflight = refInflight.length > 0;
+    $generate.disabled = busy || anyRefInflight || videoFrameBusy !== null || !$prompt.value.trim();
   }
 
-  // ---------- 参考图（图生图）----------
-  /** 清参考图全部状态（× 删除 / 失败清理 / 换新图共用）；refSelection 自增作废旧在途压缩的结算。 */
-  function clearRefState() {
-    refSelection++;
-    refImageDataUri = null;
-    refError = false;
-    refMode = 'free';
-    setRefModeActive('free');
-    if (refPreviewUrl) { URL.revokeObjectURL(refPreviewUrl); refPreviewUrl = ''; }
-    $refAdd.hidden = false;
-    $refProcessing.hidden = true;
-    $refPreview.hidden = true;
-    $refModes.hidden = true;
+  // ---------- 参考图（图生图，多槽位）----------
+  /** 渲染参考图槽位：编号 + 缩略图 + 文件名 + ×（在途槽位额外显示 spinner）。
+   *  全部用 createElement + textContent，文件名永不进 innerHTML。 */
+  function renderRefSlots() {
+    $refSlots.textContent = '';   // 清空（子节点全由本函数创建，textContent 清空安全）
+
+    const all = [...refSlots.map((s) => ({ ...s, ready: true })), ...refInflight.map((s) => ({ ...s, ready: false }))]
+      .sort((a, b) => a.id - b.id);   // id=加入顺序，编号与「图一/图二」顺序一致
+
+    all.forEach((slot, idx) => {
+      const el = document.createElement('div');
+      el.className = 'ai-ref-slot';
+
+      const badge = document.createElement('span');
+      badge.className = 'ai-ref-badge';
+      badge.textContent = String(idx + 1);
+
+      const thumb = document.createElement('img');
+      thumb.className = 'ai-ref-thumb';
+      thumb.alt = `参考图 ${idx + 1}`;
+      thumb.src = slot.previewUrl;
+
+      const name = document.createElement('span');
+      name.className = 'ai-ref-name';
+      name.textContent = slot.name;   // textContent 铁律
+
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'ai-ref-remove';
+      remove.setAttribute('aria-label', `删除参考图 ${idx + 1}`);
+      remove.textContent = '×';
+      remove.addEventListener('click', () => removeRefSlot(slot.id));
+
+      el.append(badge, thumb, name);
+      if (!slot.ready) {
+        const spinner = document.createElement('span');
+        spinner.className = 'ai-spinner';
+        const status = document.createElement('span');
+        status.className = 'ai-ref-processing-text';
+        status.textContent = '处理中…';
+        el.append(spinner, status);
+      }
+      el.append(remove);
+
+      $refSlots.append(el);
+    });
+
+    // 相似度 chips 仅单张就绪时显示；0 或 ≥2 张隐藏
+    $refModes.hidden = refSlots.length !== 1;
+    // 达到上限禁用「＋ 添加参考图」（计数=就绪+在途）
+    $refAdd.disabled = refSlots.length + refInflight.length >= REF_IMAGE_MAX;
   }
 
   function setRefModeActive(mode) {
@@ -178,13 +212,21 @@
     });
   }
 
-  /** 压缩完成：处理中占位 → 已选态（缩略图 + 文件名 + 相似度 chips）。 */
-  function showRefPreview(name) {
-    $refProcessing.hidden = true;
-    $refPreview.hidden = false;
-    $refModes.hidden = false;
-    $refThumb.src = refPreviewUrl;
-    $refName.textContent = name;   // textContent：文件名不进 innerHTML
+  /** 删除单个槽位：就绪槽位直接删；在途槽位删后其压缩结算被丢弃（id 唯一不复用，守卫不会误伤别的槽位）。 */
+  function removeRefSlot(id) {
+    const readyIdx = refSlots.findIndex((s) => s.id === id);
+    if (readyIdx >= 0) {
+      const [slot] = refSlots.splice(readyIdx, 1);
+      if (slot.previewUrl) URL.revokeObjectURL(slot.previewUrl);   // 释放缩略图 objectURL
+    } else {
+      const inflightIdx = refInflight.findIndex((s) => s.id === id);
+      if (inflightIdx >= 0) {
+        const [slot] = refInflight.splice(inflightIdx, 1);
+        if (slot.previewUrl) URL.revokeObjectURL(slot.previewUrl);
+      }
+    }
+    renderRefSlots();
+    syncGenerateButton();
   }
 
   /**
@@ -235,46 +277,39 @@
     }
   }
 
-  /** 选中参考图 → 清旧状态 → 处理中占位 → 压缩 → 预览态/失败清理。 */
+  /** 选中参考图 → 立即以「处理中」槽位呈现 → 并发压缩 → 成功进就绪槽位 / 失败清理并 toast。 */
   function onRefFileChange() {
     const file = $refFile.files?.[0];
     $refFile.value = '';   // 重置 input：同一文件再次选择也能触发 change
     if (!file) return;
 
-    clearRefState();   // 清旧状态（revoke 旧 objectURL、作废旧在途压缩）
-    const mySel = refSelection;
-
-    $refAdd.hidden = true;
-    $refProcessing.hidden = false;
-    $refProcessingText.textContent = file.name;   // textContent：文件名不进 innerHTML
-    refPreviewUrl = URL.createObjectURL(file);
+    const slotId = refNextId++;
+    const previewUrl = URL.createObjectURL(file);
+    const name = file.name;
 
     // R14 生命周期：压缩开始即禁用生成按钮；settle（成败皆）释放并同步按钮。
-    // identity 守卫：只清自己的锁 —— 删除/换图后旧压缩的 finally 不得误清新压缩的锁。
+    // identity 守卫：槽位 id 唯一不复用 —— 删除该槽位后旧压缩的结算被丢弃，不误写入别的槽位。
     const p = compressRefImage(file)
       .then((result) => {
-        if (refSelection !== mySel) return;   // 已被删除/换图：丢弃结算结果
+        const idx = refInflight.findIndex((s) => s.id === slotId);
+        if (idx < 0) return;   // 已被删除：previewUrl 已在删除时 revoke，丢弃结算
+        refInflight.splice(idx, 1);
         if (result.ok) {
-          refImageDataUri = result.dataUri;
-          showRefPreview(file.name);
+          refSlots.push({ id: slotId, dataUri: result.dataUri, previewUrl, name });
+          refError = false;
         } else {
-          clearRefState();                                   // 恢复添加按钮态（revoke objectURL）
+          URL.revokeObjectURL(previewUrl);   // 失败：释放缩略图 objectURL
           if (result.reason === 'unreadable') refError = true;   // 仅压缩失败标记，预检拒绝不算
-          toast(REF_FAIL_TOAST[result.reason]);
+          toast(REF_FAIL_TOAST[result.reason] || REF_FAIL_TOAST.unreadable);
         }
       })
       .finally(() => {
-        if (refCompressPromise === p) refCompressPromise = null;
+        renderRefSlots();
         syncGenerateButton();
       });
-    refCompressPromise = p;
-    syncGenerateButton();
-  }
 
-  /** × 删除参考图：清状态 + 释放压缩锁（R14：× 删除时点必须调 syncGenerateButton）。 */
-  function onRefRemove() {
-    clearRefState();
-    refCompressPromise = null;   // 丢弃在途压缩的按钮锁；其 finally 的 identity 守卫不会误伤新锁
+    refInflight.push({ id: slotId, previewUrl, name, promise: p });
+    renderRefSlots();
     syncGenerateButton();
   }
 
@@ -529,12 +564,21 @@
       // 双保险：即使按钮 disabled 渲染延迟、点击先到，await 在途压缩后才构造 payload，
       // 不会发出缺 image 的静默文生图请求；压缩失败后中止生成。
       // 动图不使用静图参考图（R17），两项检查仅对静图生效。
+      let refImage = null;
+      let refModeValue = refMode;
       if (!isVideo) {
-        if (refCompressPromise) await refCompressPromise;
-        if (refError) {
+        if (refInflight.length > 0) await Promise.all(refInflight.map((s) => s.promise));   // 等待所有在途压缩
+        if (refError && refSlots.length === 0) {
           toast('参考图无法读取，请重新添加');
           setResultState('empty');   // 恢复结果区空态，勿停留在 loading
           return;
+        }
+        // 静图参考图 payload：0 张 → null（文生图）；1 张 → 字符串；≥2 张 → 数组（按加入顺序）
+        if (refSlots.length === 1) {
+          refImage = refSlots[0].dataUri;
+        } else if (refSlots.length >= 2) {
+          refImage = [...refSlots].sort((a, b) => a.id - b.id).map((s) => s.dataUri);
+          refModeValue = 'free';   // 多图语义由提示词描述，不叠加 keep/style 前缀
         }
       }
       // 动图首帧（图生图）：等待在途取帧/压缩 → 代际守卫（等待期间删除/换图）toast 中止 →
@@ -557,7 +601,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isVideo
           ? { prompt, duration: Number(currentDuration), image: videoFrameDataUri }   // image 为 null 时后端走 Seedream 首帧
-          : { prompt, size: currentSize, image: refImageDataUri, ref_mode: refMode }),   // image 为 null 时后端按文生图处理
+          : { prompt, size: currentSize, image: refImage, ref_mode: refModeValue }),   // image 为 null 时后端按文生图处理
         signal: ctrl.signal,   // 静图：timer 为 0，signal 永不 abort，行为与原裸 fetch 一致
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `HTTP ${res.status}`);
@@ -716,10 +760,9 @@
     $prompt.focus();
   });
 
-  // 参考图（图生图）：添加 / 选文件 / 删除 / 相似度 chips
+  // 参考图（图生图）：添加 / 选文件 / 相似度 chips（删除按钮由 renderRefSlots 动态绑定）
   $refAdd.addEventListener('click', () => $refFile.click());
   $refFile.addEventListener('change', onRefFileChange);
-  $refRemove.addEventListener('click', onRefRemove);
   document.querySelectorAll('[data-ref-mode]').forEach((btn) => {
     btn.addEventListener('click', () => {
       refMode = btn.dataset.refMode;

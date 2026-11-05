@@ -274,6 +274,45 @@ body.ai-page {
   color: var(--text-secondary);
 }
 
+.ai-ref-add:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 多参考图槽位容器 + 单个槽位（编号徽标 + 缩略图 + 文件名 + × 删除）。缩略图/文件名/删除复用
+   .ai-ref-thumb / .ai-ref-name / .ai-ref-remove，视觉与旧单张预览一致 */
+.ai-ref-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ai-ref-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 6px 52px 6px 8px;   /* 右侧给 × 按钮留位 */
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+}
+
+.ai-ref-badge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 /* ====== 动图首帧（图生图：静图 / GIF 取帧） ====== */
 .ai-vidref-entry {
   display: flex;
