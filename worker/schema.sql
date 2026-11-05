@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS uploads (
   size       INTEGER NOT NULL,              -- 字节数
   work       TEXT NOT NULL,                 -- 作品名（用户输入，对应网站的二级/三级标签）
   characters TEXT NOT NULL DEFAULT '[]',    -- 角色名，JSON 数组；非单角色时多个
+  search_keys TEXT DEFAULT NULL,            -- 预生成搜索键（JSON），NULL=旧行走客户端回退
   created_at INTEGER NOT NULL,              -- 毫秒时间戳
   ip_hash    TEXT,                          -- 上传者 IP 的哈希（不存明文；投诉追溯用）
   status     TEXT NOT NULL DEFAULT 'visible' -- visible / hidden（侵权投诉下架）

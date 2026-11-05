@@ -71,7 +71,7 @@ const API_BASE = window.STICKER_API_BASE ?? '';
 
 /** 把上传接口返回的条目，转成和图库一致的结构。 */
 function uploadToSticker(u) {
-  return {
+  const sticker = {
     id: `up-${u.id}`,
     uploadId: u.id,
     filename: u.filename,
@@ -82,6 +82,9 @@ function uploadToSticker(u) {
     subcategory: '二次元',   // 上传时只问了作品名，统一归二次元
     source: 'upload',
   };
+  // 后端预生成的搜索键（键名与 fuzzy.js 消费的 snake_case 一致）；旧接口无此字段时保持回退逻辑
+  if (u.searchKeys) sticker.search_keys = u.searchKeys;
+  return sticker;
 }
 
 async function loadUploads() {

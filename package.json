@@ -1,0 +1,8 @@
+{
+  "name": "sticker-site",
+  "private": true,
+  "description": "表情包站点（Cloudflare Pages + Functions）",
+  "dependencies": {
+    "pinyin-pro": "^3.29.5"
+  }
+}

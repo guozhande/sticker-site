@@ -7,6 +7,8 @@
  * 文件/目录以 `_` 开头不会被 Pages 当成路由，所以这个文件可以安全放这里。
  */
 
+import { pinyin } from "pinyin-pro";
+
 // ---- 限制 ----
 export const MAX_BYTES = 8 * 1024 * 1024;          // 单文件 8MB
 /**
@@ -214,9 +216,112 @@ function cleanFilename(name) {
   );
 }
 
+// ---- 搜索键（与 pixai/gen_search_keys.py 同语义，供 js/fuzzy.js 分级匹配）----
+/**
+ * 多音字覆盖白名单：词 -> (覆盖全拼, 覆盖首字母)。
+ * 与 gen_search_keys.py 的 MULTI_PRON_OVERRIDES 逐条一致；命中时默认读音行与覆盖行都保留
+ * （错读音键无害——用户按错读音拼仍能找到）。
+ */
+const MULTI_PRON_OVERRIDES = {
+  "降魔大圣": { py: "xiangmodasheng", ini: "xmds" },
+  "长离": { py: "changli", ini: "cl" },
+};
+
+/**
+ * pinyin-pro 与 pypinyin 的默认读音差异补丁。
+ * 固定条目键由 pypinyin 生成（长离 -> zhangli），pinyin-pro 默认给 changli；
+ * 为与固定条目的键完全对齐，这里显式保留 pypinyin 的默认读音行（覆盖行由白名单追加）。
+ */
+const PYPINYIN_DEFAULT_OVERRIDES = { "长离": ["zhang", "li"] };
+
+/** 是否 CJK 基本区汉字（U+4E00-U+9FFF），与 gen_search_keys.py 的 is_cjk 一致。 */
+function isCjk(ch) {
+  const code = ch.codePointAt(0);
+  return code >= 0x4e00 && code <= 0x9fff;
+}
+
+/** 清洗：仅保留 CJK 汉字 + ASCII 字母/数字，ASCII 转小写，其余删除。 */
+function cleanSearchText(raw) {
+  let out = "";
+  for (const ch of String(raw ?? "")) {
+    if (isCjk(ch)) out += ch;
+    else if (ch >= "a" && ch <= "z") out += ch;
+    else if (ch >= "0" && ch <= "9") out += ch;
+    else if (ch >= "A" && ch <= "Z") out += ch.toLowerCase();
+  }
+  return out;
+}
+
+/** 是否含至少 1 个 CJK 汉字。 */
+function hasCjk(word) {
+  return [...word].some(isCjk);
+}
+
+/** 按字符串整体去重，保持首现顺序（与 gen_search_keys.py 的 unique 一致）。 */
+function uniqueSearchWords(words) {
+  return [...new Set(words)];
+}
+
+/**
+ * 全拼（无分隔）与首字母（数字原样透传）。
+ * pinyin-pro 的 nonZh: 'consecutive' 把连续非汉字块当成一个整体（与 pypinyin 的
+ * lazy_pinyin 行为对齐，如 '东方project' -> dong/fang/project）；数字自己成音节，
+ * 首字符天然是数字本身（'崩坏3' -> beng/huai/3 -> py=benghuai3, ini=bh3）。
+ */
+function toPinyinParts(word) {
+  const syllables = PYPINYIN_DEFAULT_OVERRIDES[word]
+    ?? pinyin(word, { toneType: "none", type: "array", nonZh: "consecutive" });
+  return {
+    py: syllables.join(""),
+    ini: syllables.map((s) => s[0]).join(""),
+  };
+}
+
+/** 一组词 -> {cn, py, ini} 平行数组（cn 与 py/ini 按下标一一对应）。 */
+function buildSearchGroup(words) {
+  const triples = [];
+  for (const word of words) {
+    const { py, ini } = toPinyinParts(word);
+    triples.push([word, py, ini]);
+    const override = MULTI_PRON_OVERRIDES[word];
+    if (override) triples.push([word, override.py, override.ini]);
+  }
+  const seen = new Set();
+  const out = [];
+  for (const triple of triples) {
+    const key = triple.join("\u0000");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(triple);
+  }
+  return { cn: out.map((t) => t[0]), py: out.map((t) => t[1]), ini: out.map((t) => t[2]) };
+}
+
+/**
+ * 上传条目 -> search_keys。
+ * cat 组 = 作品名（字段权重 3）；tag 组 = characters 中清洗后含 >=1 个汉字的词（字段权重 2）。
+ * 与 gen_search_keys.py 一致：cat 优先去重（同词不再进 tag 组）；纯英文 tag 不生成键
+ * （客户端走 tags 原字段的子串匹配）。两组都为空时返回 null（客户端走回退路径）。
+ */
+export function buildSearchKeysForUpload(work, characters) {
+  const catWords = uniqueSearchWords([cleanSearchText(work)].filter(Boolean));
+  const catSet = new Set(catWords);
+  const tagWords = uniqueSearchWords(
+    (Array.isArray(characters) ? characters : [])
+      .map(cleanSearchText)
+      .filter((word) => word && hasCjk(word) && !catSet.has(word))
+  );
+  const cat = buildSearchGroup(catWords);
+  const tag = buildSearchGroup(tagWords);
+  if (!cat.cn.length && !tag.cn.length) return null;
+  return { cat, tag };
+}
+
 function rowToItem(row) {
   let characters = [];
   try { characters = JSON.parse(row.characters); } catch { /* 脏数据当空数组 */ }
+  let searchKeys = null;
+  try { searchKeys = row.search_keys ? JSON.parse(row.search_keys) : null; } catch { /* 脏数据当 null：客户端走回退搜索 */ }
   return {
     id: row.id,
     url: `/img/${row.r2_key}`,
@@ -226,6 +331,7 @@ function rowToItem(row) {
     size: row.size,
     mime: row.mime,
     createdAt: row.created_at,
+    searchKeys,
   };
 }
 
@@ -262,16 +368,25 @@ export async function handleUpload(request, env, origin) {
   const yyyymm = `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
   const r2Key = `uploads/${yyyymm}/${id}.${EXT_OF[mime]}`;
 
+  // 预生成模糊搜索键（纯函数，无 IO）；异常只记日志不阻断上传（NULL 走客户端回退）
+  let searchKeys = null;
+  try { searchKeys = buildSearchKeysForUpload(work, characters); }
+  catch (err) { console.error("生成搜索键失败：", err.message); }
+
   await env.IMAGES.put(r2Key, file.stream(), {
     httpMetadata: { contentType: mime, cacheControl: `public, max-age=${IMG_CACHE_SECONDS}, immutable` },
   });
 
   await env.DB
     .prepare(
-      "INSERT INTO uploads (id, r2_key, filename, mime, size, work, characters, created_at, ip_hash, status) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'visible')"
+      "INSERT INTO uploads (id, r2_key, filename, mime, size, work, characters, search_keys, created_at, ip_hash, status) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'visible')"
     )
-    .bind(id, r2Key, cleanFilename(file.name), mime, file.size, work, JSON.stringify(characters), Date.now(), ipHash)
+    .bind(
+      id, r2Key, cleanFilename(file.name), mime, file.size, work, JSON.stringify(characters),
+      searchKeys ? JSON.stringify(searchKeys) : null,
+      Date.now(), ipHash
+    )
     .run();
 
   return json({ ok: true, id, url: `/img/${r2Key}`, work, characters }, { origin });
