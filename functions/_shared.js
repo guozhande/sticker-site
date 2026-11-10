@@ -9,6 +9,20 @@
 
 import { pinyin } from "pinyin-pro";
 
+// 积分体系（functions/points.js）。与 _shared 循环引用：双方只用函数/常量声明，
+// 且全部调用发生在函数体内，Workers ESM 运行时安全（模块求值期互不触碰）。
+import {
+  POINTS_AI_REF_EACH,
+  POINTS_AI_VIDEO,
+  cleanupExpiredPending,
+  computeAiCost,
+  getUserId,
+  isContentModerationError,
+  preDeductPoints,
+  refundAiSpend,
+  settleAiSpend,
+} from "./points.js";
+
 // ---- 限制 ----
 export const MAX_BYTES = 8 * 1024 * 1024;          // 单文件 8MB
 /**
@@ -121,7 +135,7 @@ export function corsHeaders(origin) {
   return {
     "Access-Control-Allow-Origin": allowed,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, X-Device-Id",
     "Access-Control-Max-Age": "86400",
     Vary: "Origin",
   };
@@ -349,7 +363,7 @@ function checkAiPass(body, env) {
 
 // ---- 各接口 ----
 
-/** POST /api/upload  multipart/form-data: file, work, characters */
+/** POST /api/upload  multipart/form-data: file, work, characters（新上传进 pending 待审核，通过后 +5 积分） */
 export async function handleUpload(request, env, origin) {
   const form = await request.formData();
   const file = form.get("file");
@@ -375,6 +389,11 @@ export async function handleUpload(request, env, origin) {
     return fail("上传太频繁，请稍后再试", 429, origin);
   }
 
+  // 游客账户（限流之后、生成 r2Key 之前）：X-Device-Id 合法用之，无头 IP hash 兜底，幂等建户。
+  // 上传过审后 +5 积分发到该户；存量库漏 ALTER user_id 列时此处插入会直接 SQL 报错（见 worker/schema.sql 头部迁移说明）。
+  const uid = await getUserId(request, env);
+  if (!uid.ok) return fail(uid.error, uid.status, origin);
+
   const id = crypto.randomUUID();
   const d = new Date();
   const yyyymm = `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
@@ -391,17 +410,17 @@ export async function handleUpload(request, env, origin) {
 
   await env.DB
     .prepare(
-      "INSERT INTO uploads (id, r2_key, filename, mime, size, work, characters, search_keys, created_at, ip_hash, status) " +
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'visible')"
+      "INSERT INTO uploads (id, r2_key, filename, mime, size, work, characters, search_keys, created_at, ip_hash, status, user_id) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)"
     )
     .bind(
       id, r2Key, cleanFilename(file.name), mime, file.size, work, JSON.stringify(characters),
       searchKeys ? JSON.stringify(searchKeys) : null,
-      Date.now(), ipHash
+      Date.now(), ipHash, uid.userId
     )
     .run();
 
-  return json({ ok: true, id, url: `/img/${r2Key}`, work, characters }, { origin });
+  return json({ ok: true, id, url: `/img/${r2Key}`, work, characters, status: "pending" }, { origin });
 }
 
 /** GET /api/uploads?work=&limit=&offset= */
@@ -484,17 +503,23 @@ export async function handleReport(request, env, origin) {
  *
  * 服务端先调 Seedream 拿到临时 URL，再下载图片字节存 R2，返回站内 /img/ 地址。
  * 这样既绕开前端 fetch 临时 URL 的 CORS 限制，也把约 24h 失效的临时地址落成永久站内地址。
+ *
+ * 拦截顺序（验收口径）：口令闸门（错口令 403，未配口令 503）→ ARK_API_KEY 未配置 503 →
+ * 参数校验 400 → 限流 429 → 积分预扣 402 → 生成/结算。口令先于 key 检查：
+ * 未配 key 时错误口令也必须返回 403（不因服务未配置而暴露/改变拦截语义）。
  */
 export async function handleAiImage(request, env, origin) {
-  const apiKey = String(env.ARK_API_KEY ?? "").trim();
-  if (!apiKey) return fail("AI 生成未配置", 503, origin);
+  await cleanupExpiredPending(env);   // 惰性清理：先清算悬挂超 10 分钟的 pending 预扣（AI 悬挂保护）
 
   let body = {};
   try { body = await request.json(); } catch { /* 非法 JSON 走下面的校验 */ }
 
-  // 访问口令闸门：prompt/size 校验之前早退，无口令请求不进入任何业务逻辑
+  // 访问口令闸门：最早一步（先于 key 配置检查与 prompt/size 校验），无口令请求不进入任何业务逻辑
   const passCheck = checkAiPass(body, env);
   if (!passCheck.ok) return fail(passCheck.error, passCheck.status, origin);
+
+  const apiKey = String(env.ARK_API_KEY ?? "").trim();
+  if (!apiKey) return fail("AI 生成未配置", 503, origin);
 
   const prompt = cleanPrompt(body.prompt);
   if (!prompt) return fail("请输入提示词", 400, origin);
@@ -525,14 +550,32 @@ export async function handleAiImage(request, env, origin) {
   // 图生图提示词前缀（R6/R16）：拼接后统一再限长；前缀置于头部，截断只损失用户描述尾部、指令语义保留
   const finalPrompt = ((REF_PROMPT_PREFIX[refMode] ?? "") + prompt).slice(0, AI_PROMPT_MAX);
 
+  // ---- 积分计费与预扣（限流之后：被限流请求不扣分）----
+  // 计费：1K=30 / 2K=60 + 每张参考图 2（无免费张，数组按 length 计）
+  const cost = computeAiCost(rawSize, image);
+  const uid = await getUserId(request, env);
+  if (!uid.ok) return fail(uid.error, uid.status, origin);
+  const pre = await preDeductPoints(env, uid.userId, cost);
+  if (!pre.ok) return fail(pre.error, pre.status, origin);   // 402 积分不足
+  const pendingLogId = pre.logId;
+
   // ①-③ 调 Seedream 生成 + 下载 + 存 R2（抽出公共函数；按标签还原原文案，零回归）
   let frame;
   try {
     frame = await generateSeedreamFrame(finalPrompt, rawSize, env, image);
   } catch (err) {
     if (!(err instanceof FrameError)) throw err;   // 非首帧错误（理论不发生）交路由层 500
+    // 风控类失败不退分（文案黑名单命中 → 预扣转正式）；欠费/网络/5xx/未配置等服务端故障 → 退分
+    if (isContentModerationError(err.message)) {
+      await settleAiSpend(env, pendingLogId).catch((e) => console.error("AI 结算失败：", e.message));
+    } else {
+      await refundAiSpend(env, pendingLogId).catch((e) => console.error("AI 退分失败：", e.message));
+    }
     return fail(err.message, err.status, origin);  // 原 7 条文案/状态码逐条还原（no_key/gen_request/gen_failed/no_url/download_failed/empty_body/store_failed）
   }
+
+  // 生成成功：预扣转正式（pending → confirmed，余额不动，幂等）；结算失败由 10 分钟惰性清理兜底退分
+  await settleAiSpend(env, pendingLogId).catch((e) => console.error("AI 结算失败：", e.message));
 
   // ④ 记一次成功生成，用于限流计数（计数失败不影响已生成的结果）
   try {
@@ -649,15 +692,18 @@ async function generateSeedreamFrame(prompt, rawSize, env, image = null) {
  * 最后一段才是单行 JSON 结果（长链路结果一律 HTTP 200，逻辑状态码放 payload.code）。
  */
 export async function handleAiVideo(request, env, origin) {
-  // ── 快失败路径：秒级返回，普通 JSON（前端 !res.ok 分支照旧处理）──
-  if (!String(env.KLING_API_KEY ?? "").trim()) return fail("动图生成未配置", 503, origin);
+  await cleanupExpiredPending(env);   // 惰性清理：先清算悬挂超 10 分钟的 pending 预扣（AI 悬挂保护）
 
   let body = {};
   try { body = await request.json(); } catch { /* 非法 JSON 走下方校验 */ }
 
-  // 访问口令闸门：与 handleAiImage 同源（checkAiPass），早退在 prompt/duration 校验之前
+  // 访问口令闸门：与 handleAiImage 同源（checkAiPass），最早一步（先于 key 配置检查）——
+  // 未配 KLING key 时错误口令也必须 403 而非 503，两端点拦截顺序统一
   const passCheck = checkAiPass(body, env);
   if (!passCheck.ok) return fail(passCheck.error, passCheck.status, origin);
+
+  // ── 快失败路径：秒级返回，普通 JSON（前端 !res.ok 分支照旧处理）──
+  if (!String(env.KLING_API_KEY ?? "").trim()) return fail("动图生成未配置", 503, origin);
 
   const prompt = cleanPrompt(body.prompt);
   if (!prompt) return fail("请输入提示词", 400, origin);
@@ -684,6 +730,15 @@ export async function handleAiVideo(request, env, origin) {
     return fail("今日动图生成次数已达上限（每天最多 8 次），请明天再试", 429, origin);
   }
 
+  // ── 积分计费与预扣（限流之后：被限流请求不扣分；402 普通 JSON 返回，不进流）──
+  // 动图 150 + 首帧参考图 2（首帧只许单张，数组已被拒，无免费张）
+  const cost = POINTS_AI_VIDEO + (image ? POINTS_AI_REF_EACH : 0);
+  const uid = await getUserId(request, env);
+  if (!uid.ok) return fail(uid.error, uid.status, origin);
+  const pre = await preDeductPoints(env, uid.userId, cost);
+  if (!pre.ok) return fail(pre.error, pre.status, origin);
+  const pendingLogId = pre.logId;
+
   // ── 长链路：先返回 ReadableStream（响应头立刻到达），start 内跑流水线 ──
   const stream = new ReadableStream({
     async start(controller) {
@@ -692,10 +747,12 @@ export async function handleAiVideo(request, env, origin) {
         try { controller.enqueue(enc.encode("\n")); } catch { /* 客户端已断开 */ }
       }, HEARTBEAT_INTERVAL_MS);
       try {
-        const payload = await runVideoPipeline(request, env, ipHash, prompt, duration, image);
+        const payload = await runVideoPipeline(request, env, ipHash, prompt, duration, image, pendingLogId);
         controller.enqueue(enc.encode(JSON.stringify(payload) + "\n"));
       } catch {
-        // 客户端断开等意外：尽力补一个错误段（客户端多半收不到，纯兜底）
+        // 客户端断开等意外：尽力退分（claim 幂等，已结算/已退回则无操作；DB 失败由 10 分钟惰性清理兜底）
+        await refundAiSpend(env, pendingLogId).catch((e) => console.error("动图退分失败：", e.message));
+        // 尽力补一个错误段（客户端多半收不到，纯兜底）
         try { controller.enqueue(enc.encode(JSON.stringify({ ok: false, error: "服务端错误", code: 500 }) + "\n")); } catch { /* 忽略 */ }
       } finally {
         clearInterval(ping);
@@ -721,8 +778,27 @@ export async function handleAiVideo(request, env, origin) {
  * 计费口径决策（v3 修正 #8）：有 image 时虽跳过 Seedream（省一次付费调用），但动图服务成本主体
  * 是可灵调用，本版不区分 image 来源、仍记 VIDEO_RATE_COST 5 行。后续如需激励图生图，
  * 可引入 VIDEO_RATE_COST_WITH_IMAGE = 4 对 image 路径记 4 行（常量化，本版不实现）。
+ *
+ * pendingLogId：AI 预扣流水行 id。失败按 finish 分流（风控类不退分、服务端故障退分），
+ * 成功路径显式 settle；客户端断开（signal abort）上抛，退分由 handleAiVideo 流 start 的 catch 尽力执行。
  */
-async function runVideoPipeline(request, env, ipHash, prompt, duration, image = null) {
+async function runVideoPipeline(request, env, ipHash, prompt, duration, image = null, pendingLogId = null) {
+  /**
+   * 长链路收尾统一出口：按失败文案黑名单分流——风控类 → 预扣转正式不退分（confirmed）；
+   * 服务端故障（503/504/500、502-非风控）→ 退分（refunded，claim 幂等防双退）。
+   * 成功路径不走这里（由调用处显式 settle）。无 pendingLogId 时纯透传。
+   */
+  const finish = async (payload, moderationHit = isContentModerationError(payload.error)) => {
+    if (!pendingLogId) return payload;
+    try {
+      if (moderationHit) await settleAiSpend(env, pendingLogId);
+      else await refundAiSpend(env, pendingLogId);
+    } catch (err) {
+      console.error(moderationHit ? "动图结算失败：" : "动图退分失败：", err.message);
+    }
+    return payload;
+  };
+
   // ── ③ 首帧：有 image → 原样作 first_frame（跳过 Seedream）；无 image → 复用 Seedream 流水线，
   //       固定 1K；按 FrameError 标签映射新文案 ──
   let dataUri;
@@ -736,13 +812,14 @@ async function runVideoPipeline(request, env, ipHash, prompt, duration, image = 
       const message = err.tag === "no_key" ? "动图生成未配置"
         : err.tag === "store_failed" ? "首帧图存储失败，请稍后重试"
         : "首帧图生成失败，请稍后重试";
-      return { ok: false, error: message, code: err.status };
+      // 风控判定用 FrameError 原始文案（映射后文案已丢失细节）
+      return await finish({ ok: false, error: message, code: err.status }, isContentModerationError(err.message));
     }
     // 首帧保留 R2 不删（D9：存储便宜，未来 App 复用）
 
     // ── ④ data URI（唯一实测成功形态；1K 图 100-300KB + 33% 膨胀可接受）──
     try { dataUri = await toDataUri(env, frame.r2Key, frame.mime); }
-    catch { return { ok: false, error: "首帧图读取失败，请稍后重试", code: 502 }; }
+    catch { return await finish({ ok: false, error: "首帧图读取失败，请稍后重试", code: 502 }); }
   }
 
   // ── ⑤ 记账 5 行：在 klingCreate 之前（记账=尝试而非成功；可灵 create 即计费，
@@ -752,22 +829,22 @@ async function runVideoPipeline(request, env, ipHash, prompt, duration, image = 
 
   // ── ⑥ 可灵 create：host 回退 singapore → beijing，单次不循环（D5/D15）──
   const created = await klingCreate(env.KLING_API_KEY, prompt, Number(duration), dataUri);
-  if (!created.ok) return { ok: false, error: `视频生成请求失败：${created.error}`, code: 502 };
+  if (!created.ok) return await finish({ ok: false, error: `视频生成请求失败：${created.error}`, code: 502 });
 
   // ── ⑦ 轮询：20s×12 ≤240s（复用 create 成功的 host；每次 sleep 前检查 request.signal，
   //       客户端断开立即退出——可灵已计费，记账已前置兜底）──
   let mp4Url;
   try { mp4Url = await klingPoll(env.KLING_API_KEY, created.taskId, created.base, request.signal); }
   catch (err) {
-    if (request.signal.aborted) throw err;   // 客户端已走：上抛退出，流关闭，下游 abort
-    return err.timeout
+    if (request.signal.aborted) throw err;   // 客户端已走：上抛退出，流关闭，下游 abort（退分由流 start 的 catch 兜底）
+    return await finish(err.timeout
       ? { ok: false, error: "视频生成超时（约 4 分钟），任务可能仍在生成，请稍后重试", code: 504 }
-      : { ok: false, error: `视频生成失败：${err.message}`, code: 502 };
+      : { ok: false, error: `视频生成失败：${err.message}`, code: 502 });
   }
 
   // ── ⑧ 下载 MP4 落 R2（带 Chrome UA，失败重试 1 次）──
   const mp4Key = await downloadAndStoreMp4(mp4Url, env);   // 失败返回 null
-  if (!mp4Key) return { ok: false, error: "视频下载失败，请稍后重试", code: 502 };
+  if (!mp4Key) return await finish({ ok: false, error: "视频下载失败，请稍后重试", code: 502 });
 
   // ── ⑨ 调转码 Worker（service binding；anySignal(540s 超时, request.signal)，
   //       Pages 放弃/客户端断开 → DO 侧 exec 被 SIGKILL、本档产物丢弃）──
@@ -783,12 +860,14 @@ async function runVideoPipeline(request, env, ipHash, prompt, duration, image = 
       signal: anySignal(ctrl.signal, request.signal),
     }));
   } catch {
-    return { ok: false, error: "转码服务暂不可用，请稍后重试", code: 503 };   // 含 540s 超时/客户端断开
+    return await finish({ ok: false, error: "转码服务暂不可用，请稍后重试", code: 503 });   // 含 540s 超时/客户端断开
   } finally { clearTimeout(timer); }
   const tData = await tRes.json().catch(() => ({}));
-  if (tRes.status === 503) return { ok: false, error: `转码服务暂不可用：${tData.error || "容器就绪超时"}`, code: 503 };   // 容器就绪超时（透传 Worker 具体原因）
-  if (!tRes.ok || !tData.ok) return { ok: false, error: `GIF 转码失败：${tData.error || "未知错误"}`, code: 500 };      // exec 失败/对象未落桶
+  if (tRes.status === 503) return await finish({ ok: false, error: `转码服务暂不可用：${tData.error || "容器就绪超时"}`, code: 503 });   // 容器就绪超时（透传 Worker 具体原因）
+  if (!tRes.ok || !tData.ok) return await finish({ ok: false, error: `GIF 转码失败：${tData.error || "未知错误"}`, code: 500 });      // exec 失败/对象未落桶
 
+  // 成功：预扣转正式（pending → confirmed，余额不动，幂等）
+  if (pendingLogId) await settleAiSpend(env, pendingLogId).catch((err) => console.error("动图结算失败：", err.message));
   return { ok: true, url: `/img/${gifKey}`, duration: Number(duration), degraded: tData.degraded === true };  // degraded 透传（D11）
 }
 

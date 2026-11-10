@@ -6,8 +6,13 @@
  *   POST /api/report
  *   POST /api/ai/image
  *   POST /api/ai/video
+ *   POST /api/points/signin       （积分：签到）
+ *   GET  /api/points/balance      （积分：余额 + AI 明码标价）
+ *   GET  /api/points/log          （积分：流水）
+ *   POST /api/points/recharge     （积分：模拟充值）
  */
 import { corsHeaders, fail, json, handleAiImage, handleAiVideo, handleList, handleReport, handleUpload } from "../_shared.js";
+import { handleBalance, handleLog, handleRecharge, handleSignin } from "../points.js";
 
 export async function onRequest(context) {
   const { request, env, params } = context;
@@ -36,6 +41,18 @@ export async function onRequest(context) {
     }
     if (route === "ai/video" && request.method === "POST") {
       return await handleAiVideo(request, env, origin);
+    }
+    if (route === "points/signin" && request.method === "POST") {
+      return await handleSignin(request, env, origin);
+    }
+    if (route === "points/balance" && request.method === "GET") {
+      return await handleBalance(request, env, origin);
+    }
+    if (route === "points/log" && request.method === "GET") {
+      return await handleLog(request, env, origin);
+    }
+    if (route === "points/recharge" && request.method === "POST") {
+      return await handleRecharge(request, env, origin);
     }
     return fail("Not Found", 404, origin);
   } catch (err) {
