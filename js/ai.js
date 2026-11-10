@@ -52,6 +52,8 @@
   let currentSize = '1K';    // 当前选中的尺寸（静图）
   let currentDuration = '5'; // 当前视频时长（动图，秒）
   let lastImageUrl = '';     // 后端返回的相对地址 /img/ai/<yyyymm>/<uuid>.<ext>
+  // 访问口令（积分墙上线前的过渡闸门）：localStorage 记忆，URL ?pass=xxx 可直入；空=门面态
+  let aiPass = localStorage.getItem('aiPass') ?? new URLSearchParams(location.search).get('pass') ?? '';
   // 参考图（仅静图模式使用）：多槽位数组，可并发压缩
   let refSlots = [];              // 已就绪参考图槽位：{ id, dataUri, previewUrl, name }；顺序=id 升序
   let refInflight = [];           // 在途压缩槽位：{ id, previewUrl, name, promise }；promise 供 generate 等待
@@ -600,10 +602,19 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isVideo
-          ? { prompt, duration: Number(currentDuration), image: videoFrameDataUri }   // image 为 null 时后端走 Seedream 首帧
-          : { prompt, size: currentSize, image: refImage, ref_mode: refModeValue }),   // image 为 null 时后端按文生图处理
+          ? { prompt, duration: Number(currentDuration), image: videoFrameDataUri, pass: aiPass }   // image 为 null 时后端走 Seedream 首帧
+          : { prompt, size: currentSize, image: refImage, ref_mode: refModeValue, pass: aiPass }),   // image 为 null 时后端按文生图处理
         signal: ctrl.signal,   // 静图：timer 为 0，signal 永不 abort，行为与原裸 fetch 一致
       });
+      // 口令失效（403）：清掉本地口令、切回门面并提示，不进入通用错误通道
+      if (res.status === 403) {
+        aiPass = '';
+        localStorage.removeItem('aiPass');
+        $passErr.hidden = false;
+        applyPassGate();
+        setResultState('empty');
+        return;
+      }
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `HTTP ${res.status}`);
       const data = isVideo ? await readVideoResult(res) : await res.json().catch(() => ({}));
       if (!data.ok) throw new Error(data.error || '生成失败');
@@ -712,6 +723,31 @@
     $('ai-success-work').textContent = work;   // textContent：用户输入永不进 innerHTML
     showModal('ai-success-modal');
   }
+
+  // ---------- 访问口令门面（积分墙上线前的过渡闸门）----------
+  const $main = document.querySelector('.ai-main');
+  const $gate = $('ai-pass-gate');
+  const $passInput = $('ai-pass-input');
+  const $passErr = $('ai-pass-err');
+
+  /** 按 aiPass 切换门面与主界面：无口令 → 只显示门面，生成表单整个隐藏。 */
+  function applyPassGate() {
+    const ok = aiPass !== '';
+    $main.hidden = !ok;
+    $gate.hidden = ok;
+  }
+
+  $('ai-pass-ok').addEventListener('click', () => {
+    const v = $passInput.value.trim();
+    if (!v) return;
+    aiPass = v;
+    localStorage.setItem('aiPass', v);   // 记住口令，下次免输
+    $passErr.hidden = true;
+    applyPassGate();
+  });
+  $passInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('ai-pass-ok').click();   // 回车提交
+  });
 
   // ---------- 事件绑定 ----------
   // 类型切换（静图/动图）：显隐尺寸组与时长组。按 data 属性分组绑定，互不污染各自状态
@@ -855,4 +891,6 @@
       if ($(id).classList.contains('show')) return closeModal(id);
     }
   });
+
+  applyPassGate();   // 启动即按口令状态切换门面/主界面
 })();

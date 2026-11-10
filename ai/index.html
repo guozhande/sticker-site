@@ -121,6 +121,17 @@
   </section>
 </main>
 
+<!-- 访问口令门面：无口令时显示（main 隐藏）；口令存 localStorage，URL ?pass=xxx 亦可直入 -->
+<div class="ai-pass-gate" id="ai-pass-gate" hidden>
+  <h2 class="ai-pass-title">AI 制作暂未开放</h2>
+  <p class="ai-pass-hint">功能维护中，输入访问口令后使用</p>
+  <div class="ai-pass-row">
+    <input type="password" class="ai-pass-input" id="ai-pass-input" placeholder="访问口令" autocomplete="off">
+    <button type="button" class="ai-pass-ok" id="ai-pass-ok">进入</button>
+  </div>
+  <p class="ai-pass-err" id="ai-pass-err" hidden>口令不正确，请重试</p>
+</div>
+
 <!-- 上传表单（作品名必填、角色名选填） -->
 <div class="up-overlay" id="ai-upload-modal" role="dialog" aria-modal="true">
   <div class="up-dialog">

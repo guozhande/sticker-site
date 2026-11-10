@@ -1,2 +1,5 @@
 worker/.wrangler/
 node_modules/
+
+# 本地开发密钥（含 AI 口令），绝不提交
+.dev.vars

@@ -335,6 +335,18 @@ function rowToItem(row) {
   };
 }
 
+/**
+ * AI 生成访问口令（积分墙上线前的过渡闸门，handleAiImage/handleAiVideo 共用）。
+ * env.AI_PASS 未配置 → 全锁（503，安全默认：新部署忘配口令时 AI 默认关闭）；
+ * 请求体 pass 字段与口令不匹配 → 403。口令只存环境变量，绝不写进代码。
+ */
+function checkAiPass(body, env) {
+  const pass = String(env.AI_PASS ?? "").trim();
+  if (!pass) return { ok: false, error: "AI 制作暂未开放", status: 503 };
+  if (String(body.pass ?? "") !== pass) return { ok: false, error: "AI 制作暂未开放", status: 403 };
+  return { ok: true };
+}
+
 // ---- 各接口 ----
 
 /** POST /api/upload  multipart/form-data: file, work, characters */
@@ -479,6 +491,10 @@ export async function handleAiImage(request, env, origin) {
 
   let body = {};
   try { body = await request.json(); } catch { /* 非法 JSON 走下面的校验 */ }
+
+  // 访问口令闸门：prompt/size 校验之前早退，无口令请求不进入任何业务逻辑
+  const passCheck = checkAiPass(body, env);
+  if (!passCheck.ok) return fail(passCheck.error, passCheck.status, origin);
 
   const prompt = cleanPrompt(body.prompt);
   if (!prompt) return fail("请输入提示词", 400, origin);
@@ -638,6 +654,10 @@ export async function handleAiVideo(request, env, origin) {
 
   let body = {};
   try { body = await request.json(); } catch { /* 非法 JSON 走下方校验 */ }
+
+  // 访问口令闸门：与 handleAiImage 同源（checkAiPass），早退在 prompt/duration 校验之前
+  const passCheck = checkAiPass(body, env);
+  if (!passCheck.ok) return fail(passCheck.error, passCheck.status, origin);
 
   const prompt = cleanPrompt(body.prompt);
   if (!prompt) return fail("请输入提示词", 400, origin);
