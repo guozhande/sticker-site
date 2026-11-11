@@ -17,13 +17,16 @@
   'use strict';
 
   const API = window.STICKER_API_BASE ?? '';
+  // 设备号注入（js/device.js 先加载）：积分/AI/上传请求自动带 X-Device-Id，落到同一设备账户；
+  // 极端情况 device.js 被阻断时退回裸 fetch（仅丢设备号头，其余行为不变）
+  const apiFetch = window.StickerDevice ? window.StickerDevice.apiFetch : (url, options) => fetch(url, options);
   const PROMPT_MAX = 1000;  // 对齐 functions/_shared.js AI_PROMPT_MAX
   const WORK_MAX = 60;      // 对齐 functions/_shared.js MAX_WORK_LEN
   const CHAR_MAX = 12;      // 对齐 functions/_shared.js MAX_CHARS
   const CHAR_LEN = 40;      // 对齐 functions/_shared.js MAX_CHAR_LEN
   const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;   // 对齐 functions/_shared.js MAX_BYTES
   // 动图前端兜底（15 分钟）：覆盖健康最坏 ≈10.5 分钟。极端最坏 21 分钟超出时，
-  // 超时 abort → 后端全链路取消、无孤儿产物；已产生的费用不退还（文案已提示）。
+  // 超时 abort → 后端全链路取消、无孤儿产物；提示文案为中性「本次请求已取消，请稍后重试」。
   const VIDEO_TIMEOUT_MS = 900_000;
   // 参考图压缩参数（对齐 quickref：单边 >14px、宽高比 [1/16,16]；压缩后 data URI 远小于后端 5MB 硬限）
   const REF_MAX_EDGE = 1024;
@@ -42,6 +45,9 @@
     unreadable: '动图解析失败，请换一张',
     not_loaded: '动图取帧组件未加载，请刷新重试',
   };
+  // AI 明码标价：价格唯一来源是后端 GET /api/points/balance 下发；
+  // 以下镜像常量仅作 balance 拉取失败时的展示兜底（扣分以后端为准）。
+  const FALLBACK_PRICES = { image1K: 30, image2K: 60, video: 150, refImage: 2 };
 
   const $ = (id) => document.getElementById(id);
 
@@ -54,6 +60,11 @@
   let lastImageUrl = '';     // 后端返回的相对地址 /img/ai/<yyyymm>/<uuid>.<ext>
   // 访问口令（积分墙上线前的过渡闸门）：localStorage 记忆，URL ?pass=xxx 可直入；空=门面态
   let aiPass = localStorage.getItem('aiPass') ?? new URLSearchParams(location.search).get('pass') ?? '';
+  // AI 明码标价状态：价格唯一来源是后端 balance 接口；拉取失败期间 balanceLoaded=false
+  //（不做余额不足禁用判断，展示走镜像兜底）
+  let balanceLoaded = false;
+  let points = 0;                          // 当前余额（仅 balanceLoaded 时有意义）
+  let prices = { ...FALLBACK_PRICES };     // 展示价格（后端下发覆盖；镜像兜底，扣分以后端为准）
   // 参考图（仅静图模式使用）：多槽位数组，可并发压缩
   let refSlots = [];              // 已就绪参考图槽位：{ id, dataUri, previewUrl, name }；顺序=id 升序
   let refInflight = [];           // 在途压缩槽位：{ id, previewUrl, name, promise }；promise 供 generate 等待
@@ -109,6 +120,9 @@
   const $work = $('ai-work');
   const $chars = $('ai-chars');
   const $uploadSubmit = $('ai-upload-submit');
+  const $cost = $('ai-cost');
+  const $costHint = $('ai-cost-hint');
+  const $costShort = $('ai-cost-short');
 
   // ---------- 工具 ----------
   let toastTimer = null;
@@ -152,7 +166,56 @@
   function syncGenerateButton() {
     // 参考图在途压缩/动图首帧取帧中禁用生成按钮（R14：不调用的话选图瞬间存在竞态窗口）
     const anyRefInflight = refInflight.length > 0;
-    $generate.disabled = busy || anyRefInflight || videoFrameBusy !== null || !$prompt.value.trim();
+    // 余额不足禁用：仅价格已知且非口令免积分态时判断（口令用户余额 0 不得被误禁）
+    const insufficient = aiPass === '' && balanceLoaded && points < computeDisplayCost();
+    $generate.disabled = busy || anyRefInflight || videoFrameBusy !== null || !$prompt.value.trim() || insufficient;
+  }
+
+  // ---------- AI 明码标价 ----------
+  /** 当前配置的预计消耗（展示用；实际扣分以后端为准）：
+   *  静图 = 1K/2K 底价 + 每张参考图 ×2；动图 = 150 + 首帧参考图 2（后端实际扣 150+2，前端必须同步显示，
+   *  否则 402 文案「需要 152 分」与 UI 显示 150 对不上）。 */
+  function computeDisplayCost() {
+    if (currentMode === 'video') return prices.video + (videoFrameDataUri ? prices.refImage : 0);
+    const base = currentSize === '1K' ? prices.image1K : prices.image2K;
+    return base + refSlots.length * prices.refImage;
+  }
+
+  /** 刷新价格行「本次消耗 X 积分 · 余额 Y」与不足提示（.ai-cost 三态：普通/不足红/口令免积分绿）。
+   *  末尾同步生成按钮——余额不足禁用条件在这里生效。 */
+  function updateCostRow() {
+    if (aiPass !== '') {
+      $cost.textContent = '口令免积分';
+      $cost.className = 'ai-cost free';
+      $costHint.hidden = true;
+      syncGenerateButton();
+      return;
+    }
+    const cost = computeDisplayCost();
+    const short = balanceLoaded && points < cost ? cost - points : 0;
+    $cost.textContent = balanceLoaded
+      ? `本次消耗 ${cost} 积分 · 余额 ${points}`
+      : `本次消耗 ${cost} 积分 · 余额 –`;   // 余额未拉到：价格走镜像兜底，仅展示辅助
+    $cost.className = short > 0 ? 'ai-cost insufficient' : 'ai-cost';
+    $costHint.hidden = short === 0;
+    if (short > 0) $costShort.textContent = String(short);   // textContent：数字不进 innerHTML
+    syncGenerateButton();
+  }
+
+  /** 拉余额+价格（价格唯一来源）。失败：保留镜像兜底、balanceLoaded=false（展示降级，扣分以后端为准）。 */
+  async function refreshBalance() {
+    try {
+      const res = await apiFetch(`${API}/api/points/balance`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      points = data.points ?? 0;
+      prices = data.prices ?? { ...FALLBACK_PRICES };
+      balanceLoaded = true;
+    } catch (err) {
+      balanceLoaded = false;
+      console.error('AI 余额/价格拉取失败（价格行用镜像兜底展示）：', err?.message ?? err);   // 不吞异常：留日志
+    }
+    updateCostRow();
   }
 
   // ---------- 参考图（图生图，多槽位）----------
@@ -206,6 +269,7 @@
     $refModes.hidden = refSlots.length !== 1;
     // 达到上限禁用「＋ 添加参考图」（计数=就绪+在途）
     $refAdd.disabled = refSlots.length + refInflight.length >= REF_IMAGE_MAX;
+    updateCostRow();   // 参考图张数变化 → 重算价格行（含生成按钮同步）
   }
 
   function setRefModeActive(mode) {
@@ -394,7 +458,7 @@
       .finally(() => {
         if (videoFrameBusy === p) videoFrameBusy = null;
         hideVidRefProcessing();   // 兜底：任何路径都不残留 processing
-        syncGenerateButton();
+        updateCostRow();          // 首帧可能已就绪 → 重算价格行（含生成按钮同步）
       });
     videoFrameBusy = p;
     syncGenerateButton();
@@ -526,7 +590,7 @@
     })().finally(() => {
       // R14 释放：与 onGifFileChange 同款 —— finally 作 reaction 恒在 p 初始化后执行，防 TDZ
       if (videoFrameBusy === p) videoFrameBusy = null;
-      syncGenerateButton();
+      updateCostRow();   // 取帧可能已就绪 → 重算价格行（含生成按钮同步）
     });
     videoFrameBusy = p;
     syncGenerateButton();
@@ -537,7 +601,7 @@
     clearVidRefState();
     clearGifState();
     videoFrameBusy = null;   // 丢弃在途取帧的按钮锁
-    syncGenerateButton();
+    updateCostRow();         // 首帧已删 → 重算价格行（含生成按钮同步）
   }
 
   // ---------- 生成 ----------
@@ -598,7 +662,7 @@
           return;
         }
       }
-      const res = await fetch(isVideo ? `${API}/api/ai/video` : `${API}/api/ai/image`, {
+      const res = await apiFetch(isVideo ? `${API}/api/ai/video` : `${API}/api/ai/image`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isVideo
@@ -615,6 +679,17 @@
         setResultState('empty');
         return;
       }
+      // 积分不足（402）：后端文案自带「本次需要 X 分，当前 Y 分」→ 直接展示 + toast + 重拉余额
+      // （刷新后价格行/生成按钮可能立刻变禁用态）。动图 402 在预扣阶段普通 JSON 返回（流之前），本分支天然覆盖。
+      if (res.status === 402) {
+        const errData = await res.json().catch(() => ({}));
+        const msg = errData.error || '积分不足';
+        $error.textContent = msg;   // textContent：后端文案不进 innerHTML
+        setResultState('error');
+        toast(msg);
+        refreshBalance();
+        return;
+      }
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || `HTTP ${res.status}`);
       const data = isVideo ? await readVideoResult(res) : await res.json().catch(() => ({}));
       if (!data.ok) throw new Error(data.error || '生成失败');
@@ -623,6 +698,7 @@
       $img.alt = prompt.slice(0, 50);
       setResultState('done');
       if (data.degraded) toast('GIF 超过 500KB，微信导入可能失败');
+      refreshBalance();   // 生成成功余额已变：重拉余额，价格行/按钮态同步
     } catch (err) {
       $error.textContent = errorMessage(err, isVideo);   // textContent：不进 innerHTML
       setResultState('error');
@@ -669,10 +745,10 @@
 
   function errorMessage(err, isVideo) {    if (!isVideo) return err.message || '生成失败，请重试';
     if (err.name === 'TimeoutError' || err.name === 'AbortError') {
-      return '生成超时，本次请求已取消；已产生的费用不退还，请勿立即重试（每次都会重新计费）';
+      return '生成超时，本次请求已取消，请稍后重试';
     }
     if (err instanceof TypeError) {
-      return '网络中断，本次请求已取消；已产生的费用不退还，请勿立即重试（每次都会重新计费）';
+      return '网络中断，本次请求已取消，请稍后重试';
     }
     return err.message || '生成失败，请重试';
   }
@@ -704,7 +780,7 @@
       fd.append('work', work);
       fd.append('characters', JSON.stringify(characters));
 
-      const res = await fetch(`${API}/api/upload`, { method: 'POST', body: fd });
+      const res = await apiFetch(`${API}/api/upload`, { method: 'POST', body: fd });   // X-Device-Id：上传过审 +5 分落到同一设备账户
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
 
@@ -735,6 +811,7 @@
     const ok = aiPass !== '';
     $main.hidden = !ok;
     $gate.hidden = ok;
+    updateCostRow();   // 口令变化 → 价格行同步（免积分绿态/门面切换后自动恢复）
   }
 
   $('ai-pass-ok').addEventListener('click', () => {
@@ -762,6 +839,7 @@
       // 动图首帧字段仅动图显示；同样只隐藏不清状态（切回动图恢复预览）。
       $refField.hidden = currentMode === 'video';
       $vidRefField.hidden = currentMode !== 'video';
+      updateCostRow();   // 类型切换 → 重算价格行
     });
   });
 
@@ -771,6 +849,7 @@
       document.querySelectorAll('[data-size]').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       currentSize = btn.dataset.size;
+      updateCostRow();   // 尺寸切换 → 重算价格行
     });
   });
 
@@ -780,6 +859,7 @@
       document.querySelectorAll('[data-duration]').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       currentDuration = btn.dataset.duration;
+      updateCostRow();   // 时长切换 → 重算价格行
     });
   });
 
@@ -892,5 +972,6 @@
     }
   });
 
-  applyPassGate();   // 启动即按口令状态切换门面/主界面
+  refreshBalance();    // 启动拉余额+价格（价格唯一来源；失败走镜像兜底展示）
+  applyPassGate();     // 启动即按口令状态切换门面/主界面（含价格行同步）
 })();

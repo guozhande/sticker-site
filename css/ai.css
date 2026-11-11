@@ -441,3 +441,27 @@ body.ai-page {
 .ai-pass-ok:hover { background: var(--accent-hover); }
 
 .ai-pass-err { font-size: 13px; color: #d33; margin: 12px 0 0; }
+
+/* ====== AI 明码标价行（生成按钮旁；普通/余额不足红/口令免积分绿三态） ====== */
+.ai-cost-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ai-cost {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.ai-cost.insufficient { color: #d9534f; }     /* 余额不足 */
+.ai-cost.free { color: #2e9e44; font-weight: 600; }   /* 口令免积分（冻结设计 E 后门） */
+.ai-cost-hint {
+  margin: 0;
+  font-size: 13px;
+  color: #d9534f;
+  text-align: center;
+}
+.ai-cost-hint a {
+  color: var(--accent);
+  font-weight: 600;
+}

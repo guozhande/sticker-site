@@ -126,6 +126,8 @@ const CHROME_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 
 const ALLOWED_ORIGINS = [
   "https://sticker-store-uzo.pages.dev",
   "https://guozhande.github.io",
+  "https://emoticon-station.com",        // 自定义域名（同源兜底）
+  "https://www.emoticon-station.com",    // 自定义域名（同源兜底）
   "http://localhost:8080",
   "http://127.0.0.1:8080",
 ];
@@ -357,12 +359,13 @@ function rowToItem(row) {
  * AI 生成访问口令（积分墙上线前的过渡闸门，handleAiImage/handleAiVideo 共用）。
  * env.AI_PASS 未配置 → 全锁（503，安全默认：新部署忘配口令时 AI 默认关闭）；
  * 请求体 pass 字段与口令不匹配 → 403。口令只存环境变量，绝不写进代码。
+ * 匹配成功 → free=true：冻结设计 E 后门 —— 口令通过即免积分（零积分进出、不建 pending 流水）。
  */
 function checkAiPass(body, env) {
   const pass = String(env.AI_PASS ?? "").trim();
   if (!pass) return { ok: false, error: "AI 制作暂未开放", status: 503 };
   if (String(body.pass ?? "") !== pass) return { ok: false, error: "AI 制作暂未开放", status: 403 };
-  return { ok: true };
+  return { ok: true, free: true };
 }
 
 // ---- 各接口 ----
@@ -511,6 +514,7 @@ export async function handleReport(request, env, origin) {
  * 拦截顺序（验收口径）：口令闸门（错口令 403，未配口令 503）→ ARK_API_KEY 未配置 503 →
  * 参数校验 400 → 限流 429 → 积分预扣 402 → 生成/结算。口令先于 key 检查：
  * 未配 key 时错误口令也必须返回 403（不因服务未配置而暴露/改变拦截语义）。
+ * 冻结设计 E：口令通过=免积分跳过预扣（不建 pending 流水，生成前后零积分进出）。
  */
 export async function handleAiImage(request, env, origin) {
   await cleanupExpiredPending(env);   // 惰性清理：先清算悬挂超 10 分钟的 pending 预扣（AI 悬挂保护）
@@ -554,14 +558,17 @@ export async function handleAiImage(request, env, origin) {
   // 图生图提示词前缀（R6/R16）：拼接后统一再限长；前缀置于头部，截断只损失用户描述尾部、指令语义保留
   const finalPrompt = ((REF_PROMPT_PREFIX[refMode] ?? "") + prompt).slice(0, AI_PROMPT_MAX);
 
-  // ---- 积分计费与预扣（限流之后：被限流请求不扣分）----
+  // ---- 积分计费与预扣（限流之后：被限流请求不扣分；口令通过=免积分跳过预扣）----
   // 计费：1K=30 / 2K=60 + 每张参考图 2（无免费张，数组按 length 计）
-  const cost = computeAiCost(rawSize, image);
-  const uid = await getUserId(request, env);
-  if (!uid.ok) return fail(uid.error, uid.status, origin);
-  const pre = await preDeductPoints(env, uid.userId, cost);
-  if (!pre.ok) return fail(pre.error, pre.status, origin);   // 402 积分不足
-  const pendingLogId = pre.logId;
+  let pendingLogId = null;
+  if (!passCheck.free) {
+    const cost = computeAiCost(rawSize, image);
+    const uid = await getUserId(request, env);
+    if (!uid.ok) return fail(uid.error, uid.status, origin);
+    const pre = await preDeductPoints(env, uid.userId, cost);
+    if (!pre.ok) return fail(pre.error, pre.status, origin);   // 402 积分不足
+    pendingLogId = pre.logId;
+  }
 
   // ①-③ 调 Seedream 生成 + 下载 + 存 R2（抽出公共函数；按标签还原原文案，零回归）
   let frame;
@@ -569,17 +576,19 @@ export async function handleAiImage(request, env, origin) {
     frame = await generateSeedreamFrame(finalPrompt, rawSize, env, image);
   } catch (err) {
     if (!(err instanceof FrameError)) throw err;   // 非首帧错误（理论不发生）交路由层 500
-    // 风控类失败不退分（文案黑名单命中 → 预扣转正式）；欠费/网络/5xx/未配置等服务端故障 → 退分
+    // 风控类失败不退分（文案黑名单命中 → 预扣转正式）；欠费/网络/5xx/未配置等服务端故障 → 退分。
+    // 免积分（口令通过）时无预扣流水，pendingLogId 为 null，两条分支均跳过。
     if (isContentModerationError(err.message)) {
-      await settleAiSpend(env, pendingLogId).catch((e) => console.error("AI 结算失败：", e.message));
+      if (pendingLogId) await settleAiSpend(env, pendingLogId).catch((e) => console.error("AI 结算失败：", e.message));
     } else {
-      await refundAiSpend(env, pendingLogId).catch((e) => console.error("AI 退分失败：", e.message));
+      if (pendingLogId) await refundAiSpend(env, pendingLogId).catch((e) => console.error("AI 退分失败：", e.message));
     }
     return fail(err.message, err.status, origin);  // 原 7 条文案/状态码逐条还原（no_key/gen_request/gen_failed/no_url/download_failed/empty_body/store_failed）
   }
 
-  // 生成成功：预扣转正式（pending → confirmed，余额不动，幂等）；结算失败由 10 分钟惰性清理兜底退分
-  await settleAiSpend(env, pendingLogId).catch((e) => console.error("AI 结算失败：", e.message));
+  // 生成成功：预扣转正式（pending → confirmed，余额不动，幂等）；结算失败由 10 分钟惰性清理兜底退分。
+  // 免积分（口令通过）时无预扣流水，跳过结算。
+  if (pendingLogId) await settleAiSpend(env, pendingLogId).catch((e) => console.error("AI 结算失败：", e.message));
 
   // ④ 记一次成功生成，用于限流计数（计数失败不影响已生成的结果）
   try {
@@ -734,14 +743,18 @@ export async function handleAiVideo(request, env, origin) {
     return fail("今日动图生成次数已达上限（每天最多 8 次），请明天再试", 429, origin);
   }
 
-  // ── 积分计费与预扣（限流之后：被限流请求不扣分；402 普通 JSON 返回，不进流）──
+  // ── 积分计费与预扣（限流之后：被限流请求不扣分；402 普通 JSON 返回，不进流；
+  //    口令通过=免积分跳过预扣，pendingLogId 保持 null，后续结算/退分全部空转）──
   // 动图 150 + 首帧参考图 2（首帧只许单张，数组已被拒，无免费张）
-  const cost = POINTS_AI_VIDEO + (image ? POINTS_AI_REF_EACH : 0);
-  const uid = await getUserId(request, env);
-  if (!uid.ok) return fail(uid.error, uid.status, origin);
-  const pre = await preDeductPoints(env, uid.userId, cost);
-  if (!pre.ok) return fail(pre.error, pre.status, origin);
-  const pendingLogId = pre.logId;
+  let pendingLogId = null;
+  if (!passCheck.free) {
+    const cost = POINTS_AI_VIDEO + (image ? POINTS_AI_REF_EACH : 0);
+    const uid = await getUserId(request, env);
+    if (!uid.ok) return fail(uid.error, uid.status, origin);
+    const pre = await preDeductPoints(env, uid.userId, cost);
+    if (!pre.ok) return fail(pre.error, pre.status, origin);
+    pendingLogId = pre.logId;
+  }
 
   // ── 长链路：先返回 ReadableStream（响应头立刻到达），start 内跑流水线 ──
   const stream = new ReadableStream({
@@ -755,7 +768,8 @@ export async function handleAiVideo(request, env, origin) {
         controller.enqueue(enc.encode(JSON.stringify(payload) + "\n"));
       } catch {
         // 客户端断开等意外：尽力退分（claim 幂等，已结算/已退回则无操作；DB 失败由 10 分钟惰性清理兜底）
-        await refundAiSpend(env, pendingLogId).catch((e) => console.error("动图退分失败：", e.message));
+        // 免积分（口令通过）时 pendingLogId 为 null，跳过。
+        if (pendingLogId) await refundAiSpend(env, pendingLogId).catch((e) => console.error("动图退分失败：", e.message));
         // 尽力补一个错误段（客户端多半收不到，纯兜底）
         try { controller.enqueue(enc.encode(JSON.stringify({ ok: false, error: "服务端错误", code: 500 }) + "\n")); } catch { /* 忽略 */ }
       } finally {

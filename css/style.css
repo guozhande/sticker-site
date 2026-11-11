@@ -971,3 +971,163 @@ body {
   opacity: 1;
   transform: translate(-50%, 0);
 }
+
+/* ---- 积分入口（header 右上角胶囊） ---- */
+.points-entry {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--accent);
+  border-radius: 18px;
+  background: var(--card-bg);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.points-entry:hover { background: #eef5fc; }
+
+/* ---- 积分中心弹窗（骨架复用 .up-overlay/.up-dialog/.up-close） ---- */
+.points-dialog { max-width: 420px; }
+
+.points-balance-card {
+  margin-bottom: 12px;
+  padding: 16px 12px;
+  border-radius: var(--radius);
+  background: #eef5fc;
+  text-align: center;
+}
+.points-balance-num {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+}
+.points-total-earned {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.points-signin {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.points-signin-btn {
+  min-height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.points-signin-btn:hover { background: var(--accent-hover); }
+.points-signin-btn:disabled {
+  background: var(--border);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+.points-streak {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.points-streak-hint {
+  margin: 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.points-section-title {
+  margin: 14px 0 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.points-log {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+.points-log-empty {
+  padding: 18px 12px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.points-log-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.points-log-item:last-child { border-bottom: none; }
+.points-log-change { flex-shrink: 0; font-weight: 600; }
+.points-log-pos { color: #2e9e44; }
+.points-log-neg { color: #d9534f; }
+.points-log-reason { color: var(--text); }
+.points-log-badge {
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 16px;
+}
+.points-badge-pending { background: #fff3cd; color: #8a6d3b; }
+.points-badge-refunded { background: var(--border); color: var(--text-secondary); }
+.points-log-time {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.points-recharge-chips { display: flex; gap: 8px; }
+.points-chip {
+  flex: 1;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.points-chip:hover { border-color: var(--accent); }
+.points-chip.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+  background: #eef5fc;
+}
+.points-chip:disabled { opacity: 0.45; cursor: not-allowed; }
+.points-recharge-confirm {
+  width: 100%;
+  margin-top: 10px;
+  min-height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.points-recharge-confirm:hover { background: var(--accent-hover); }
+.points-recharge-confirm:disabled { opacity: 0.45; cursor: not-allowed; }

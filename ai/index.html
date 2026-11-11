@@ -104,6 +104,13 @@
 
   <button type="button" class="ai-generate" id="ai-generate" disabled>生成</button>
 
+  <!-- AI 明码标价行（生成按钮旁）：价格与余额由 js 拉 balance 接口实时计算；
+       不足提示内置「去积分中心」深链（../index.html?points=1 自动打开积分中心） -->
+  <div class="ai-cost-row">
+    <span class="ai-cost" id="ai-cost"></span>
+    <p class="ai-cost-hint" id="ai-cost-hint" hidden>积分不足，还差 <span id="ai-cost-short"></span> 分，可签到或充值，<a href="../index.html?points=1">去积分中心</a></p>
+  </div>
+
   <section class="ai-result" id="ai-result" aria-live="polite">
     <div class="ai-empty" id="ai-empty">生成后的图片会显示在这里</div>
     <div class="ai-loading" id="ai-loading" hidden>
@@ -167,6 +174,7 @@
 <div class="up-toast" id="up-toast"></div>
 
 <script src="../js/config.js"></script>
+<script src="../js/device.js"></script>
 <script src="../vendor/gifuct-js.vendor.js"></script>
 <script src="../js/gif-frame.js"></script>
 <script src="../js/ai.js"></script>
