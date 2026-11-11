@@ -6,6 +6,8 @@
 -- 已部署的存量库升级积分体系时，必须额外手工执行一次（SQLite 无 IF NOT EXISTS ADD COLUMN）：
 --   ALTER TABLE uploads ADD COLUMN user_id TEXT;
 -- 漏做该 ALTER 则 handleUpload 插入 user_id 时直接 SQL 报错。
+-- 新增 client_logs 表（运行日志）后，已部署的存量库同样需手工执行一次本文件（幂等）：
+--   wrangler d1 execute <DB_NAME> --file=worker/schema.sql
 
 -- 用户上传的表情包元数据
 -- 图片字节存 R2，这里只存索引信息
@@ -84,3 +86,24 @@ CREATE TABLE IF NOT EXISTS recharge_orders (
 );
 
 CREATE INDEX IF NOT EXISTS idx_recharge_orders_user_created ON recharge_orders(user_id, created_at DESC);
+
+-- ============ 客户端运行日志（错误上报）============
+
+-- 网站（js/error-report.js）与 App（log/CrashLogger.kt）的错误上报通道。
+-- 用户拍板：只收 error 级（不收集 warning）；只报匿名设备号 + 页面路径 + 错误文本/堆栈，
+-- 无任何个人信息字段；IP 只存哈希（限流 + 追溯，不存明文）。
+-- 30 天旧日志由 functions/log.js 概率惰性清理（Pages Functions 无 cron，约每 50 条触发一次）。
+CREATE TABLE IF NOT EXISTS client_logs (
+  id         TEXT PRIMARY KEY,           -- UUID
+  platform   TEXT NOT NULL,              -- web | app（白名单）
+  device_id  TEXT NOT NULL,              -- 匿名设备号 X-Device-Id（不采集个人信息）
+  page       TEXT,                       -- 页面路径/Activity（可空）
+  level      TEXT NOT NULL,              -- 只收 'error'（用户拍板：不收集 warning）
+  message    TEXT NOT NULL,              -- 错误消息（清洗后 ≤200 字）
+  stack      TEXT,                       -- 堆栈（清洗后 ≤2000 字，可空）
+  ip_hash    TEXT NOT NULL,              -- 提交者 IP 哈希（限流+追溯，不存明文）
+  created_at INTEGER NOT NULL            -- 毫秒时间戳
+);
+
+CREATE INDEX IF NOT EXISTS idx_client_logs_created  ON client_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_client_logs_platform ON client_logs(platform, created_at DESC);

@@ -8,30 +8,57 @@
 <title>上传审核后台 - 我的表情</title>
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/ai.css">
-<link rel="stylesheet" href="../css/admin.css">
+<link rel="stylesheet" href="css/admin.css">
 </head>
 <body class="ad-page">
 
-<!-- 主界面：顶栏（标题+计数+刷新+退出）→ 状态区 → 卡片列表 → 加载更多；无口令时整个隐藏 -->
+<!-- 主界面：顶栏（标题+tab+计数+刷新+退出）→ 状态区 → 卡片列表 → 加载更多；无口令时整个隐藏 -->
 <main class="ad-main" id="ad-main" hidden>
   <div class="ad-topbar">
     <span class="ad-topbar-title">上传审核后台</span>
+    <div class="ad-tabs">
+      <button type="button" class="ad-tab active" id="ad-tab-review">待审核</button>
+      <button type="button" class="ad-tab" id="ad-tab-logs">运行日志</button>
+    </div>
     <span class="ad-count">待审核 <span id="ad-total">0</span> 条</span>
     <button type="button" class="ad-btn ad-btn-ghost" id="ad-refresh">刷新</button>
     <button type="button" class="ad-btn ad-btn-ghost" id="ad-exit">退出</button>
   </div>
 
-  <!-- 状态区四态：loading / error（后端文案+重试）/ empty / 列表（三块全隐） -->
-  <div class="ad-status" id="ad-status-loading" hidden><span class="ai-spinner"></span>加载中…</div>
-  <div class="ad-status" id="ad-status-error" hidden>
-    <p class="ad-status-error-text" id="ad-status-error-text"></p>
-    <button type="button" class="ad-btn ad-btn-ghost" id="ad-retry">重试</button>
+  <!-- 审核 tab：状态区四态：loading / error（后端文案+重试）/ empty / 列表（三块全隐） -->
+  <div id="ad-review">
+    <div class="ad-status" id="ad-status-loading" hidden><span class="ai-spinner"></span>加载中…</div>
+    <div class="ad-status" id="ad-status-error" hidden>
+      <p class="ad-status-error-text" id="ad-status-error-text"></p>
+      <button type="button" class="ad-btn ad-btn-ghost" id="ad-retry">重试</button>
+    </div>
+    <div class="ad-status" id="ad-status-empty" hidden>暂无待审核</div>
+
+    <div class="ad-list" id="ad-list"></div>
+
+    <button type="button" class="ad-btn ad-load-more" id="ad-load-more" hidden>加载更多</button>
   </div>
-  <div class="ad-status" id="ad-status-empty" hidden>暂无待审核</div>
 
-  <div class="ad-list" id="ad-list"></div>
+  <!-- 运行日志 tab：平台筛选 + 日志专用刷新 + 状态区四态 + 列表 + 加载更多（首次切到本 tab 懒加载） -->
+  <div id="ad-logs" hidden>
+    <div class="ad-log-toolbar">
+      <button type="button" class="ad-filter active" data-platform="">全部</button>
+      <button type="button" class="ad-filter" data-platform="web">web</button>
+      <button type="button" class="ad-filter" data-platform="app">app</button>
+      <span class="ad-log-count">共 <span id="ad-log-total">0</span> 条</span>
+      <button type="button" class="ad-btn ad-btn-ghost" id="ad-log-refresh">刷新日志</button>
+    </div>
+    <div class="ad-status" id="ad-log-status-loading" hidden><span class="ai-spinner"></span>加载中…</div>
+    <div class="ad-status" id="ad-log-status-error" hidden>
+      <p class="ad-status-error-text" id="ad-log-status-error-text"></p>
+      <button type="button" class="ad-btn ad-btn-ghost" id="ad-log-retry">重试</button>
+    </div>
+    <div class="ad-status" id="ad-log-status-empty" hidden>暂无运行日志</div>
 
-  <button type="button" class="ad-btn ad-load-more" id="ad-load-more" hidden>加载更多</button>
+    <div class="ad-list" id="ad-log-list"></div>
+
+    <button type="button" class="ad-btn ad-load-more" id="ad-log-more" hidden>加载更多</button>
+  </div>
 </main>
 
 <!-- 管理口令门面（复用 ai.css 的 .ai-pass-* 类）：无口令只显示门面。
@@ -49,6 +76,6 @@
 <div class="up-toast" id="ad-toast"></div>
 
 <script src="../js/config.js"></script>
-<script src="../js/admin.js"></script>
+<script src="js/admin.js"></script>
 </body>
 </html>

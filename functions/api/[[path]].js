@@ -4,18 +4,21 @@
  *   POST /api/upload
  *   GET  /api/uploads?work=&limit=&offset=
  *   POST /api/report
+ *   POST /api/log               （运行日志：客户端错误上报，只收 error 级）
  *   POST /api/ai/image
  *   POST /api/ai/video
  *   POST /api/points/signin       （积分：签到）
  *   GET  /api/points/balance      （积分：余额 + AI 明码标价）
  *   GET  /api/points/log          （积分：流水）
  *   POST /api/points/recharge     （积分：模拟充值）
- *   GET  /api/admin/list          （审核：待审核队列，口令走 body.pass）
+ *   POST /api/admin/list          （审核：待审核队列，口令走 body.pass）
  *   POST /api/admin/approve       （审核：通过）
  *   POST /api/admin/reject        （审核：下架）
+ *   POST /api/admin/logs          （运行日志查询，口令走 body.pass）
  */
 import { corsHeaders, fail, json, handleAiImage, handleAiVideo, handleList, handleReport, handleUpload } from "../_shared.js";
-import { handleAdminApprove, handleAdminList, handleAdminReject } from "../admin.js";
+import { handleAdminApprove, handleAdminList, handleAdminLogs, handleAdminReject } from "../admin.js";
+import { handleLog as handleClientLog } from "../log.js";   // 别名防与 points.js 的 handleLog（积分流水）重名
 import { handleBalance, handleLog, handleRecharge, handleSignin } from "../points.js";
 
 export async function onRequest(context) {
@@ -40,6 +43,9 @@ export async function onRequest(context) {
     if (route === "report" && request.method === "POST") {
       return await handleReport(request, env, origin);
     }
+    if (route === "log" && request.method === "POST") {
+      return await handleClientLog(request, env, origin);
+    }
     if (route === "ai/image" && request.method === "POST") {
       return await handleAiImage(request, env, origin);
     }
@@ -58,7 +64,7 @@ export async function onRequest(context) {
     if (route === "points/recharge" && request.method === "POST") {
       return await handleRecharge(request, env, origin);
     }
-    if (route === "admin/list" && request.method === "GET") {
+    if (route === "admin/list" && request.method === "POST") {
       return await handleAdminList(request, env, origin);
     }
     if (route === "admin/approve" && request.method === "POST") {
@@ -66,6 +72,9 @@ export async function onRequest(context) {
     }
     if (route === "admin/reject" && request.method === "POST") {
       return await handleAdminReject(request, env, origin);
+    }
+    if (route === "admin/logs" && request.method === "POST") {
+      return await handleAdminLogs(request, env, origin);
     }
     return fail("Not Found", 404, origin);
   } catch (err) {

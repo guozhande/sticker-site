@@ -166,10 +166,10 @@ export async function sha256Hex(text) {
 /**
  * 同一 IP 一小时内命中指定表的次数（限流共用）。
  *
- * `table` 只由内部调用方传固定字符串（"uploads" / "ai_requests"），不进用户输入，
- * 所以直接拼进 SQL 是安全的。
+ * `table` 只由内部调用方传固定字符串（"uploads" / "ai_requests" / "client_logs"），
+ * 不进用户输入，所以直接拼进 SQL 是安全的。
  */
-async function countRecentByIp(env, ipHash, sinceMs, table) {
+export async function countRecentByIp(env, ipHash, sinceMs, table) {
   const row = await env.DB
     .prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE ip_hash = ? AND created_at > ?`)
     .bind(ipHash, sinceMs)

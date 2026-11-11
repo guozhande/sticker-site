@@ -1,7 +1,7 @@
 /**
  * 审核管理后台（Pages Functions 版）
  *
- * 三个接口：待审核队列（FIFO）/ 一键通过 / 一键下架。
+ * 四个接口：待审核队列（FIFO）/ 一键通过 / 一键下架 / 运行日志查询。
  * 状态机逻辑（pending → visible / hidden）在 functions/points.js 的 approveUpload / rejectUpload
  * 单一来源维护，本文件只做口令闸门 + 请求解析 + 响应包装。
  *
@@ -18,7 +18,9 @@ import { approveUpload, rejectUpload } from "./points.js";
 
 const ADMIN_LIST_DEFAULT_LIMIT = 60;   // 首屏/默认页大小
 const ADMIN_LIST_MAX_LIMIT = 200;      // 上限（与 handleList 同款钳制公式）
-const ADMIN_NO_STORE = { "Cache-Control": "no-store" };   // 审核数据禁中间缓存
+const ADMIN_LOGS_DEFAULT_LIMIT = 50;   // 日志页默认条数（上限同 ADMIN_LIST_MAX_LIMIT 钳制）
+const ADMIN_LOG_PLATFORMS = new Set(["", "web", "app"]);   // 日志 platform 筛选白名单（''=全部）
+const ADMIN_NO_STORE = { "Cache-Control": "no-store" };   // 审核/日志数据禁中间缓存
 
 /**
  * 管理口令闸门：最早一步执行（先于一切业务逻辑，无口令请求不进入任何查询）。
@@ -49,11 +51,11 @@ function rowToAdminItem(row) {
 }
 
 /**
- * GET /api/admin/list  待审核队列。
+ * POST /api/admin/list  待审核队列。
  * FIFO 先到先审：ORDER BY created_at ASC（与 handleList 的 DESC 刻意不同——审核队列
  * 第 1 页稳定，不会被新上传挤走）。limit/offset 钳制与 handleList 同款公式。
- * 口令走 body.pass：fetch 发 GET 携带 JSON body，与 AI 页模式一致
- * （路由层 request.json() 带 try/catch，无 body → pass='' → 403）。
+ * 口令走 body.pass：POST JSON body（浏览器禁止 GET 带 body，故查询接口走 POST；
+ * 路由层 request.json() 带 try/catch，无 body → pass='' → 403）。
  */
 export async function handleAdminList(request, env, origin) {
   let body = {};
@@ -127,4 +129,58 @@ export async function handleAdminReject(request, env, origin) {
   if (!result.ok) return fail(result.error, result.status, origin);
 
   return json({ ok: true, id: result.id, status: "hidden" }, { origin, headers: ADMIN_NO_STORE });
+}
+
+/** client_logs 行 → 列表条目（字段名转驼峰，与站点接口风格一致）。 */
+function rowToLogItem(row) {
+  return {
+    id: row.id,
+    platform: row.platform,
+    deviceId: row.device_id,
+    page: row.page,
+    level: row.level,
+    message: row.message,
+    stack: row.stack,
+    createdAt: row.created_at,
+  };
+}
+
+/**
+ * POST /api/admin/logs  运行日志查询（平台筛选 + 时间倒序分页）。
+ * 口令走 body.pass（与 handleAdminList 同模式）；platform 查询参数白名单 ''|'web'|'app'，
+ * 非法值回退全部（''）；limit 默认 50、上限 200（与 ADMIN_LIST_MAX_LIMIT 同款钳制）。
+ * 数据禁中间缓存（同审核接口 ADMIN_NO_STORE）。
+ */
+export async function handleAdminLogs(request, env, origin) {
+  let body = {};
+  try { body = await request.json(); } catch { /* 无 body / 非法 JSON → pass='' → 403 */ }
+
+  const passCheck = checkAdminPass(body, env);
+  if (!passCheck.ok) return fail(passCheck.error, passCheck.status, origin);
+
+  const url = new URL(request.url);
+  const rawPlatform = url.searchParams.get("platform") ?? "";
+  const platform = ADMIN_LOG_PLATFORMS.has(rawPlatform) ? rawPlatform : "";
+  const limit = Math.min(Number(url.searchParams.get("limit")) || ADMIN_LOGS_DEFAULT_LIMIT, ADMIN_LIST_MAX_LIMIT);
+  const offset = Math.max(Number(url.searchParams.get("offset")) || 0, 0);
+
+  const where = platform ? "WHERE platform = ?" : "";
+  const binds = platform ? [platform] : [];
+
+  const { results } = await env.DB
+    .prepare(`SELECT * FROM client_logs ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`)
+    .bind(...binds, limit, offset)
+    .all();
+  const total = await env.DB
+    .prepare(`SELECT COUNT(*) AS n FROM client_logs ${where}`)
+    .bind(...binds)
+    .first();
+
+  return json({
+    ok: true,
+    total: total?.n ?? 0,
+    limit,
+    offset,
+    items: (results ?? []).map(rowToLogItem),
+  }, { origin, headers: ADMIN_NO_STORE });
 }

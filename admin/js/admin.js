@@ -1,16 +1,20 @@
 /**
- * 上传审核后台（管理口令门面 + 待审核队列 + 通过/下架）
+ * 上传审核后台（管理口令门面 + 待审核队列 + 通过/下架 + 运行日志 tab）
  *
  * 口令门面模式照搬 ai.js 骨架，但键完全独立（localStorage 'adminPass' ≠ 'aiPass'），
  * 且不支持 ?pass= URL 直入——AI 页的 URL 直入是为了分享，管理口令进 URL 会留在
  * 浏览器历史/访问日志，安全上刻意不做。
  *
- * 列表：GET /api/admin/list?limit=&offset=（FIFO 待审核队列，口令走 body.pass）；
+ * 列表：POST /api/admin/list?limit=&offset=（FIFO 待审核队列，口令走 body.pass；
+ * 浏览器禁止 GET 携带 body，故查询也走 POST，与 approve/reject 同模式）；
  * 操作：POST /api/admin/approve | /api/admin/reject（{id, pass}）。
+ * 日志：POST /api/admin/logs?limit=&offset=&platform=（口令走 body.pass；tab 共存，
+ * 首次切到日志 tab 懒加载；顶栏「刷新」按当前 tab 分发）。
  * 任何接口 403/503 统一走 clearPassToGate 回门面，不落列表状态区。
  *
  * XSS 铁律：全部 createElement + textContent，文件名/作品名/角色名/时间/错误文案
  * 永不进 innerHTML；缩略图只通过 img.src 属性赋值（url 是服务端从 r2_key 拼的，仍不走 HTML 字符串）。
+ * 日志消息来自任意用户设备，同一条铁律：绝不 innerHTML。
  *
  * 依赖：js/config.js（window.STICKER_API_BASE），必须在 admin.js 之前加载。
  */
@@ -19,6 +23,7 @@
 
   const API = window.STICKER_API_BASE ?? '';
   const PAGE_LIMIT = 60;   // 对齐 functions/admin.js ADMIN_LIST_DEFAULT_LIMIT（首屏/每页条数）
+  const LOG_PAGE_LIMIT = 50;   // 对齐 functions/admin.js ADMIN_LOGS_DEFAULT_LIMIT
 
   const $ = (id) => document.getElementById(id);
 
@@ -29,6 +34,13 @@
   let total = 0;                // 待审核总数（顶栏计数）
   let loading = false;          // 列表在途锁（防重复加载）
   const inflight = new Set();   // 卡片级在途锁：审批请求中的条目 id（防连点）
+
+  let currentTab = 'review';    // 'review' | 'logs'
+  let logOffset = 0;            // 日志下一页 offset（成功加载后 +LOG_PAGE_LIMIT）
+  let logTotal = 0;             // 日志总数（「共 N 条」）
+  let logLoading = false;       // 日志列表在途锁（防重复加载）
+  let logPlatform = '';         // '' | 'web' | 'app'
+  let logsLoaded = false;       // 首次切到日志 tab 懒加载标记
 
   // ---------- DOM ----------
   const $main = $('ad-main');
@@ -42,6 +54,17 @@
   const $errorBox = $('ad-status-error');
   const $errorText = $('ad-status-error-text');
   const $emptyBox = $('ad-status-empty');
+  const $review = $('ad-review');
+  const $logs = $('ad-logs');
+  const $tabReview = $('ad-tab-review');
+  const $tabLogs = $('ad-tab-logs');
+  const $logTotal = $('ad-log-total');
+  const $logList = $('ad-log-list');
+  const $logMore = $('ad-log-more');
+  const $logLoadingBox = $('ad-log-status-loading');
+  const $logErrorBox = $('ad-log-status-error');
+  const $logErrorText = $('ad-log-status-error-text');
+  const $logEmptyBox = $('ad-log-status-empty');
 
   // ---------- 工具 ----------
   let toastTimer = null;
@@ -86,6 +109,7 @@
   function clearPassToGate(httpStatus) {
     adminPass = '';
     localStorage.removeItem('adminPass');
+    logsLoaded = false;   // 重新进门后首次切日志 tab 再懒加载
     $passErr.textContent = httpStatus === 503
       ? '后台未配置：请先在 Cloudflare Pages 环境变量中设置 ADMIN_PASS'
       : '口令不正确，请重试';
@@ -115,9 +139,9 @@
     }
     setStatus('loading');
     try {
-      // GET 携带 JSON body（口令走 body.pass，与 AI 页模式一致；后端无 body → pass='' → 403）
+      // POST 携带 JSON body（口令走 body.pass；浏览器禁止 GET 带 body，查询接口一律 POST）
       const res = await fetch(`${API}/api/admin/list?limit=${PAGE_LIMIT}&offset=${offset}`, {
-        method: 'GET',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pass: adminPass }),
       });
@@ -246,6 +270,127 @@
     }
   }
 
+  // ---------- tab 切换（待审核 / 运行日志）----------
+  /** 互斥切换：active 高亮 + 两区块 hidden 互切；首次切到日志 tab 懒加载。 */
+  function setTab(tab) {
+    currentTab = tab;
+    $tabReview.classList.toggle('active', tab === 'review');
+    $tabLogs.classList.toggle('active', tab === 'logs');
+    $review.hidden = tab !== 'review';
+    $logs.hidden = tab !== 'logs';
+    if (tab === 'logs' && !logsLoaded) {
+      logsLoaded = true;
+      loadLogs(true);
+    }
+  }
+
+  // ---------- 运行日志 ----------
+  /** 日志状态区四态：loading / error / empty / list（与审核页同款 .ad-status 类）。 */
+  function setLogStatus(state, message = '') {
+    $logLoadingBox.hidden = state !== 'loading';
+    $logErrorBox.hidden = state !== 'error';
+    $logEmptyBox.hidden = state !== 'empty';
+    if (state === 'error') $logErrorText.textContent = message;
+  }
+
+  function updateLogMore() {
+    $logMore.hidden = logOffset >= logTotal || $logList.childElementCount === 0;
+  }
+
+  /**
+   * 拉取一页运行日志。clearFirst=true → 从 offset 0 重载（首载/刷新/切平台筛选）；
+   * false → 「加载更多」按当前 offset 追加。403/503 走 clearPassToGate（与审核列表同模式）。
+   */
+  async function loadLogs(clearFirst) {
+    if (logLoading) return;
+    logLoading = true;
+    if (clearFirst) {
+      logOffset = 0;
+      $logList.textContent = '';   // 清空（子节点全由 renderLogItem 创建，textContent 清空安全）
+    }
+    setLogStatus('loading');
+    try {
+      // POST 携带 JSON body（口令走 body.pass，与 admin/list 同模式）
+      const res = await fetch(`${API}/api/admin/logs?limit=${LOG_PAGE_LIMIT}&offset=${logOffset}&platform=${encodeURIComponent(logPlatform)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pass: adminPass }),
+      });
+      if (res.status === 403 || res.status === 503) { clearPassToGate(res.status); return; }
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+
+      logTotal = data.total ?? 0;
+      $logTotal.textContent = String(logTotal);
+      for (const item of data.items ?? []) $logList.append(renderLogItem(item));
+      logOffset += LOG_PAGE_LIMIT;
+
+      if ($logList.childElementCount === 0) setLogStatus('empty');
+      else setLogStatus('list');
+    } catch (err) {
+      setLogStatus('error', err.message || '加载失败，请重试');
+    } finally {
+      logLoading = false;
+      updateLogMore();
+    }
+  }
+
+  /**
+   * 渲染一条日志卡片：时间 + 平台徽标 + 页面 + 消息摘要（单行省略）+「堆栈」折叠按钮。
+   * 全 createElement + textContent——错误消息来自任意用户设备，XSS 铁律：绝不 innerHTML。
+   */
+  function renderLogItem(item) {
+    const card = document.createElement('article');
+    card.className = 'ad-log-card';
+
+    const head = document.createElement('div');
+    head.className = 'ad-log-head';
+
+    const when = document.createElement('span');
+    when.className = 'ad-log-time';
+    when.textContent = new Date(item.createdAt).toLocaleString('zh-CN', { hour12: false });
+
+    const platform = item.platform === 'web' || item.platform === 'app' ? item.platform : 'unknown';
+    const badge = document.createElement('span');
+    badge.className = `ad-log-badge ad-log-badge-${platform}`;
+    badge.textContent = item.platform;
+
+    const page = document.createElement('span');
+    page.className = 'ad-log-page';
+    page.textContent = item.page || '—';
+
+    head.append(when, badge, page);
+
+    const msg = document.createElement('div');
+    msg.className = 'ad-log-msg';
+    msg.textContent = item.message;
+
+    card.append(head, msg);
+
+    if (item.stack) {
+      const stackBlock = document.createElement('pre');
+      stackBlock.className = 'ad-log-stack';
+      stackBlock.hidden = true;
+      stackBlock.textContent = item.stack;
+
+      const stackBtn = document.createElement('button');
+      stackBtn.type = 'button';
+      stackBtn.className = 'ad-btn ad-btn-ghost ad-log-stack-btn';
+      stackBtn.textContent = '堆栈';
+      stackBtn.addEventListener('click', () => {
+        stackBlock.hidden = !stackBlock.hidden;
+        stackBtn.textContent = stackBlock.hidden ? '堆栈' : '收起堆栈';
+      });
+
+      const body = document.createElement('div');
+      body.className = 'ad-log-body';
+      body.append(stackBlock, stackBtn);
+      card.append(body);
+    }
+
+    return card;
+  }
+
   // ---------- 事件绑定 ----------
   $('ad-pass-ok').addEventListener('click', () => {
     const v = $passInput.value.trim();
@@ -259,10 +404,31 @@
     if (e.key === 'Enter') $('ad-pass-ok').click();   // 回车提交
   });
 
-  $('ad-refresh').addEventListener('click', () => loadPage(true));   // 从 offset 0 重载（清除追加的分页）
+  $tabReview.addEventListener('click', () => setTab('review'));
+  $tabLogs.addEventListener('click', () => setTab('logs'));
+
+  $('ad-refresh').addEventListener('click', () => {
+    // 顶栏刷新按当前 tab 分发：审核=loadPage(true) / 日志=loadLogs(true)
+    if (currentTab === 'logs') loadLogs(true);
+    else loadPage(true);
+  });
   $('ad-retry').addEventListener('click', () => loadPage(true));
   $loadMore.addEventListener('click', () => loadPage(false));
   $('ad-exit').addEventListener('click', exitToGate);
+
+  // 日志：平台筛选切换 → 从 offset 0 重载；日志专用刷新/重试/加载更多
+  document.querySelectorAll('.ad-filter').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const platform = btn.dataset.platform ?? '';
+      if (logPlatform === platform) return;
+      logPlatform = platform;
+      document.querySelectorAll('.ad-filter').forEach((b) => b.classList.toggle('active', b === btn));
+      loadLogs(true);
+    });
+  });
+  $('ad-log-refresh').addEventListener('click', () => loadLogs(true));
+  $('ad-log-retry').addEventListener('click', () => loadLogs(true));
+  $logMore.addEventListener('click', () => loadLogs(false));
 
   applyPassGate();   // 启动即按口令状态切换门面/主界面
 })();

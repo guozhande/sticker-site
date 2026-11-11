@@ -396,6 +396,17 @@ body {
   background: var(--accent-hover);
 }
 
+/* 举报按钮：危险红色调（.pa-btn 体系内覆盖；预览弹窗底是深色遮罩，用亮红文字+描边） */
+.pa-report {
+  background: transparent;
+  border: 1px solid #e5484d;
+  color: #ff8a8a;
+}
+
+.pa-report:hover {
+  background: rgba(229, 72, 77, 0.15);
+}
+
 /* ---- Context Menu ---- */
 .context-menu {
   position: fixed;

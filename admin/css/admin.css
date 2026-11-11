@@ -187,3 +187,131 @@ body.ad-page {
 }
 
 .ad-reject:hover:not(:disabled) { background: rgba(221, 51, 51, 0.08); }
+
+/* ---- tab 栏（待审核 / 运行日志）---- */
+.ad-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.ad-tab {
+  min-height: 28px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ad-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---- 运行日志 tab ---- */
+.ad-log-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ad-filter {
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ad-filter.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ad-log-count {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ad-log-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.ad-log-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ad-log-time { font-size: 12px; color: var(--text-secondary); }
+
+.ad-log-badge {
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.ad-log-badge-web { background: var(--accent); color: #fff; }
+.ad-log-badge-app { background: #6aa84f; color: #fff; }
+
+.ad-log-page {
+  max-width: 40%;
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ad-log-msg {
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ad-log-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ad-log-stack-btn {
+  align-self: flex-start;
+  min-height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.ad-log-stack {
+  margin: 0;
+  padding: 10px;
+  max-height: 240px;
+  overflow: auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-all;
+}

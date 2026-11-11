@@ -40,6 +40,7 @@ const $secondaryNav = document.querySelector('.secondary-nav');
 const $letterNav = document.querySelector('.letter-nav');
 const $pagination = document.getElementById('pagination');
 const $suggest = document.getElementById('search-suggest');
+const $reportBtn = document.getElementById('pa-report');
 
 // ====== 初始化 ======
 async function init() {
@@ -435,7 +436,9 @@ function renderGallery(list) {
          data-category="${s.category || ''}"
          data-categories="${labelsOf(s).join(',')}"
          data-subcategory="${s.subcategory || ''}"
-         data-tags="${s.tags.join(',')}">
+         data-tags="${s.tags.join(',')}"
+         data-source="${s.source || ''}"
+         data-upload-id="${s.uploadId || ''}">
       <img src="${s.url}" alt="${s.tags.join(', ')}" loading="lazy"
            onerror="this.parentElement.style.display='none'">
       ${s.source === 'upload' ? '<span class="up-badge">新</span>' : ''}
@@ -461,6 +464,8 @@ function getStickerData(card) {
     category: card.dataset.category,
     subcategory: card.dataset.subcategory,
     tags: card.dataset.tags,
+    source: card.dataset.source || '',
+    uploadId: card.dataset.uploadId || '',
   };
 }
 
@@ -471,6 +476,7 @@ function openPreview(card) {
   $previewImg.src = s.url;
   $previewImg.alt = s.tags;
   $previewInfo.textContent = [s.filename, s.category, s.subcategory].filter(Boolean).join(' · ');
+  $reportBtn.hidden = s.source !== 'upload';   // 举报只对用户上传条目显示（固定图库是微软 CC0 贴纸无需举报）
   $overlay.classList.add('show');
   document.body.style.overflow = 'hidden';
 }
@@ -491,6 +497,34 @@ document.getElementById('pa-download').addEventListener('click', () => {
 document.getElementById('pa-related').addEventListener('click', () => {
   if (state.currentSticker) searchRelated(state.currentSticker);
   closePreview();
+});
+
+// ====== 举报 ======
+// 一键举报（用户拍板：无原因分类）。后端 /api/report 置 hidden + 删 R2 图片（避风港机制），
+// 只对用户上传条目可用（固定图库条目按钮根本不显示，后端也查不到 id）。
+document.getElementById('pa-report').addEventListener('click', async () => {
+  const s = state.currentSticker;
+  if (!s || s.source !== 'upload' || !s.uploadId) return;
+  if (!confirm('举报后该表情将被立即下架并删除，确认举报？')) return;
+  try {
+    const res = await StickerDevice.apiFetch(`${API_BASE}/api/report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: s.uploadId }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    showToast('已收到举报，我们会尽快处理');
+    closePreview();
+    // 条目立刻从列表消失：本地先剔除，再重拉上传列表（服务端已 hidden，重拉结果天然不含该条）
+    state.stickers = state.stickers.filter((x) => x.id !== s.id);
+    state.uploads = state.uploads.filter((x) => x.id !== s.id);
+    rebuildSuggestIndex();
+    filterAndRender();
+    loadUploads();
+  } catch (err) {
+    showToast(`举报失败：${err.message}`);
+  }
 });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
@@ -523,9 +557,11 @@ $ctxMenu.addEventListener('click', e => {
 });
 
 function previewFromData(s) {
+  state.currentSticker = s;
   $previewImg.src = s.url;
   $previewImg.alt = s.tags;
   $previewInfo.textContent = [s.filename, s.category, s.subcategory].filter(Boolean).join(' · ');
+  $reportBtn.hidden = s.source !== 'upload';
   $overlay.classList.add('show');
   document.body.style.overflow = 'hidden';
 }
