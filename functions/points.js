@@ -257,7 +257,7 @@ export async function handleRecharge(request, env, origin) {
   return json({ ok: true, orderId, amount, points, balance }, { origin });
 }
 
-// ---- 审核（本期只导出函数，路由与界面第 3 步做）----
+// ---- 审核（导出函数供 functions/admin.js 的接口复用，状态机逻辑单一来源；路由注册见 functions/api/[[path]].js）----
 
 /**
  * 审核通过：pending → visible；上传者有 user_id → 发 POINTS_UPLOAD_REWARD 分；
@@ -298,6 +298,38 @@ export async function approveUpload(env, uploadId) {
     .run();
 
   return { ok: true, id: uploadId, credited: true, points: balance };
+}
+
+/**
+ * 审核下架：pending → hidden。
+ * 冻结设计第 4 条：只改状态 —— 不发分、不写积分流水、不删 R2 对象
+ * （被下架内容仍可直链访问，7 天边缘缓存到期后自然失效；如需立即删除可参考
+ * _shared.js handleReport 的「hidden + 删 R2」先例）。
+ * 状态守卫 + 条件 UPDATE（meta.changes 判定）双保险防并发重复处理，与 approveUpload 同款。
+ */
+export async function rejectUpload(env, uploadId) {
+  const row = await env.DB
+    .prepare("SELECT id, status, r2_key FROM uploads WHERE id = ?")
+    .bind(uploadId)
+    .first();
+  if (!row) return { ok: false, error: "找不到该条目", status: 404 };
+  if (row.status !== "pending") return { ok: false, error: "该条目已处理", status: 409 };
+
+  const upd = await env.DB
+    .prepare("UPDATE uploads SET status = 'hidden' WHERE id = ? AND status = 'pending'")
+    .bind(uploadId)
+    .run();
+  if (upd.meta.changes !== 1) return { ok: false, error: "该条目已处理", status: 409 };   // 并发已被处理
+
+  // 下架删图（用户拍板 2026-11-11）：与 handleReport 同款——不留给 CDN 缓存最长 7 天的直链传播窗口。
+  // 删除失败只记日志不阻断（条目已 hidden，列表/搜索不可见；R2 残留由后续清理兜底）。
+  try {
+    await env.IMAGES.delete(row.r2_key);
+  } catch (err) {
+    console.error("下架删图失败：", err.message);
+  }
+
+  return { ok: true, id: uploadId, status: "hidden" };
 }
 
 // ---- AI 计费 / 预扣 / 结算 / 退回 ----

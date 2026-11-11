@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="上传审核后台 - 我的表情。管理员审核用户上传的作品：通过后上架展示并发积分，下架则隐藏。">
+<meta name="robots" content="noindex, nofollow">
+<title>上传审核后台 - 我的表情</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/ai.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="ad-page">
+
+<!-- 主界面：顶栏（标题+计数+刷新+退出）→ 状态区 → 卡片列表 → 加载更多；无口令时整个隐藏 -->
+<main class="ad-main" id="ad-main" hidden>
+  <div class="ad-topbar">
+    <span class="ad-topbar-title">上传审核后台</span>
+    <span class="ad-count">待审核 <span id="ad-total">0</span> 条</span>
+    <button type="button" class="ad-btn ad-btn-ghost" id="ad-refresh">刷新</button>
+    <button type="button" class="ad-btn ad-btn-ghost" id="ad-exit">退出</button>
+  </div>
+
+  <!-- 状态区四态：loading / error（后端文案+重试）/ empty / 列表（三块全隐） -->
+  <div class="ad-status" id="ad-status-loading" hidden><span class="ai-spinner"></span>加载中…</div>
+  <div class="ad-status" id="ad-status-error" hidden>
+    <p class="ad-status-error-text" id="ad-status-error-text"></p>
+    <button type="button" class="ad-btn ad-btn-ghost" id="ad-retry">重试</button>
+  </div>
+  <div class="ad-status" id="ad-status-empty" hidden>暂无待审核</div>
+
+  <div class="ad-list" id="ad-list"></div>
+
+  <button type="button" class="ad-btn ad-load-more" id="ad-load-more" hidden>加载更多</button>
+</main>
+
+<!-- 管理口令门面（复用 ai.css 的 .ai-pass-* 类）：无口令只显示门面。
+     不支持 ?pass= URL 直入——AI 页 URL 直入是为了分享，管理口令进 URL 会留在浏览器历史/访问日志，安全上刻意不做 -->
+<div class="ai-pass-gate" id="ad-pass-gate" hidden>
+  <h2 class="ai-pass-title">上传审核后台</h2>
+  <p class="ai-pass-hint">管理员专用，请输入管理口令</p>
+  <div class="ai-pass-row">
+    <input type="password" class="ai-pass-input" id="ad-pass-input" placeholder="管理口令" autocomplete="off">
+    <button type="button" class="ai-pass-ok" id="ad-pass-ok">进入</button>
+  </div>
+  <p class="ai-pass-err" id="ad-pass-err" hidden>口令不正确，请重试</p>
+</div>
+
+<div class="up-toast" id="ad-toast"></div>
+
+<script src="../js/config.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>

@@ -141,10 +141,14 @@ export function corsHeaders(origin) {
   };
 }
 
-export function json(data, { status = 200, origin = "" } = {}) {
+/**
+ * `headers` 可选（默认空对象，向后兼容零回归）：附加响应头排在 CORS 头之后，
+ * 显式传入可覆盖默认值（如审核接口加 Cache-Control: no-store 防中间缓存）。
+ */
+export function json(data, { status = 200, origin = "", headers = {} } = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders(origin) },
+    headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders(origin), ...headers },
   });
 }
 

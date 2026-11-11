@@ -10,8 +10,12 @@
  *   GET  /api/points/balance      （积分：余额 + AI 明码标价）
  *   GET  /api/points/log          （积分：流水）
  *   POST /api/points/recharge     （积分：模拟充值）
+ *   GET  /api/admin/list          （审核：待审核队列，口令走 body.pass）
+ *   POST /api/admin/approve       （审核：通过）
+ *   POST /api/admin/reject        （审核：下架）
  */
 import { corsHeaders, fail, json, handleAiImage, handleAiVideo, handleList, handleReport, handleUpload } from "../_shared.js";
+import { handleAdminApprove, handleAdminList, handleAdminReject } from "../admin.js";
 import { handleBalance, handleLog, handleRecharge, handleSignin } from "../points.js";
 
 export async function onRequest(context) {
@@ -53,6 +57,15 @@ export async function onRequest(context) {
     }
     if (route === "points/recharge" && request.method === "POST") {
       return await handleRecharge(request, env, origin);
+    }
+    if (route === "admin/list" && request.method === "GET") {
+      return await handleAdminList(request, env, origin);
+    }
+    if (route === "admin/approve" && request.method === "POST") {
+      return await handleAdminApprove(request, env, origin);
+    }
+    if (route === "admin/reject" && request.method === "POST") {
+      return await handleAdminReject(request, env, origin);
     }
     return fail("Not Found", 404, origin);
   } catch (err) {
