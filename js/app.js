@@ -1,7 +1,7 @@
 /**
  * 我的表情 — 网站脚本
- * 一级标签: 主页 | 二次元 | 网络
- * 二级标签: 每个一级下的具体名称
+ * 一级标签: 主页 | 贴纸
+ * 二级标签: 每个一级下的具体名称（微软免费贴纸）
  */
 const state = {
   stickers: [],
@@ -79,7 +79,7 @@ function uploadToSticker(u) {
     tags: [u.work, ...(u.characters || [])].filter(Boolean),
     category: u.work,
     categories: [u.work],
-    subcategory: '二次元',   // 上传时只问了作品名，统一归二次元
+    subcategory: '贴纸',   // 上传时只问了作品名，统一归贴纸（一级）
     source: 'upload',
   };
   // 后端预生成的搜索键（键名与 fuzzy.js 消费的 snake_case 一致）；旧接口无此字段时保持回退逻辑
@@ -116,7 +116,7 @@ async function loadUploads() {
 // ====== 一级导航 ======
 function renderPrimaryNav() {
   $primaryNav.innerHTML = '';
-  const tabs = ['主页', '二次元', '网络'];
+  const tabs = ['主页', '贴纸'];
 
   tabs.forEach(tab => {
     const btn = document.createElement('button');
@@ -179,7 +179,7 @@ function renderLetterNav(primary) {
     labelsOf(s).forEach(c => present.add(c));
   });
 
-  // 只留这个一级下真有作品的字母（网络下可能就没有几个字母）
+  // 只留这个一级下真有作品的字母
   const letters = Object.keys(state.categoryGroups)
     .filter(L => (state.categoryGroups[L] || []).some(n => present.has(n)));
   if (!letters.length) {
