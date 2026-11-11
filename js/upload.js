@@ -87,7 +87,7 @@
       <div class="up-picked"></div>
       <label class="up-field">
         <span class="up-label">输入作品名称</span>
-        <input class="up-text" type="text" maxlength="60" placeholder="例如：原神" value="${esc(work)}">
+        <input class="up-text" type="text" maxlength="60" placeholder="例如：小恐龙" value="${esc(work)}">
       </label>`;
 
     const $file = $body.querySelector('.up-file');
