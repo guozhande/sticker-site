@@ -107,3 +107,24 @@ CREATE TABLE IF NOT EXISTS client_logs (
 
 CREATE INDEX IF NOT EXISTS idx_client_logs_created  ON client_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_client_logs_platform ON client_logs(platform, created_at DESC);
+
+-- ============ AI 打标（阶段一：Vectorize/Queues 基础设施）============
+
+-- 上传打标状态。handleUpload 在 INSERT uploads 之后写初始行（tag_status='pending'），
+-- 打标 Worker 消费 tagging-queue 后回写结果；sticker-cron 扫描悬挂行（tagged_at IS NULL
+-- 且 uploads.created_at 超 30 分钟）重投队列。无 created_at 列：悬挂判定 JOIN uploads 取创建时间。
+CREATE TABLE IF NOT EXISTS upload_tags (
+  upload_id       TEXT PRIMARY KEY,               -- 关联 uploads.id
+  model_version   TEXT,                           -- 打标模型版本（出结果时回写）
+  tags_json       TEXT,                           -- 打标结果 JSON（角色/风格标签）
+  rating_tag      TEXT,                           -- 分级标签（如 general / suggestive）
+  rating_score    REAL,                           -- 分级置信度
+  anime_real_score REAL,                          -- 二次元/写实分类置信度（anime-vs-real 分类器）
+  head_count      INTEGER,                        -- 画面人物数
+  search_keys     TEXT,                           -- 打标衍生的搜索键（JSON，覆盖 uploads.search_keys）
+  tag_status      TEXT DEFAULT 'pending',         -- pending / done / failed
+  tag_error       TEXT,                           -- 打标失败原因（status='failed' 时）
+  tagged_at       INTEGER                         -- 打标完成毫秒时间戳（NULL=未完成）
+);
+
+CREATE INDEX IF NOT EXISTS idx_upload_tags_status ON upload_tags(tag_status, tagged_at);

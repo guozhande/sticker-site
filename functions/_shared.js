@@ -427,6 +427,14 @@ export async function handleUpload(request, env, origin) {
     )
     .run();
 
+  // 打标链路（阶段一）：入队 + 打标状态初始行。两者都不影响上传主流程，失败只记日志。
+  try {
+    await env.TAG_QUEUE.send({ uploadId: id, r2Key, mime, op: "tag" });
+  } catch (e) { console.error("打标入队失败：", e.message); /* 队列故障不影响上传主流程 */ }
+  try {
+    await env.DB.prepare("INSERT OR IGNORE INTO upload_tags (upload_id, tag_status) VALUES (?, 'pending')").bind(id).run();
+  } catch (e) { console.error("写打标初始行失败：", e.message); }
+
   return json({ ok: true, id, url: `/img/${r2Key}`, work, characters, status: "pending" }, { origin });
 }
 
