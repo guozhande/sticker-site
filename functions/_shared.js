@@ -105,7 +105,7 @@ export const REF_PROMPT_PREFIX = {
 };
 
 // ---- 可灵动图（图生视频 → GIF）----
-const KLING_HOSTS = ["https://api-singapore.klingai.com", "https://api-beijing.klingai.com"];  // 与侦察脚本 kling_test.py 同序
+const KLING_HOSTS = ["https://api-beijing.klingai.com", "https://api-singapore.klingai.com"];  // beijing 优先：key 区域绑定北京（2026-11-14 实测 singapore 恒 401）
 const KLING_CREATE_PATH = "/image-to-video/kling-3.0";
 const KLING_TASKS_PATH = "/tasks";
 const VIDEO_DURATIONS = new Set(["3", "4", "5"]);   // 时长白名单（秒）
@@ -985,31 +985,32 @@ async function klingCreate(apiKey, prompt, duration, firstFrame) {
   const RETRY_DELAYS = [0, 5000, 10000, 20000, 30000];
   for (let attempt = 1; attempt <= 5; attempt++) {
     if (attempt > 1) await sleep(RETRY_DELAYS[attempt - 1]);
-    for (const base of KLING_HOSTS) {               // singapore → beijing（同侦察脚本）
-    try {
-      const res = await fetchWithTimeout(`${base}${KLING_CREATE_PATH}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }, KLING_CREATE_TIMEOUT_MS);
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        lastErr = `${base} HTTP ${res.status}: ${truncate(err?.message || String(err?.code || ""), 120)}`;
-        console.error(`kling create 失败:`, lastErr);
-        continue;                                    // 下一 host
+    for (const base of KLING_HOSTS) {
+      // beijing 优先：本 key 区域绑定北京（singapore 恒 401 api key not found，2026-11-14 实测）
+      try {
+        const res = await fetchWithTimeout(`${base}${KLING_CREATE_PATH}`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }, KLING_CREATE_TIMEOUT_MS);
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          lastErr = `${base} HTTP ${res.status}: ${truncate(err?.message || String(err?.code || ""), 120)}`;
+          console.error(`kling create 失败:`, lastErr);
+          continue;                                    // 下一 host
+        }
+        const data = await res.json().catch(() => null);
+        const id = data?.data?.id;                     // 侦察脚本：r.get("data").get("id")
+        if (id) return { ok: true, taskId: id, base };
+        lastErr = `${base} 无 task id: ${truncate(JSON.stringify(data), 120)}`;
+        console.error(`kling create 异常:`, lastErr);
+      } catch (err) {
+        lastErr = `${base} 网络异常: ${truncate(err.message, 120)}`;
+        console.error(`kling create 异常:`, lastErr);
       }
-      const data = await res.json().catch(() => null);
-      const id = data?.data?.id;                     // 侦察脚本：r.get("data").get("id")
-      if (id) return { ok: true, taskId: id, base };
-      lastErr = `${base} 无 task id: ${truncate(JSON.stringify(data), 120)}`;
-      console.error(`kling create 异常:`, lastErr);
-    } catch (err) {
-      lastErr = `${base} 网络异常: ${truncate(err.message, 120)}`;
-      console.error(`kling create 异常:`, lastErr);
     }
   }
   return { ok: false, error: lastErr };
-  }
 }
 
 /**
