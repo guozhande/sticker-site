@@ -180,6 +180,12 @@
     fd.append('work', work.trim());
     fd.append('characters', JSON.stringify(characters));
 
+    // Turnstile：提交前取人机验证 token（后端 428 拒绝无 token 请求）
+    let ttToken = null;
+    try { ttToken = await window.StickerTurnstile.getToken('upload'); } catch { ttToken = null; }
+    if (!ttToken) return toast('人机验证未通过，请稍后重试');
+    fd.append('cf-turnstile-response', ttToken);
+
     $primary.disabled = true;
     $primary.textContent = '上传中…';
     try {

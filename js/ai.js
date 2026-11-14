@@ -662,12 +662,20 @@
           return;
         }
       }
+      // Turnstile：生成前取人机验证 token（action 按静图/动图区分，后端 428 拒绝无 token 请求）
+      let ttToken = null;
+      try { ttToken = await window.StickerTurnstile.getToken(isVideo ? 'ai-video' : 'ai-image'); } catch { ttToken = null; }
+      if (!ttToken) {
+        toast('人机验证未通过，请稍后重试');
+        setResultState('empty');
+        return;
+      }
       const res = await apiFetch(isVideo ? `${API}/api/ai/video` : `${API}/api/ai/image`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isVideo
-          ? { prompt, duration: Number(currentDuration), image: videoFrameDataUri, pass: aiPass }   // image 为 null 时后端走 Seedream 首帧
-          : { prompt, size: currentSize, image: refImage, ref_mode: refModeValue, pass: aiPass }),   // image 为 null 时后端按文生图处理
+          ? { prompt, duration: Number(currentDuration), image: videoFrameDataUri, pass: aiPass, 'cf-turnstile-response': ttToken }   // image 为 null 时后端走 Seedream 首帧
+          : { prompt, size: currentSize, image: refImage, ref_mode: refModeValue, pass: aiPass, 'cf-turnstile-response': ttToken }),   // image 为 null 时后端按文生图处理
         signal: ctrl.signal,   // 静图：timer 为 0，signal 永不 abort，行为与原裸 fetch 一致
       });
       // 口令失效（403）：清掉本地口令、切回门面并提示，不进入通用错误通道
@@ -779,6 +787,12 @@
       fd.append('file', new File([blob], `ai_${Date.now()}.${extFromUrl(lastImageUrl)}`, { type: blob.type || 'image/jpeg' }));
       fd.append('work', work);
       fd.append('characters', JSON.stringify(characters));
+
+      // Turnstile：上传前取人机验证 token（action=upload）
+      let ttToken = null;
+      try { ttToken = await window.StickerTurnstile.getToken('upload'); } catch { ttToken = null; }
+      if (!ttToken) throw new Error('人机验证未通过，请稍后重试');
+      fd.append('cf-turnstile-response', ttToken);
 
       const res = await apiFetch(`${API}/api/upload`, { method: 'POST', body: fd });   // X-Device-Id：上传过审 +5 分落到同一设备账户
       const data = await res.json().catch(() => ({}));

@@ -23,6 +23,9 @@ binding = "TAG_QUEUE"
 [ai]
 binding = "AI"
 
+[vars]
+TURNSTILE_HOSTNAMES = "emoticon-station.com,www.emoticon-station.com,data.emoticon-station.com,sticker-store-uzo.pages.dev,guozhande.github.io"
+
 [env.production]
 compatibility_flags = [ "enable_request_signal" ]
 
@@ -45,6 +48,9 @@ binding = "TAG_QUEUE"
 
 [env.production.ai]
 binding = "AI"
+
+[env.production.vars]
+TURNSTILE_HOSTNAMES = "emoticon-station.com,www.emoticon-station.com,data.emoticon-station.com,sticker-store-uzo.pages.dev,guozhande.github.io"
 
 [[services]]
 binding = "TRANSCODE_WORKER"

@@ -925,6 +925,11 @@
       fd.append('file', new File([blob], `maker_${Date.now()}.png`, { type: 'image/png' }));
       fd.append('work', work.trim());
       fd.append('characters', JSON.stringify(characters));   // 空数组服务端也收
+      // Turnstile：上传前取人机验证 token（action=upload）
+      let ttToken = null;
+      try { ttToken = await window.StickerTurnstile.getToken('upload'); } catch { ttToken = null; }
+      if (!ttToken) throw new Error('人机验证未通过，请稍后重试');
+      fd.append('cf-turnstile-response', ttToken);
       const res = await fetch(`${API}/api/upload`, { method: 'POST', body: fd });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);

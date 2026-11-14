@@ -158,6 +158,50 @@ export function fail(message, status = 400, origin = "") {
   return json({ ok: false, error: message }, { status, origin });
 }
 
+// ── Turnstile siteverify（canonical，见 developers.cloudflare.com/turnstile） ──
+// 契约：success === true + action 匹配 + 前端 hostname 在 TURNSTILE_HOSTNAMES 白名单内。
+// 浏览器 → 用户后端 → siteverify，绝不从前端直调。
+const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+export async function verifyTurnstile(env, token, action, clientIp) {
+  const expectedHostnames = new Set(
+    String(env.TURNSTILE_HOSTNAMES ?? "")
+      .split(",")
+      .map((hostname) => hostname.trim())
+      .filter(Boolean),
+  );
+  if (
+    typeof token !== "string" ||
+    token.length === 0 ||
+    token.length > 2048 ||
+    expectedHostnames.size === 0
+  ) {
+    return false;
+  }
+  let result;
+  try {
+    const r = await fetch(TURNSTILE_VERIFY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      signal: AbortSignal.timeout(10_000),
+      body: new URLSearchParams({
+        secret: String(env.TURNSTILE_SECRET ?? ""),
+        response: token,
+        remoteip: clientIp,
+      }),
+    });
+    if (!r.ok) return false;
+    result = await r.json();
+  } catch {
+    return false;
+  }
+  return (
+    result.success === true &&
+    result.action === action &&
+    expectedHostnames.has(result.hostname)
+  );
+}
+
 export async function sha256Hex(text) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -391,6 +435,12 @@ export async function handleUpload(request, env, origin) {
   const characters = cleanLabels(rawChars, MAX_CHAR_LEN).slice(0, MAX_CHARS);
 
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  // Turnstile 人机验证：先于限流与业务逻辑（action=upload，token 来自表单字段 cf-turnstile-response）
+  const ttToken = form.get("cf-turnstile-response");
+  if (!(await verifyTurnstile(env, ttToken, "upload", ip))) {
+    return fail("人机验证未通过，请刷新页面重试", 428, origin);
+  }
+
   const ipHash = await sha256Hex(ip + "|sticker-salt");
   if ((await countRecentByIp(env, ipHash, Date.now() - 3600_000, "uploads")) >= RATE_LIMIT_PER_HOUR) {
     return fail("上传太频繁，请稍后再试", 429, origin);
@@ -530,6 +580,12 @@ export async function handleAiImage(request, env, origin) {
   let body = {};
   try { body = await request.json(); } catch { /* 非法 JSON 走下面的校验 */ }
 
+  // Turnstile 人机验证：先于口令闸门与业务逻辑（action=ai-image，token 来自 JSON 字段 cf-turnstile-response）
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  if (!(await verifyTurnstile(env, body["cf-turnstile-response"], "ai-image", ip))) {
+    return fail("人机验证未通过，请刷新页面重试", 428, origin);
+  }
+
   // 访问口令闸门：最早一步（先于 key 配置检查与 prompt/size 校验），无口令请求不进入任何业务逻辑
   const passCheck = checkAiPass(body, env);
   if (!passCheck.ok) return fail(passCheck.error, passCheck.status, origin);
@@ -557,7 +613,6 @@ export async function handleAiImage(request, env, origin) {
   const refMode = (image && !isMultiRef) ? (REF_MODES.has(String(body.ref_mode ?? "")) ? String(body.ref_mode) : "free") : "free";
 
   // per-IP 限流：与上传共用「IP hash + 1 小时窗口」思路，但用独立表 ai_requests
-  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const ipHash = await sha256Hex(ip + "|sticker-salt");
   if ((await countRecentByIp(env, ipHash, Date.now() - 3600_000, "ai_requests")) >= AI_RATE_LIMIT_PER_HOUR) {
     return fail("AI 生成太频繁，请稍后再试", 429, origin);
@@ -718,6 +773,12 @@ export async function handleAiVideo(request, env, origin) {
   let body = {};
   try { body = await request.json(); } catch { /* 非法 JSON 走下方校验 */ }
 
+  // Turnstile 人机验证：先于口令闸门与业务逻辑（action=ai-video，token 来自 JSON 字段 cf-turnstile-response）
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  if (!(await verifyTurnstile(env, body["cf-turnstile-response"], "ai-video", ip))) {
+    return fail("人机验证未通过，请刷新页面重试", 428, origin);
+  }
+
   // 访问口令闸门：与 handleAiImage 同源（checkAiPass），最早一步（先于 key 配置检查）——
   // 未配 KLING key 时错误口令也必须 403 而非 503，两端点拦截顺序统一
   const passCheck = checkAiPass(body, env);
@@ -740,7 +801,6 @@ export async function handleAiVideo(request, env, origin) {
   if (Array.isArray(image)) return fail("动图首帧仅支持一张图片", 400, origin);   // 可灵 first_frame 只收单张 data URI
 
   // ── 限流：共享 ai_requests 池（小时池 + 每日池，均按行数计；动图一次计 5 行）──
-  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const ipHash = await sha256Hex(ip + "|sticker-salt");
   const usedHour = await countRecentByIp(env, ipHash, Date.now() - 3600_000, "ai_requests");
   if (usedHour + VIDEO_RATE_COST > AI_RATE_LIMIT_PER_HOUR) {
