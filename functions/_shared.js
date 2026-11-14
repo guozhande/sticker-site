@@ -162,10 +162,13 @@ export function fail(message, status = 400, origin = "") {
 // 契约：success === true + action 匹配 + 前端 hostname 在 TURNSTILE_HOSTNAMES 白名单内。
 // 浏览器 → 用户后端 → siteverify，绝不从前端直调。
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+// 兜底白名单：若 Pages git 集成未应用 wrangler.toml [vars]，退回内置常量，保证校验可用。
+const TURNSTILE_HOSTNAMES_FALLBACK =
+  "emoticon-station.com,www.emoticon-station.com,data.emoticon-station.com,sticker-store-uzo.pages.dev,guozhande.github.io";
 
 export async function verifyTurnstile(env, token, action, clientIp) {
   const expectedHostnames = new Set(
-    String(env.TURNSTILE_HOSTNAMES ?? "")
+    String(env.TURNSTILE_HOSTNAMES ?? TURNSTILE_HOSTNAMES_FALLBACK)
       .split(",")
       .map((hostname) => hostname.trim())
       .filter(Boolean),
