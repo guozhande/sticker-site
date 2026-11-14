@@ -170,12 +170,15 @@ export async function verifyTurnstile(env, token, action, clientIp) {
       .map((hostname) => hostname.trim())
       .filter(Boolean),
   );
+  const diag = { tokenOk: false, hostnamesSize: expectedHostnames.size, result: null };
   if (
     typeof token !== "string" ||
     token.length === 0 ||
     token.length > 2048 ||
     expectedHostnames.size === 0
   ) {
+    diag.tokenOk = typeof token === "string" && token.length > 0 && token.length <= 2048;
+    console.log("[turnstile] early-fail", JSON.stringify(diag));
     return false;
   }
   let result;
@@ -190,11 +193,17 @@ export async function verifyTurnstile(env, token, action, clientIp) {
         remoteip: clientIp,
       }),
     });
-    if (!r.ok) return false;
+    if (!r.ok) {
+      console.log("[turnstile] siteverify-http", r.status);
+      return false;
+    }
     result = await r.json();
-  } catch {
+  } catch (e) {
+    console.log("[turnstile] siteverify-exc", String(e && e.message).slice(0, 100));
     return false;
   }
+  diag.result = { success: result.success, action: result.action, hostname: result.hostname };
+  console.log("[turnstile] result", JSON.stringify(diag));
   return (
     result.success === true &&
     result.action === action &&
