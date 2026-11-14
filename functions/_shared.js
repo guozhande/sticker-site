@@ -173,17 +173,10 @@ export async function verifyTurnstile(env, token, action, clientIp) {
       .map((hostname) => hostname.trim())
       .filter(Boolean),
   );
-  const diag = { tokenOk: false, hostnamesSize: expectedHostnames.size, result: null };
-  if (
-    typeof token !== "string" ||
-    token.length === 0 ||
-    token.length > 2048 ||
-    expectedHostnames.size === 0
-  ) {
-    diag.tokenOk = typeof token === "string" && token.length > 0 && token.length <= 2048;
-    console.log("[turnstile] early-fail", JSON.stringify(diag));
-    return false;
+  if (typeof token !== "string" || token.length === 0 || token.length > 2048) {
+    return { ok: false, reason: "token-missing" };
   }
+  if (expectedHostnames.size === 0) return { ok: false, reason: "no-hostnames" };
   let result;
   try {
     const r = await fetch(TURNSTILE_VERIFY_URL, {
@@ -196,22 +189,21 @@ export async function verifyTurnstile(env, token, action, clientIp) {
         remoteip: clientIp,
       }),
     });
-    if (!r.ok) {
-      console.log("[turnstile] siteverify-http", r.status);
-      return false;
-    }
+    if (!r.ok) return { ok: false, reason: `siteverify-http-${r.status}` };
     result = await r.json();
   } catch (e) {
     console.log("[turnstile] siteverify-exc", String(e && e.message).slice(0, 100));
-    return false;
+    return { ok: false, reason: "siteverify-unreachable" };
   }
-  diag.result = { success: result.success, action: result.action, hostname: result.hostname };
-  console.log("[turnstile] result", JSON.stringify(diag));
-  return (
-    result.success === true &&
-    result.action === action &&
-    expectedHostnames.has(result.hostname)
+  const codes = Array.isArray(result["error-codes"]) ? result["error-codes"].join("+") : "";
+  console.log(
+    "[turnstile] result",
+    JSON.stringify({ success: result.success, action: result.action, hostname: result.hostname, errorCodes: codes }),
   );
+  if (result.success !== true) return { ok: false, reason: codes || "verify-failed" };
+  if (result.action !== action) return { ok: false, reason: `action:${result.action ?? "null"}` };
+  if (!expectedHostnames.has(result.hostname)) return { ok: false, reason: `hostname:${result.hostname ?? "null"}` };
+  return { ok: true };
 }
 
 export async function sha256Hex(text) {
@@ -449,8 +441,9 @@ export async function handleUpload(request, env, origin) {
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   // Turnstile 人机验证：先于限流与业务逻辑（action=upload，token 来自表单字段 cf-turnstile-response）
   const ttToken = form.get("cf-turnstile-response");
-  if (!(await verifyTurnstile(env, ttToken, "upload", ip))) {
-    return fail("人机验证未通过，请刷新页面重试", 428, origin);
+  const turnstile = await verifyTurnstile(env, ttToken, "upload", ip);
+  if (!turnstile.ok) {
+    return fail(`人机验证未通过（${turnstile.reason}），请刷新页面重试`, 428, origin);
   }
 
   const ipHash = await sha256Hex(ip + "|sticker-salt");
@@ -594,8 +587,9 @@ export async function handleAiImage(request, env, origin) {
 
   // Turnstile 人机验证：先于口令闸门与业务逻辑（action=ai-image，token 来自 JSON 字段 cf-turnstile-response）
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  if (!(await verifyTurnstile(env, body["cf-turnstile-response"], "ai-image", ip))) {
-    return fail("人机验证未通过，请刷新页面重试", 428, origin);
+  const turnstile = await verifyTurnstile(env, body["cf-turnstile-response"], "ai-image", ip);
+  if (!turnstile.ok) {
+    return fail(`人机验证未通过（${turnstile.reason}），请刷新页面重试`, 428, origin);
   }
 
   // 访问口令闸门：最早一步（先于 key 配置检查与 prompt/size 校验），无口令请求不进入任何业务逻辑
@@ -787,8 +781,9 @@ export async function handleAiVideo(request, env, origin) {
 
   // Turnstile 人机验证：先于口令闸门与业务逻辑（action=ai-video，token 来自 JSON 字段 cf-turnstile-response）
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  if (!(await verifyTurnstile(env, body["cf-turnstile-response"], "ai-video", ip))) {
-    return fail("人机验证未通过，请刷新页面重试", 428, origin);
+  const turnstile = await verifyTurnstile(env, body["cf-turnstile-response"], "ai-video", ip);
+  if (!turnstile.ok) {
+    return fail(`人机验证未通过（${turnstile.reason}），请刷新页面重试`, 428, origin);
   }
 
   // 访问口令闸门：与 handleAiImage 同源（checkAiPass），最早一步（先于 key 配置检查）——
