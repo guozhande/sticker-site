@@ -591,7 +591,7 @@ body {
 
 .features {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);   /* 3 张卡片单行排列（键盘集成卡片已移除） */
   gap: 12px;
   max-width: 600px;
   margin: 0 auto;
